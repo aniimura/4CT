@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第13章: ケンペ鎖ゲーム — 四色定理の証明</title>
+<link rel="stylesheet" href="style.css">
+<script>
+MathJax = {
+  tex: { inlineMath: [['$','$']], displayMath: [['$$','$$']],
+         macros: { conn: '\\mathrm{conn}', QED: '\\blacksquare' } },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+</head>
+<body>
+
+<div class="nav-header">
+  <a href="12_no_b4_recursion.html">&larr; 前へ</a>
+  <a href="index.html">目次</a>
+  <a href="14_four_color.html">次へ &rarr;</a>
+</div>
+
+<p class="chapter-number">第13章</p>
+<h1>ケンペ鎖ゲーム</h1>
+
+<div class="learning-box">
+<h3>このページで学ぶこと</h3>
+<ul>
+<li>定理8：高々3回のケンペ交換で彩色を $v$ に拡張できる</li>
+<li>ケース0：境界に3色以下</li>
+<li>ケースA：$\conn \geq 2$（統合交換）</li>
+<li>ケースB：$\conn = 1$、部分的連結</li>
+<li>ケースC：$\conn = 1$、全域的連結（B4）</li>
+<li>すべてのケースの完全なウォークスルー</li>
+</ul>
+</div>
+
+<div class="prereq-box">
+<strong>前提:</strong> 第4章（設定）、第6章（BCT）、第8〜12章（積の上界と B4 解析）
+</div>
+
+<!-- ===== 13.1 定理8 ===== -->
+<h2>定理8：ケンペ鎖ゲーム</h2>
+
+<div class="thm-box" style="border-left-color:#e53e3e; border-color:#fed7d7; background:#fff5f5;">
+<strong>定理8（次数5のケンペ鎖ゲーム）.</strong>
+$G \setminus v$ の任意の正則4彩色 $\varphi$ は、<strong>高々3回</strong>のケンペ交換により、
+$v$ へ拡張可能な彩色に変換できる。
+</div>
+
+<div class="explanation">
+<h4>「$v$ へ拡張可能」とは</h4>
+<p>$v$ の5つの近傍に $\leq 3$ 色しか使われていなければ、
+空いている色を $v$ に割り当てられます。
+つまり目標は「ケンペ交換を繰り返して、境界の色数を3以下にする」ことです。</p>
+</div>
+
+<!-- ===== ケース0 ===== -->
+<h2>ケース0：$\leq 3$ 色が境界に現れる場合</h2>
+
+<div class="step">
+<span class="step-number">処理：</span>
+使われていない色を $v$ に割り当てる。<strong>0回交換</strong>。
+</div>
+
+<p>これは自明なケースです。4色のうち少なくとも1色が $N(v)$ に現れないので、
+その色を $v$ に使えます。以降、4色すべてが現れる場合を考えます。</p>
+
+<!-- ===== ケースA ===== -->
+<h2>ケースA：$\conn \geq 2$（統合交換）</h2>
+
+<p>少なくとも2つの非 $d$ 色が連結。</p>
+
+<h3>統合交換の概念</h3>
+
+<div class="thm-box definition">
+<strong>定義（統合交換）.</strong>
+非 $d$ 色の2色 $\{x, y\}$ について、色 $x$ の境界頂点と色 $y$ の境界頂点が
+$H_{x,y}$ の<strong>異なる成分</strong>に属するとき、一方の成分を交換すると
+その頂点の色が他方の色に変わり、境界は $\leq 3$ 色に帰着する。
+この操作を<strong>統合交換</strong>（merging swap）と呼ぶ。
+</div>
+
+<div class="example-block">
+<h4>具体例：統合交換</h4>
+<p>境界が $(d, \gamma, d, \alpha, \beta)$ で $\conn = 2$（$\gamma$ と $\alpha$ が連結、
+$\beta$ が非連結）のとき。非 $d$ ペア $\{\gamma, \beta\}$ を考える。</p>
+<p>$v_1$（色 $\gamma$）と $v_4$（色 $\beta$）が $H_{\gamma,\beta}$ の異なる成分にいれば：</p>
+<ul>
+<li>$v_1$ を含む成分で $\gamma \leftrightarrow \beta$ を交換</li>
+<li>$v_1$ が $\beta$ 色になる → 境界は $(d, \beta, d, \alpha, \beta)$ → 二重色は $d$ と $\beta$ → 色 $\gamma$ が消えて3色に！</li>
+</ul>
+<p><strong>1回の交換で完了。</strong></p>
+</div>
+
+<h3>部分ケース $\conn = 3$</h3>
+
+<div class="step">
+<span class="step-number">状況：</span> 3つの非 $d$ 色すべてが連結。
+積の上界より各相補対で $(p, q) \in \{(1,2), (2,1)\}$。
+補助的観察1（SO1）により、少なくとも1つの非 $d$ ペアで統合交換が可能。
+<strong>1回交換。</strong>
+</div>
+
+<h3>部分ケース $\conn = 2$</h3>
+
+<div class="step">
+<span class="step-number">状況：</span> 2色が連結（$\gamma, \alpha$）、1色（$\beta$）が非連結。
+$p_{d,\beta} \geq 2$ なので積の上界より $p_{\gamma,\alpha} = 1$。
+統合交換の候補は $\{\gamma,\beta\}$ と $\{\alpha,\beta\}$。
+SO1 により少なくとも一方で統合交換が可能。
+<strong>1回交換。</strong>
+</div>
+
+<!-- ===== ケースB ===== -->
+<h2>ケースB：$\conn = 1$、部分的連結</h2>
+
+<div class="step">
+<span class="step-number">状況：</span>
+$\gamma$ が唯一の連結色、$p_{d,\gamma} \geq 2$（部分的）。
+$H_{d,\gamma}$ の境界対 $(b_1, b_2)$ を含む連結成分 $C$ は全体ではない（内部成分が存在）。
+</div>
+
+<h3>手順</h3>
+
+<div class="step">
+<span class="step-number">交換1：</span>
+成分 $C$ 上で $d \leftrightarrow \gamma$ を交換。
+<ul>
+<li>$b_1, b_2$ が $d → \gamma$ に変わる</li>
+<li>共通近傍 $v_1$（元は $\gamma$）が $\gamma → d$ に変わる</li>
+<li>新しい境界：$(\gamma, d, \gamma, \alpha, \beta)$、二重色は $\gamma$</li>
+</ul>
+</div>
+
+<div class="step">
+<span class="step-number">分析：</span>
+BCT により $d$ は連結色（$v_1$ 経由で新しい境界対を結ぶ）。$\conn' \geq 1$。
+補助的観察2（SO2）により $\conn' \geq 2$。
+</div>
+
+<div class="step">
+<span class="step-number">交換2：</span>
+$\conn' \geq 2$ なのでケースAが適用可能。統合交換で1回交換。
+</div>
+
+<p><strong>合計：高々2回交換。</strong></p>
+
+<!-- ===== ケースC ===== -->
+<h2>ケースC：$\conn = 1$、全域的連結（B4）</h2>
+
+<div class="step">
+<span class="step-number">状況：</span>
+$p_{d,\gamma} = 1$（全域的連結）。定理6より $p_{d,\alpha} = 2$。
+$b_1$ と $b_2$ は $H_{d,\alpha}$ の異なる成分にある。
+</div>
+
+<h3>手順</h3>
+
+<div class="step">
+<span class="step-number">交換1：</span>
+$b_1$ を含む $H_{d,\alpha}$ の成分上で $d \leftrightarrow \alpha$ を交換（非連結交換）。
+</div>
+
+<div class="step">
+<span class="step-number">系3の適用：</span>
+B4非再帰定理（定理7）+ BCT により：
+<ul>
+<li>$\conn' \geq 1$</li>
+<li>結果は B4 ではない</li>
+</ul>
+</div>
+
+<div class="step">
+<span class="step-number">場合分け：</span>
+<ul>
+<li><strong>$\conn' \geq 2$ の場合：</strong>ケースA → 統合交換で1回追加。<strong>合計2回。</strong></li>
+<li><strong>$\conn' = 1$ の場合：</strong>結果は部分的連結（ケースB）。
+ケースBは $\leq 2$ 回で解決。<strong>合計3回。</strong></li>
+</ul>
+</div>
+
+<!-- ===== 全体のまとめ ===== -->
+<h2>ケースの全体像</h2>
+
+<div class="figure">
+<svg width="550" height="360" viewBox="0 0 550 360">
+  <!-- Case 0 -->
+  <rect x="10" y="10" width="160" height="40" rx="6" fill="#f0fff4" stroke="#38a169" stroke-width="1.5"/>
+  <text x="90" y="35" text-anchor="middle" font-size="12" fill="#276749" font-weight="bold">ケース0: ≤3色 → 0回</text>
+  <!-- Case A -->
+  <rect x="10" y="70" width="200" height="40" rx="6" fill="#ebf8ff" stroke="#3182ce" stroke-width="1.5"/>
+  <text x="110" y="95" text-anchor="middle" font-size="12" fill="#2b6cb0" font-weight="bold">ケースA: conn≥2 → 1回</text>
+  <!-- Case B -->
+  <rect x="10" y="130" width="200" height="55" rx="6" fill="#faf5ff" stroke="#805ad5" stroke-width="1.5"/>
+  <text x="110" y="150" text-anchor="middle" font-size="12" fill="#553c9a" font-weight="bold">ケースB: conn=1, 部分的</text>
+  <text x="110" y="170" text-anchor="middle" font-size="11" fill="#4a5568">交換→conn'≥2→ケースA</text>
+  <text x="200" y="180" text-anchor="end" font-size="11" fill="#553c9a">→ 2回</text>
+  <!-- Case C -->
+  <rect x="10" y="210" width="200" height="55" rx="6" fill="#fff5f5" stroke="#e53e3e" stroke-width="1.5"/>
+  <text x="110" y="230" text-anchor="middle" font-size="12" fill="#c53030" font-weight="bold">ケースC: B4 (conn=1, 全域的)</text>
+  <text x="110" y="252" text-anchor="middle" font-size="11" fill="#4a5568">非連結交換→B4でない</text>
+  <!-- Arrows from C -->
+  <line x1="210" y1="225" x2="300" y2="100" stroke="#4a5568" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="275" y="148" font-size="11" fill="#4a5568" transform="rotate(-35 275 148)">conn'≥2</text>
+  <rect x="300" y="80" width="170" height="40" rx="6" fill="#ebf8ff" stroke="#3182ce" stroke-width="1"/>
+  <text x="385" y="105" text-anchor="middle" font-size="11" fill="#2b6cb0">ケースA → +1回 = 計2回</text>
+
+  <line x1="210" y1="245" x2="300" y2="180" stroke="#4a5568" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="275" y="225" font-size="11" fill="#4a5568" transform="rotate(-20 275 225)">conn'=1</text>
+  <rect x="300" y="160" width="230" height="55" rx="6" fill="#faf5ff" stroke="#805ad5" stroke-width="1"/>
+  <text x="415" y="180" text-anchor="middle" font-size="11" fill="#553c9a">ケースB(部分的) → +2回 = 計3回</text>
+  <text x="415" y="198" text-anchor="middle" font-size="10" fill="#4a5568">（B4にはならない！定理7）</text>
+
+  <!-- Summary box -->
+  <rect x="100" y="290" width="350" height="50" rx="8" fill="#fffff0" stroke="#d69e2e" stroke-width="2"/>
+  <text x="275" y="315" text-anchor="middle" font-size="14" fill="#975a16" font-weight="bold">
+    すべてのケースで高々3回のケンペ交換で解決</text>
+
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#4a5568"/>
+    </marker>
+  </defs>
+</svg>
+</div>
+
+<!-- ===== 交換回数の表 ===== -->
+<h2>交換回数のまとめ</h2>
+
+<table>
+<tr><th>ケース</th><th>条件</th><th>交換回数</th><th>使う定理</th></tr>
+<tr><td>0</td><td>$\leq 3$ 色</td><td>0</td><td>—</td></tr>
+<tr><td>A</td><td>$\conn \geq 2$</td><td>1</td><td>積の上界 + SO1</td></tr>
+<tr><td>B</td><td>$\conn = 1$, 部分的</td><td>$\leq 2$</td><td>BCT + SO2 → ケースA</td></tr>
+<tr><td>C</td><td>B4</td><td>$\leq 3$</td><td>定理7（B4非再帰）→ ケースA or B</td></tr>
+</table>
+
+<div class="explanation">
+<h4>なぜ3回で十分か</h4>
+<p>最悪のケースは B4 です：</p>
+<ol>
+<li><strong>1回目：</strong>非連結 $\{d,\alpha\}$-交換 → B4 が消える（定理7）</li>
+<li>結果が $\conn' = 1$, 部分的なら：</li>
+<li><strong>2回目：</strong>連結成分交換 → $\conn' \geq 2$（SO2）</li>
+<li><strong>3回目：</strong>統合交換（ケースA）→ $\leq 3$ 色に帰着</li>
+</ol>
+<p>$\conn' \geq 2$ であれば2回目のケースAで終わり、合計2回。</p>
+</div>
+
+<div class="takeaway">
+<h3>ポイント</h3>
+<ul>
+<li><strong>定理8</strong>：任意の4彩色を高々3回のケンペ交換で $v$ に拡張可能。</li>
+<li>ケースA（$\conn \geq 2$）：統合交換で1回。</li>
+<li>ケースB（部分的連結）：連結成分交換 + ケースA で2回。</li>
+<li>ケースC（B4）：非連結交換で B4 を脱出 + 残りは A or B で $\leq 3$回。</li>
+<li>B4→B4 が起こらない（定理7）ことが、有限停止の保証。</li>
+</ul>
+</div>
+
+<div class="nav-footer">
+  <a href="12_no_b4_recursion.html">&larr; 前へ: B4非再帰</a>
+  <a href="index.html">目次</a>
+  <a href="14_four_color.html">次へ: 四色定理 &rarr;</a>
+</div>
+
+</body>
+</html>

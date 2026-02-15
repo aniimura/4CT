@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>四色定理の証明 — 教育的解説</title>
+<link rel="stylesheet" href="style.css">
+<script>
+MathJax = {
+  tex: { inlineMath: [['$','$']], displayMath: [['$$','$$']],
+         macros: { conn: '\\mathrm{conn}', QED: '\\blacksquare' } },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+</head>
+<body>
+
+<h1>四色定理の証明<br><span style="font-size:0.6em; color:#4a5568;">ケンペ鎖と代数的構造による計算機非依存アプローチ</span></h1>
+
+<p style="text-align:center; color:#718096; font-size:0.95em;">
+学部1年生から読める段階的解説</p>
+
+<hr style="margin: 1.5em 0;">
+
+<h2 style="border:none; color:#1a1a1a;">このサイトについて</h2>
+
+<p>このサイトでは、<strong>四色定理</strong>（すべての平面グラフは4色で正則彩色できる）の
+新しい証明を、大学1年生でも理解できるように14章に分割して解説します。</p>
+
+<p>各章では以下の構成をとります：</p>
+<ul>
+<li><strong>定理の厳密な記述</strong> — 数学的に正確な主張</li>
+<li><strong>平易な解説</strong> — 直感的な意味と「なぜそうなるか」</li>
+<li><strong>具体例</strong> — 小さなグラフでの計算・図解</li>
+</ul>
+
+<h2 style="border:none; color:#1a1a1a;">証明のロードマップ</h2>
+
+<p>証明は大きく4つのパートに分かれます。</p>
+
+<!-- Part I -->
+<div class="part-header part1">Part I: 基礎概念（第1〜4章）</div>
+<div class="roadmap">
+  <div class="roadmap-item">
+    <div class="roadmap-number">1</div>
+    <div class="roadmap-content">
+      <a href="01_graph_basics.html">グラフ理論の基礎</a>
+      <div class="desc">グラフ・次数・平面性・オイラーの公式・三角形分割</div>
+    </div>
+  </div>
+  <div class="roadmap-item">
+    <div class="roadmap-number">2</div>
+    <div class="roadmap-content">
+      <a href="02_coloring.html">グラフ彩色</a>
+      <div class="desc">正則彩色・彩色数・四色定理の主張・歴史</div>
+    </div>
+  </div>
+  <div class="roadmap-item">
+    <div class="roadmap-number">3</div>
+    <div class="roadmap-content">
+      <a href="03_kempe_chains.html">ケンペ鎖と交換</a>
+      <div class="desc">ケンペ部分グラフ $H_{a,b}$・連結成分・ケンペ交換</div>
+    </div>
+  </div>
+  <div class="roadmap-item">
+    <div class="roadmap-number">4</div>
+    <div class="roadmap-content">
+      <a href="04_setup.html">次数5頂点の設定</a>
+      <div class="desc">極小反例・頂点除去・近三角形分割・境界の構造</div>
+    </div>
+  </div>
+</div>
+
+<!-- Part II -->
+<div class="part-header part2">Part II: 代数的基盤（第5〜7章）</div>
+<div class="roadmap">
+  <div class="roadmap-item">
+    <div class="roadmap-number part2">5</div>
+    <div class="roadmap-content">
+      <a href="05_cycle_rank.html">サイクルランク恒等式</a>
+      <div class="desc">定理1（和恒等式）・定理2（相補対恒等式）・計算例</div>
+    </div>
+  </div>
+  <div class="roadmap-item">
+    <div class="roadmap-number part2">6</div>
+    <div class="roadmap-content">
+      <a href="06_bct.html">境界連結性定理（BCT）</a>
+      <div class="desc">定理3：4色が境界に現れるなら連結度 $\geq 1$</div>
+    </div>
+  </div>
+  <div class="roadmap-item">
+    <div class="roadmap-number part2">7</div>
+    <div class="roadmap-content">
+      <a href="07_jordan.html">ジョルダン分離補題</a>
+      <div class="desc">定理4：ケンペ閉路が相補色を分離する</div>
+    </div>
+  </div>
+</div>
+
+<!-- Part III -->
+<div class="part-header part3">Part III: B4解析（第8〜12章）</div>
+<div class="roadmap">
+  <div class="roadmap-item">
+    <div class="roadmap-number part3">8</div>
+    <div class="roadmap-content">
+      <a href="08_product_bound.html">積の上界</a>
+      <div class="desc">計算補題1：$p_{a,b} \cdot p_{c,d} \leq 2$</div>
+    </div>
+  </div>
+  <div class="roadmap-item">
+    <div class="roadmap-number part3">9</div>
+    <div class="roadmap-content">
+      <a href="09_consequences.html">積の上界の帰結</a>
+      <div class="desc">定理5：サイクルランクと成分数の制約</div>
+    </div>
+  </div>
+  <div class="roadmap-item">
+    <div class="roadmap-number part3">10</div>
+    <div class="roadmap-content">
+      <a href="10_b4.html">B4彩色の構造</a>
+      <div class="desc">定理6：B4彩色のすべての成分数が決定される</div>
+    </div>
+  </div>
+  <div class="roadmap-item">
+    <div class="roadmap-number part3">11</div>
+    <div class="roadmap-content">
+      <a href="11_conservation.html">保存則</a>
+      <div class="desc">補題1：ケンペ交換が保存する量</div>
+    </div>
+  </div>
+  <div class="roadmap-item">
+    <div class="roadmap-number part3">12</div>
+    <div class="roadmap-content">
+      <a href="12_no_b4_recursion.html">B4非再帰定理</a>
+      <div class="desc">定理7：B4 から B4 への遷移は不可能</div>
+    </div>
+  </div>
+</div>
+
+<!-- Part IV -->
+<div class="part-header part4">Part IV: 証明の完成（第13〜14章）</div>
+<div class="roadmap">
+  <div class="roadmap-item">
+    <div class="roadmap-number part4">13</div>
+    <div class="roadmap-content">
+      <a href="13_kempe_game.html">ケンペ鎖ゲーム</a>
+      <div class="desc">定理8：高々3回の交換で彩色を拡張できる</div>
+    </div>
+  </div>
+  <div class="roadmap-item">
+    <div class="roadmap-number part4">14</div>
+    <div class="roadmap-content">
+      <a href="14_four_color.html">四色定理</a>
+      <div class="desc">定理9：すべての平面グラフは正則4彩色可能</div>
+    </div>
+  </div>
+</div>
+
+<hr style="margin: 2em 0;">
+
+<h2 style="border:none; color:#1a1a1a;">証明の依存関係</h2>
+
+<p>この証明は3つの層から構成されています：</p>
+
+<table>
+<tr><th>層</th><th>依存する仮定</th><th>含まれる定理</th></tr>
+<tr><td style="background:#f0fff4;"><strong>第1層</strong></td>
+    <td>なし（無条件に成立）</td>
+    <td>定理1〜4、補題1</td></tr>
+<tr><td style="background:#faf5ff;"><strong>第2層</strong></td>
+    <td>積の上界</td>
+    <td>定理5〜7、系3</td></tr>
+<tr><td style="background:#fff5f5;"><strong>第3層</strong></td>
+    <td>積の上界 + SO1 + SO2</td>
+    <td>定理8（ケンペ鎖ゲーム）、定理9（四色定理）</td></tr>
+</table>
+
+<h2 style="border:none; color:#1a1a1a;">前提知識</h2>
+
+<p>このサイトは以下の知識を前提とします（第1章で復習します）：</p>
+<ul>
+<li>集合の基本（和集合、共通部分、要素）</li>
+<li>自然数の基本的な不等式</li>
+<li>「証明」とは何か（特に背理法）</li>
+</ul>
+<p>線形代数や微積分は<strong>不要</strong>です。</p>
+
+<p style="text-align:center; margin-top:2em;">
+<a href="01_graph_basics.html" style="display:inline-block; padding:10px 30px; background:#3182ce; color:white; border-radius:6px; font-weight:bold;">
+第1章から読み始める &rarr;</a></p>
+
+</body>
+</html>

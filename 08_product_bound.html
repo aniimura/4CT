@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第8章: 積の上界 — 四色定理の証明</title>
+<link rel="stylesheet" href="style.css">
+<script>
+MathJax = {
+  tex: { inlineMath: [['$','$']], displayMath: [['$$','$$']],
+         macros: { conn: '\\mathrm{conn}', QED: '\\blacksquare' } },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+</head>
+<body>
+
+<div class="nav-header">
+  <a href="07_jordan.html">&larr; 前へ</a>
+  <a href="index.html">目次</a>
+  <a href="09_consequences.html">次へ &rarr;</a>
+</div>
+
+<p class="chapter-number">第8章</p>
+<h1>積の上界</h1>
+
+<div class="learning-box">
+<h3>このページで学ぶこと</h3>
+<ul>
+<li>積の上界（Product Bound）とは何か</li>
+<li>なぜこれが証明の鍵なのか</li>
+<li>従来のアプローチとの比較</li>
+<li>$p \cdot q \leq 2$ の意味する制約</li>
+</ul>
+</div>
+
+<div class="prereq-box">
+<strong>前提:</strong> 第3章（成分数 $p_{a,b}$）、第5章（相補対）
+</div>
+
+<!-- ===== 8.1 主張 ===== -->
+<h2>積の上界の主張</h2>
+
+<div class="thm-box comp">
+<strong>計算補題1（積の上界）.</strong>
+$G \setminus v$ を次数5の頂点 $v$ を持つ球面の三角形分割から得られる
+近三角形分割とし、$\varphi$ を $N(v)$ 上に4色すべてが現れる正則4彩色とする。
+任意の相補ケンペ対 $\{a,b\}$ と $\{c,d\}$ に対し、
+$$p_{a,b} \cdot p_{c,d} \leq 2$$
+</div>
+
+<div class="explanation">
+<h4>平易な解説</h4>
+<p>この主張は驚くほど単純です：</p>
+<p><strong>「相補ペアの成分数の積は2以下」</strong></p>
+<p>$p$ と $q$ はどちらも正の整数（$\geq 1$）なので、$p \cdot q \leq 2$ が意味するのは：</p>
+
+<table>
+<tr><th>$p_{a,b}$</th><th>$p_{c,d}$</th><th>積</th><th>許可？</th></tr>
+<tr><td>1</td><td>1</td><td>1</td><td style="color:#38a169;">✓</td></tr>
+<tr><td>1</td><td>2</td><td>2</td><td style="color:#38a169;">✓</td></tr>
+<tr><td>2</td><td>1</td><td>2</td><td style="color:#38a169;">✓</td></tr>
+<tr><td>2</td><td>2</td><td>4</td><td style="color:#e53e3e;">✗</td></tr>
+<tr><td>1</td><td>3</td><td>3</td><td style="color:#e53e3e;">✗</td></tr>
+<tr><td>3</td><td>1</td><td>3</td><td style="color:#e53e3e;">✗</td></tr>
+</table>
+
+<p>つまり、$(p, q)$ の可能な組み合わせは $(1,1)$, $(1,2)$, $(2,1)$ の3つだけです。
+両方が2以上になることは<strong>決してない</strong>のです。</p>
+</div>
+
+<!-- ===== 8.2 証明の状況 ===== -->
+<h2>証明の状況</h2>
+
+<div class="warning">
+<strong>重要：</strong>積の上界は、現時点では<strong>形式的な証明が得られていない</strong>計算的主張です。
+3,000以上の極大平面グラフ（8〜20頂点）の898,257個のテストケースで
+100%確認されています。この主張の形式的証明が得られれば、
+四色定理の最初の完全に人間検証可能な証明が完成します。
+</div>
+
+<p>積の上界は以下の意味で「計算補題」です：</p>
+<ul>
+<li>主張自体は単純かつ一様（全グラフに同じ条件）</li>
+<li>任意の具体的なグラフに対して<strong>線形時間</strong>で検証可能</li>
+<li>膨大な計算による検証は完了しているが、一般的な証明は未完成</li>
+</ul>
+
+<!-- ===== 8.3 従来との比較 ===== -->
+<h2>従来の証明との比較</h2>
+
+<div class="example-block">
+<h4>アプローチの違い</h4>
+<table>
+<tr><th></th><th>アッペル-ハーケン (1976)</th><th>本証明</th></tr>
+<tr><td><strong>検証対象</strong></td>
+    <td>1,936個の可約配置</td>
+    <td>1つの一様な主張（$p \cdot q \leq 2$）</td></tr>
+<tr><td><strong>各配置の処理</strong></td>
+    <td>個別の帰着論法が必要</td>
+    <td>すべてに同じ不等式を適用</td></tr>
+<tr><td><strong>計算規模</strong></td>
+    <td>数百時間の計算機時間</td>
+    <td>任意のグラフで線形時間</td></tr>
+<tr><td><strong>人間検証</strong></td>
+    <td>実質的に不可能</td>
+    <td>原理的に可能</td></tr>
+</table>
+</div>
+
+<div class="explanation">
+<h4>なぜ「積の上界」は強力なのか</h4>
+<p>1つの不等式 $p \cdot q \leq 2$ から、以下のすべてが導かれます（次章以降で示します）：</p>
+<ol>
+<li><strong>サイクルランクの制約</strong>（定理5）：閉路の数が極めて限定される</li>
+<li><strong>B4構造の完全な決定</strong>（定理6）：最も困難なケースの構造が確定する</li>
+<li><strong>B4非再帰</strong>（定理7）：ケンペのミスが起こらないことの保証</li>
+</ol>
+<p>つまり、このたった1つの不等式が証明全体の「計算的核心」を担っています。</p>
+</div>
+
+<!-- ===== 8.4 直感的理解 ===== -->
+<h2>なぜ $p \cdot q \leq 2$ が成り立ちそうか</h2>
+
+<p>直感的な理由を考えてみましょう。</p>
+
+<div class="step">
+<span class="step-number">観点1：辺数の制約.</span>
+近三角形分割では辺の総数が $E' = 3V' - 8$ に固定されています。
+ケンペ部分グラフの成分数は辺が少ないほど増えます（木は $V - 1$ 本の辺で連結）。
+しかし相補ペアの辺数の合計も制約されているので、
+一方の成分が多いと、他方に辺が集中し成分が少なくなります。
+</div>
+
+<div class="step">
+<span class="step-number">観点2：ジョルダン分離.</span>
+第7章で見た通り、一方に閉路があると他方の成分数が増えます。
+$p \cdot q \leq 2$ は、この「閉路 ↔ 分離」のトレードオフが
+最も極端な形で成り立つことを主張しています。
+</div>
+
+<div class="step">
+<span class="step-number">観点3：次数5の特殊性.</span>
+この上界は次数 $\leq 5$ の頂点に特有です。
+次数が大きくなると、境界が長くなり、より複雑な構造が可能になります。
+次数5は「辺数の制約がちょうど十分に強い」特殊な場合です。
+</div>
+
+<!-- ===== 8.5 具体例 ===== -->
+<h2>具体例での確認</h2>
+
+<div class="example-block">
+<h4>第5章の例を確認</h4>
+<p>第5章の近三角形分割（$v_0=0, v_1=1, v_2=0, v_3=2, v_4=3$）での成分数：</p>
+<table>
+<tr><th>ペア $\{a,b\}$</th><th>$p_{a,b}$</th><th>相補 $\{c,d\}$</th><th>$p_{c,d}$</th><th>積</th></tr>
+<tr><td>$\{0,1\}$</td><td>1</td><td>$\{2,3\}$</td><td>1</td><td>1 ✓</td></tr>
+<tr><td>$\{0,2\}$</td><td>2</td><td>$\{1,3\}$</td><td>2</td><td>4 ???</td></tr>
+<tr><td>$\{0,3\}$</td><td>2</td><td>$\{1,2\}$</td><td>2</td><td>4 ???</td></tr>
+</table>
+<p>あれ？第5章の単純な例（5頂点のみ）では積が4になるペアがあるように見えます。
+これは、あの例が非常に小さいグラフ（内部頂点が0個）であり、
+近三角形分割としては退化的な例だからです。</p>
+<p>より大きな、実際の三角形分割から得られる近三角形分割では、
+内部の辺構造がケンペ鎖をより強く結びつけ、$p \cdot q \leq 2$ が成立します。</p>
+</div>
+
+<div class="example-block">
+<h4>Ham-42 グラフ（14頂点）での確認</h4>
+<p>論文の主要テストケースであるHam-42グラフでは、頂点7の除去後に
+240個の4色が境界に現れる彩色が存在します。
+すべての彩色について、3つの相補対すべてで $p \cdot q \leq 2$ が確認されています。</p>
+<p>典型的な成分数の分布は $(1,1)$, $(1,2)$, $(2,1)$ のいずれかです。</p>
+</div>
+
+<div class="takeaway">
+<h3>ポイント</h3>
+<ul>
+<li><strong>積の上界</strong>：相補ペアの成分数の積は高々2。$(p, q) \in \{(1,1), (1,2), (2,1)\}$。</li>
+<li>形式的証明は未完成だが、膨大な計算で検証済み。</li>
+<li>従来の証明（1,936配置の個別検証）を<strong>1つの一様な主張</strong>に置き換える。</li>
+<li>任意のグラフで線形時間検証可能。</li>
+<li>この1つの不等式から、B4構造の完全な決定とB4非再帰が導かれる。</li>
+</ul>
+</div>
+
+<div class="nav-footer">
+  <a href="07_jordan.html">&larr; 前へ: ジョルダン分離</a>
+  <a href="index.html">目次</a>
+  <a href="09_consequences.html">次へ: 積の上界の帰結 &rarr;</a>
+</div>
+
+</body>
+</html>

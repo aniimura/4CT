@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第2章: グラフ彩色 — 四色定理の証明</title>
+<link rel="stylesheet" href="style.css">
+<script>
+MathJax = {
+  tex: { inlineMath: [['$','$']], displayMath: [['$$','$$']],
+         macros: { conn: '\\mathrm{conn}', QED: '\\blacksquare' } },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+</head>
+<body>
+
+<div class="nav-header">
+  <a href="01_graph_basics.html">&larr; 前へ</a>
+  <a href="index.html">目次</a>
+  <a href="03_kempe_chains.html">次へ &rarr;</a>
+</div>
+
+<p class="chapter-number">第2章</p>
+<h1>グラフ彩色</h1>
+
+<div class="learning-box">
+<h3>このページで学ぶこと</h3>
+<ul>
+<li>正則彩色とは何か</li>
+<li>彩色数の概念</li>
+<li>四色定理の正確な主張</li>
+<li>定理の歴史と意義</li>
+</ul>
+</div>
+
+<div class="prereq-box">
+<strong>前提:</strong> 第1章（グラフ・隣接・平面グラフの概念）
+</div>
+
+<!-- ===== 2.1 正則彩色 ===== -->
+<h2>正則彩色</h2>
+
+<div class="thm-box definition">
+<strong>定義（正則彩色）.</strong>
+グラフ $G = (V, E)$ の<strong>正則 $k$-彩色</strong>（proper $k$-coloring）とは、
+各頂点に $k$ 色のうちの1色を割り当てる写像 $\varphi: V \to \{0, 1, \ldots, k-1\}$ で、
+隣接するどの2頂点も異なる色を持つもの:
+$$\{u, v\} \in E \implies \varphi(u) \neq \varphi(v)$$
+</div>
+
+<div class="explanation">
+<h4>平易な解説</h4>
+<p>「正則彩色」とは、地図の塗り分けのようなものです。
+隣り合う国を異なる色で塗る &mdash; これがグラフの言葉では「隣接する頂点に異なる色を割り当てる」ことに対応します。</p>
+<p>色は数字 $0, 1, 2, 3$ で表します。4色を使うなら、赤=0、青=1、緑=2、黄=3 と思ってください。</p>
+</div>
+
+<div class="example-block">
+<h4>具体例：$K_4$ の4彩色</h4>
+<div class="figure">
+<svg width="200" height="180" viewBox="0 0 200 180">
+  <line x1="100" y1="20" x2="30" y2="150" stroke="#4a5568" stroke-width="2"/>
+  <line x1="100" y1="20" x2="170" y2="150" stroke="#4a5568" stroke-width="2"/>
+  <line x1="30" y1="150" x2="170" y2="150" stroke="#4a5568" stroke-width="2"/>
+  <line x1="100" y1="95" x2="100" y2="20" stroke="#4a5568" stroke-width="2"/>
+  <line x1="100" y1="95" x2="30" y2="150" stroke="#4a5568" stroke-width="2"/>
+  <line x1="100" y1="95" x2="170" y2="150" stroke="#4a5568" stroke-width="2"/>
+  <!-- Vertices with 4 colors -->
+  <circle cx="100" cy="20" r="12" fill="#e53e3e"/>
+  <circle cx="30" cy="150" r="12" fill="#3182ce"/>
+  <circle cx="170" cy="150" r="12" fill="#38a169"/>
+  <circle cx="100" cy="95" r="12" fill="#d69e2e"/>
+  <!-- Labels -->
+  <text x="100" y="25" text-anchor="middle" font-size="12" fill="white" font-weight="bold">0</text>
+  <text x="30" y="155" text-anchor="middle" font-size="12" fill="white" font-weight="bold">1</text>
+  <text x="170" y="155" text-anchor="middle" font-size="12" fill="white" font-weight="bold">2</text>
+  <text x="100" y="100" text-anchor="middle" font-size="12" fill="white" font-weight="bold">3</text>
+</svg>
+<div class="figure-caption">$K_4$ の正則4彩色。隣接する頂点はすべて異なる色。</div>
+</div>
+<p>$K_4$ では4頂点がすべて互いに隣接しているので、最低4色が必要です。
+3色では足りません（$K_4$ は正則3彩色を持ちません）。</p>
+</div>
+
+<!-- ===== 2.2 彩色数 ===== -->
+<h2>彩色数</h2>
+
+<div class="thm-box definition">
+<strong>定義（彩色数）.</strong>
+グラフ $G$ の<strong>彩色数</strong> $\chi(G)$ とは、$G$ が正則 $k$-彩色を持つような
+最小の $k$ である。
+</div>
+
+<div class="example-block">
+<h4>いくつかのグラフの彩色数</h4>
+<table>
+<tr><th>グラフ</th><th>彩色数</th><th>理由</th></tr>
+<tr><td>辺のないグラフ</td><td>$1$</td><td>全頂点に同じ色を割り当てられる</td></tr>
+<tr><td>パスグラフ $P_n$（$n \geq 2$）</td><td>$2$</td><td>2色を交互に塗れる</td></tr>
+<tr><td>偶数サイクル $C_{2k}$</td><td>$2$</td><td>2色を交互に塗れる</td></tr>
+<tr><td>奇数サイクル $C_{2k+1}$</td><td>$3$</td><td>2色だけでは一周できない</td></tr>
+<tr><td>完全グラフ $K_n$</td><td>$n$</td><td>全頂点が隣接するので $n$ 色必要</td></tr>
+</table>
+</div>
+
+<!-- ===== 2.3 四色定理 ===== -->
+<h2>四色定理</h2>
+
+<div class="thm-box" style="border-left-color:#e53e3e; border-color:#fed7d7; background:#fff5f5;">
+<strong>四色定理.</strong>
+すべての平面グラフ $G$ に対し $\chi(G) \leq 4$。
+すなわち、すべての平面グラフは正則4彩色を持つ。
+</div>
+
+<div class="explanation">
+<h4>日常語での表現</h4>
+<p>「任意の地図は4色で塗り分けることができる。」</p>
+<p>ここで「塗り分け」とは、隣り合う国が異なる色を持つことです。
+地図の各国を頂点、隣接関係を辺としたグラフは平面グラフになります。</p>
+</div>
+
+<div class="example-block">
+<h4>具体例：地図の彩色</h4>
+<p>日本の都道府県の地図を考えてみましょう。隣接する県を異なる色で塗りたい場合、
+4色あれば必ず塗り分けられます。これは四色定理の帰結です。</p>
+<p>一方、3色では足りない地図は簡単に作れます：4つの国が互いにすべて隣接する地図
+（$K_4$ に対応）は3色では塗れません。</p>
+</div>
+
+<!-- ===== 2.4 歴史 ===== -->
+<h2>定理の歴史</h2>
+
+<div class="step">
+<span class="step-number">1852年</span>
+フランシス・ガスリーが四色予想を提起。
+</div>
+
+<div class="step">
+<span class="step-number">1879年</span>
+アルフレッド・ケンペが最初の「証明」を発表。「ケンペ鎖」の手法を導入した。
+しかし1890年にヒーウッドが誤りを指摘（次数5の場合のB4ケース）。
+ケンペ鎖の手法自体は正しく、五色定理の証明に使える。
+</div>
+
+<div class="step">
+<span class="step-number">1976年</span>
+アッペルとハーケンが計算機を用いた証明を完成。
+1,936個の「可約配置」を一つずつ確認する膨大な計算が必要。
+</div>
+
+<div class="step">
+<span class="step-number">1997年</span>
+ロバートソン、サンダース、シーモア、トーマスが改良された計算機証明を発表。
+可約配置は633個に削減されたが、やはり計算機が必要。
+</div>
+
+<div class="step">
+<span class="step-number">本証明</span>
+ケンペ鎖の代数的構造を分析する新しいアプローチ。
+数千の配置を個別に検証する代わりに、<strong>積の上界</strong>という単一の主張に帰着させる。
+</div>
+
+<!-- ===== 2.5 証明戦略 ===== -->
+<h2>証明の戦略（プレビュー）</h2>
+
+<p>本証明の基本戦略は以下の通りです：</p>
+
+<ol>
+<li><strong>背理法</strong>：4彩色できない最小のグラフ $G$（極小反例）を仮定する</li>
+<li><strong>次数の小さい頂点</strong>：$G$ は三角形分割であり、次数 $\leq 5$ の頂点 $v$ が存在する</li>
+<li><strong>頂点の除去</strong>：$G$ から $v$ を取り除くと、最小性より残りは4彩色できる</li>
+<li><strong>彩色の拡張</strong>：$G \setminus v$ の彩色をケンペ交換で調整し、$v$ にも色を割り当てられるようにする</li>
+<li><strong>矛盾</strong>：$G$ も4彩色できるので、極小反例は存在しない</li>
+</ol>
+
+<p>ステップ4が証明の核心であり、以後の章で詳しく解説します。</p>
+
+<div class="takeaway">
+<h3>ポイント</h3>
+<ul>
+<li>正則彩色：隣接頂点が異なる色を持つような色の割り当て。</li>
+<li>彩色数 $\chi(G)$：正則彩色に必要な最小色数。</li>
+<li>四色定理：すべての平面グラフは $\chi(G) \leq 4$。</li>
+<li>1879年のケンペの証明は B4 ケースで誤りがあった。本証明はその誤りを修正する。</li>
+<li>証明の戦略：極小反例 → 頂点除去 → ケンペ交換で拡張 → 矛盾。</li>
+</ul>
+</div>
+
+<div class="nav-footer">
+  <a href="01_graph_basics.html">&larr; 前へ: グラフの基礎</a>
+  <a href="index.html">目次</a>
+  <a href="03_kempe_chains.html">次へ: ケンペ鎖 &rarr;</a>
+</div>
+
+</body>
+</html>

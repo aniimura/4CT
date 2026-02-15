@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第14章: 四色定理 — 四色定理の証明</title>
+<link rel="stylesheet" href="style.css">
+<script>
+MathJax = {
+  tex: { inlineMath: [['$','$']], displayMath: [['$$','$$']],
+         macros: { conn: '\\mathrm{conn}', QED: '\\blacksquare' } },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+</head>
+<body>
+
+<div class="nav-header">
+  <a href="13_kempe_game.html">&larr; 前へ</a>
+  <a href="index.html">目次</a>
+  <span class="nav-disabled">次へ &rarr;</span>
+</div>
+
+<p class="chapter-number">第14章</p>
+<h1>四色定理</h1>
+
+<div class="learning-box">
+<h3>このページで学ぶこと</h3>
+<ul>
+<li>定理9：四色定理の完全な証明</li>
+<li>次数 $\leq 4$ の場合の処理</li>
+<li>次数 $= 5$ の場合の処理</li>
+<li>証明の全体構造の振り返り</li>
+</ul>
+</div>
+
+<div class="prereq-box">
+<strong>前提:</strong> 第1〜13章すべて（特に第13章の定理8）
+</div>
+
+<!-- ===== 定理9 ===== -->
+<h2>定理9：四色定理</h2>
+
+<div class="thm-box" style="border-left-color:#e53e3e; border-color:#fed7d7; background:#fff5f5;">
+<strong>定理9（四色定理）.</strong>
+すべての平面グラフは正則4彩色可能である。
+</div>
+
+<h3>証明</h3>
+
+<div class="proof-block">
+<span class="proof-title">証明.</span>
+
+<div class="step">
+<span class="step-number">ステップ1：極小反例の仮定.</span>
+<p>四色定理が偽であると仮定する。すなわち、正則4彩色を持たない平面グラフが存在する。
+その中で頂点数が最小のものを $G$ とする（<strong>極小反例</strong>）。</p>
+<p>標準的な議論により、$G$ は球面の<strong>三角形分割</strong>である。
+（辺を追加しても彩色は難しくなるだけ → 極小反例は辺が最大 → 三角形分割。）</p>
+</div>
+
+<div class="step">
+<span class="step-number">ステップ2：次数の小さい頂点の存在.</span>
+第1章の命題より、$G$ には $\mathrm{deg}(v) \leq 5$ なる頂点 $v$ が存在する。
+</div>
+
+<div class="step">
+<span class="step-number">ステップ3：$G \setminus v$ の4彩色.</span>
+$G \setminus v$ は $G$ より頂点が1つ少ないので、$G$ の最小性より
+$G \setminus v$ は正則4彩色 $\varphi$ を持つ。
+</div>
+
+<div class="step">
+<span class="step-number">ステップ4a：$\mathrm{deg}(v) \leq 4$ の場合.</span>
+$v$ の近傍は高々4つ。$N(v)$ 上に $\leq 3$ 色しか現れなければ、
+空いている色で $v$ を彩色できる。
+
+<p>4色すべてが $N(v)$ に現れる場合でも、$|N(v)| \leq 4$ なので
+二重色の頂点対は4-サイクル境界上にあり必然的に非隣接。
+その2頂点を分離するケンペ交換が1回で可能であり、
+$v$ への色が空く。（<strong>1回交換。</strong>）</p>
+</div>
+
+<div class="step">
+<span class="step-number">ステップ4b：$\mathrm{deg}(v) = 5$ の場合.</span>
+<strong>定理8</strong>（ケンペ鎖ゲーム）により、$\varphi$ を<strong>高々3回</strong>の
+ケンペ交換で $v$ へ拡張可能な彩色に変換できる。
+$v$ に空いた色を割り当てて $G$ 全体の正則4彩色が得られる。
+</div>
+
+<div class="step">
+<span class="step-number">ステップ5：矛盾.</span>
+いずれの場合も $G$ は正則4彩色可能であり、$G$ が反例であるという仮定に矛盾する。
+よって極小反例は存在せず、すべての平面グラフは正則4彩色可能である。
+<span class="proof-end">$\QED$</span>
+</div>
+</div>
+
+<!-- ===== 証明の全体構造 ===== -->
+<h2>証明の全体構造</h2>
+
+<div class="figure">
+<svg width="520" height="450" viewBox="0 0 520 450">
+  <!-- Top: Assumption -->
+  <rect x="130" y="5" width="260" height="35" rx="6" fill="#fff5f5" stroke="#e53e3e" stroke-width="1.5"/>
+  <text x="260" y="28" text-anchor="middle" font-size="12" fill="#c53030" font-weight="bold">仮定：極小反例 $G$ が存在</text>
+  <line x1="260" y1="40" x2="260" y2="60" stroke="#4a5568" stroke-width="1.5" marker-end="url(#a14)"/>
+
+  <!-- Euler -->
+  <rect x="130" y="60" width="260" height="35" rx="6" fill="#f7fafc" stroke="#a0aec0" stroke-width="1"/>
+  <text x="260" y="82" text-anchor="middle" font-size="11" fill="#4a5568">三角形分割 → $\exists v$ with $\deg(v) \leq 5$</text>
+  <line x1="260" y1="95" x2="260" y2="115" stroke="#4a5568" stroke-width="1.5" marker-end="url(#a14)"/>
+
+  <!-- Remove v -->
+  <rect x="130" y="115" width="260" height="35" rx="6" fill="#f7fafc" stroke="#a0aec0" stroke-width="1"/>
+  <text x="260" y="137" text-anchor="middle" font-size="11" fill="#4a5568">$G\setminus v$ は最小性より4彩色可能</text>
+
+  <!-- Branch -->
+  <line x1="180" y1="150" x2="120" y2="180" stroke="#4a5568" stroke-width="1.5" marker-end="url(#a14)"/>
+  <line x1="340" y1="150" x2="400" y2="180" stroke="#4a5568" stroke-width="1.5" marker-end="url(#a14)"/>
+
+  <!-- deg <= 4 -->
+  <rect x="20" y="180" width="200" height="55" rx="6" fill="#f0fff4" stroke="#38a169" stroke-width="1.5"/>
+  <text x="120" y="200" text-anchor="middle" font-size="12" fill="#276749" font-weight="bold">$\deg(v) \leq 4$</text>
+  <text x="120" y="220" text-anchor="middle" font-size="11" fill="#4a5568">高々1回交換で拡張</text>
+
+  <!-- deg = 5 -->
+  <rect x="300" y="180" width="200" height="55" rx="6" fill="#fff5f5" stroke="#e53e3e" stroke-width="1.5"/>
+  <text x="400" y="200" text-anchor="middle" font-size="12" fill="#c53030" font-weight="bold">$\deg(v) = 5$</text>
+  <text x="400" y="220" text-anchor="middle" font-size="11" fill="#4a5568">定理8：高々3回で拡張</text>
+
+  <!-- Theorem 8 details -->
+  <line x1="400" y1="235" x2="400" y2="260" stroke="#e53e3e" stroke-width="1.5" marker-end="url(#a14)"/>
+
+  <rect x="260" y="260" width="250" height="120" rx="6" fill="#faf5ff" stroke="#805ad5" stroke-width="1"/>
+  <text x="385" y="280" text-anchor="middle" font-size="11" fill="#553c9a" font-weight="bold">定理8の内部構造：</text>
+  <text x="275" y="300" font-size="10.5" fill="#4a5568">ケース0: ≤3色 → 0回</text>
+  <text x="275" y="318" font-size="10.5" fill="#4a5568">ケースA: conn≥2 → 1回（SO1）</text>
+  <text x="275" y="336" font-size="10.5" fill="#4a5568">ケースB: 部分的 → 2回（BCT+SO2）</text>
+  <text x="275" y="354" font-size="10.5" fill="#4a5568">ケースC: B4 → ≤3回（定理7+BCT）</text>
+
+  <!-- Both lead to contradiction -->
+  <line x1="120" y1="235" x2="200" y2="420" stroke="#4a5568" stroke-width="1.5" marker-end="url(#a14)"/>
+  <line x1="400" y1="380" x2="320" y2="420" stroke="#4a5568" stroke-width="1.5" marker-end="url(#a14)"/>
+
+  <rect x="150" y="415" width="220" height="30" rx="6" fill="#fffff0" stroke="#d69e2e" stroke-width="2"/>
+  <text x="260" y="435" text-anchor="middle" font-size="13" fill="#975a16" font-weight="bold">矛盾 → 極小反例は存在しない</text>
+
+  <defs>
+    <marker id="a14" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#4a5568"/>
+    </marker>
+  </defs>
+</svg>
+</div>
+
+<!-- ===== 依存関係 ===== -->
+<h2>証明の依存関係</h2>
+
+<p>この証明が依存する未証明の主張は以下の3つです：</p>
+
+<table>
+<tr><th>主張</th><th>使用箇所</th><th>状況</th></tr>
+<tr><td><strong>積の上界</strong>（$p \cdot q \leq 2$）</td>
+    <td>定理5〜7、系3</td>
+    <td>898,257ケースで検証済み</td></tr>
+<tr><td><strong>SO1</strong>（統合交換の存在）</td>
+    <td>定理8 ケースA</td>
+    <td>すべてのテストグラフで検証済み</td></tr>
+<tr><td><strong>SO2</strong>（部分的連結のアップグレード）</td>
+    <td>定理8 ケースB</td>
+    <td>すべてのテストグラフで検証済み</td></tr>
+</table>
+
+<p>積の上界が形式的に証明されれば、証明の代数的核心（定理5〜7）は完成します。
+さらに SO1 と SO2 が証明されれば、定理8の全ケースが確定し、
+四色定理の完全に計算機非依存な証明が完成します。</p>
+
+<!-- ===== 振り返り ===== -->
+<h2>証明の道のりを振り返って</h2>
+
+<div class="explanation">
+<h4>14章を通じて学んだこと</h4>
+<ol>
+<li><strong>第1〜2章</strong>：グラフ、平面性、彩色 — 問題の舞台設定</li>
+<li><strong>第3章</strong>：ケンペ鎖 — 彩色を操作する道具</li>
+<li><strong>第4章</strong>：次数5頂点 — 問題の核心への焦点化</li>
+<li><strong>第5章</strong>：サイクルランク恒等式 — 代数的枠組み</li>
+<li><strong>第6章</strong>：BCT — conn=0 の排除</li>
+<li><strong>第7章</strong>：ジョルダン分離 — 幾何学と代数の接続</li>
+<li><strong>第8〜9章</strong>：積の上界とその帰結 — 構造の強い制約</li>
+<li><strong>第10章</strong>：B4構造 — 最困難ケースの完全な理解</li>
+<li><strong>第11〜12章</strong>：保存則と B4 非再帰 — ケンペの誤りの修正</li>
+<li><strong>第13章</strong>：ケンペ鎖ゲーム — 高々3回で解決</li>
+<li><strong>第14章</strong>：四色定理 — すべてを組み合わせて完成</li>
+</ol>
+</div>
+
+<div class="takeaway">
+<h3>最終ポイント</h3>
+<ul>
+<li><strong>四色定理</strong>：すべての平面グラフは正則4彩色可能。</li>
+<li>証明は背理法：極小反例を仮定 → 次数 $\leq 5$ の頂点除去 → 彩色を拡張 → 矛盾。</li>
+<li>核心：次数5の場合に高々3回のケンペ交換で彩色を拡張できること（定理8）。</li>
+<li>定理8は無条件の定理（BCT）、計算補題（積の上界）、補助的観察（SO1, SO2）に依拠。</li>
+<li>ケンペの1879年の誤りは、B4非再帰定理により正しく修正された。</li>
+</ul>
+</div>
+
+<hr style="margin:2em 0;">
+
+<p style="text-align:center; font-size:1.1em; color:#2c5282; margin:2em 0;">
+<strong>おめでとうございます！四色定理の証明の全体を読み通しました。</strong></p>
+
+<p style="text-align:center;">
+<a href="index.html" style="display:inline-block; padding:10px 30px; background:#3182ce; color:white; border-radius:6px; font-weight:bold;">
+目次に戻る</a></p>
+
+<div class="nav-footer">
+  <a href="13_kempe_game.html">&larr; 前へ: ケンペ鎖ゲーム</a>
+  <a href="index.html">目次</a>
+  <span class="nav-disabled">次へ &rarr;</span>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第4章: 次数5頂点の設定 — 四色定理の証明</title>
+<link rel="stylesheet" href="style.css">
+<script>
+MathJax = {
+  tex: { inlineMath: [['$','$']], displayMath: [['$$','$$']],
+         macros: { conn: '\\mathrm{conn}', QED: '\\blacksquare' } },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+</head>
+<body>
+
+<div class="nav-header">
+  <a href="03_kempe_chains.html">&larr; 前へ</a>
+  <a href="index.html">目次</a>
+  <a href="05_cycle_rank.html">次へ &rarr;</a>
+</div>
+
+<p class="chapter-number">第4章</p>
+<h1>次数5頂点の設定</h1>
+
+<div class="learning-box">
+<h3>このページで学ぶこと</h3>
+<ul>
+<li>極小反例とは何か</li>
+<li>頂点を除去する操作</li>
+<li>近三角形分割（near-triangulation）</li>
+<li>5-サイクル境界と二重色 $d$</li>
+<li>連結度（connectivity）の定義</li>
+</ul>
+</div>
+
+<div class="prereq-box">
+<strong>前提:</strong> 第1章（グラフ・オイラーの公式）、第2章（正則彩色）、第3章（ケンペ鎖）
+</div>
+
+<!-- ===== 4.1 極小反例 ===== -->
+<h2>極小反例</h2>
+
+<div class="thm-box definition">
+<strong>定義（極小反例）.</strong>
+四色定理が偽であると仮定する。すると、正則4彩色を持たない平面グラフが存在する。
+その中で<strong>頂点数が最小</strong>のものを $G$ とし、これを<strong>極小反例</strong>（minimal counterexample）と呼ぶ。
+</div>
+
+<div class="explanation">
+<h4>極小反例の直感</h4>
+<p>「四色定理が嘘だ」と仮定すると、4色では塗れない平面グラフがどこかに存在します。
+そのような「悪い」グラフの中で、頂点数がもっとも少ないものを選びます。
+これが極小反例です。</p>
+<p>極小反例の力は、「$G$ より頂点が少ない平面グラフはすべて4色で塗れる」という点にあります。
+つまり $G$ から頂点を1つ取り除けば、残りは4色で塗れるはずなのです。</p>
+</div>
+
+<div class="thm-box">
+<strong>命題（極小反例の基本性質）.</strong>
+極小反例 $G$ は球面の三角形分割である。すなわち：
+<ul style="font-style:normal;">
+<li>$G$ は単純連結平面グラフ</li>
+<li>すべての面が三角形（3辺で囲まれた面）</li>
+<li>$E = 3V - 6$（辺数の公式、オイラーの公式から導出）</li>
+</ul>
+</div>
+
+<div class="proof-block">
+<span class="proof-title">証明のスケッチ.</span>
+<ul>
+<li>$G$ が連結でなければ、最大の連結成分が $G$ より小さい反例となり矛盾。</li>
+<li>三角形でない面があれば、対角線を加えて三角形に分割できる。辺を加えると彩色はより困難になる（制約が増える）ので、三角形分割も反例である。しかし元のグラフの頂点数は変わらないので、最初から三角形分割と仮定してよい。</li>
+</ul>
+<span class="proof-end">$\QED$</span>
+</div>
+
+<div class="thm-box">
+<strong>命題（次数の制約）.</strong>
+$G$ を三角形分割とする。オイラーの公式により、
+$$\sum_{v \in V} (6 - \deg(v)) = 12$$
+したがって $\deg(v) \leq 5$ なる頂点 $v$ が必ず存在する。
+</div>
+
+<div class="explanation">
+<h4>各次数の場合</h4>
+<p>次数が小さい頂点 $v$ に注目すると、場合分けが生じます：</p>
+<ul>
+<li><strong>$\deg(v) \leq 3$:</strong> $v$ の近傍には高々3色しか使われていない。4色目が空いているので $v$ を塗れる。簡単！</li>
+<li><strong>$\deg(v) = 4$:</strong> 第3章で学んだケンペ交換を1回行えば、近傍の色数を減らして $v$ を塗れる（下の補題を参照）。</li>
+<li><strong>$\deg(v) = 5$:</strong> これが困難なケース。ケンペ交換がうまく行かない場合がある。
+<strong>この章以降で扱うのは、まさにこのケースです。</strong></li>
+</ul>
+</div>
+
+<!-- ===== 次数4の補題 ===== -->
+<h3>次数4の場合：1回の交換で十分</h3>
+
+<div class="thm-box">
+<strong>補題（次数4頂点の彩色拡張）.</strong>
+$G$ を球面の三角形分割、$v$ を $\deg(v) = 4$ なる頂点とする。
+$G \setminus v$ の任意の正則4彩色 $\varphi$ は、<strong>高々1回</strong>のケンペ交換により
+$v$ へ拡張可能な彩色に変換できる。
+</div>
+
+<div class="proof-block">
+<span class="proof-title">証明.</span>
+$v$ の4つの近傍を $u_0, u_1, u_2, u_3$（4-サイクルの順）とする。
+
+<p><strong>場合1：$N(v)$ に $\leq 3$ 色しか現れない場合。</strong><br>
+使われていない色を $v$ に割り当てればよい。交換不要（0回）。</p>
+
+<p><strong>場合2：$N(v)$ に4色すべてが現れる場合。</strong><br>
+$|N(v)| = 4$ で4色すべて使われているので、各近傍は異なる色を持つ。
+$\varphi(u_0) = 0, \varphi(u_1) = 1, \varphi(u_2) = 2, \varphi(u_3) = 3$ としてよい。</p>
+
+<p>$u_0$ と $u_2$ は4-サイクル上で<strong>対角</strong>の位置にある（非隣接）。
+$H_{0,2}$（色0と色2のケンペ部分グラフ）を考える。</p>
+
+<ul>
+<li>$u_0$（色0）と $u_2$（色2）が $H_{0,2}$ の<strong>異なる成分</strong>に属する場合：
+$u_0$ を含む成分で $0 \leftrightarrow 2$ を交換すると $u_0$ が色2になる。
+すると $N(v)$ は色 $\{2, 1, 2, 3\}$ で色0が消え、$v$ に色0を割り当てられる。</li>
+<li>$u_0$ と $u_2$ が $H_{0,2}$ の<strong>同じ成分</strong>に属する場合：
+$u_1$（色1）と $u_3$（色3）を考える。$\{1,3\}$ は $\{0,2\}$ の相補対。
+$u_0$-$u_2$ を結ぶ $H_{0,2}$ のパスはジョルダンの閉曲線定理の議論と同様に
+$u_1$ と $u_3$ を分離する。よって $u_1$ と $u_3$ は $H_{1,3}$ の<strong>異なる成分</strong>に属する。
+$u_1$ を含む成分で $1 \leftrightarrow 3$ を交換すると $u_1$ が色3になり、
+$N(v)$ は色 $\{0, 3, 2, 3\}$ で色1が消え、$v$ に色1を割り当てられる。</li>
+</ul>
+<p>いずれにせよ、高々1回のケンペ交換で $v$ を彩色できる。
+<span class="proof-end">$\QED$</span></p>
+</div>
+
+<div class="explanation">
+<h4>証明のポイント</h4>
+<p>4-サイクル境界の対角頂点 $(u_0, u_2)$ と $(u_1, u_3)$ は<strong>相補対</strong>を成します。
+一方のペアが同じケンペ鎖にいるなら、そのパスがもう一方のペアを分離する。
+だから<strong>少なくとも一方のペア</strong>は必ず異なる成分に属し、交換で色を統合できます。</p>
+<p>これは次数5の場合（ケースA の統合交換）の原型です。
+次数4では相補対が1組しかないので無条件に成立しますが、
+次数5では3組の非 $d$ ペアがあり、SO1（補助的観察1）が必要になります。</p>
+</div>
+
+<div class="example-block">
+<h4>具体例：次数4頂点のケンペ交換</h4>
+<p>下の図で、$v$ は中央の頂点（次数4）、近傍は $u_0, u_1, u_2, u_3$ です。</p>
+
+<div class="figure">
+<svg width="580" height="220" viewBox="0 0 580 220">
+  <!-- ===== Before swap ===== -->
+  <text x="120" y="15" text-anchor="middle" font-size="13" fill="#4a5568" font-weight="bold">交換前</text>
+  <!-- Square boundary -->
+  <line x1="50" y1="50" x2="190" y2="50" stroke="#4a5568" stroke-width="1.5"/>
+  <line x1="190" y1="50" x2="190" y2="190" stroke="#4a5568" stroke-width="1.5"/>
+  <line x1="190" y1="190" x2="50" y2="190" stroke="#4a5568" stroke-width="1.5"/>
+  <line x1="50" y1="190" x2="50" y2="50" stroke="#4a5568" stroke-width="1.5"/>
+  <!-- Diagonals to center -->
+  <line x1="120" y1="120" x2="50" y2="50" stroke="#cbd5e0" stroke-width="1"/>
+  <line x1="120" y1="120" x2="190" y2="50" stroke="#cbd5e0" stroke-width="1"/>
+  <line x1="120" y1="120" x2="190" y2="190" stroke="#cbd5e0" stroke-width="1"/>
+  <line x1="120" y1="120" x2="50" y2="190" stroke="#cbd5e0" stroke-width="1"/>
+  <!-- Highlight H_{0,2}: u0 and u2 in different components -->
+  <!-- u0 (color 0, red) -->
+  <circle cx="50" cy="50" r="16" fill="#e53e3e" stroke="#2d3748" stroke-width="1.5"/>
+  <text x="50" y="56" text-anchor="middle" font-size="12" fill="white" font-weight="bold">0</text>
+  <text x="30" y="40" font-size="11" fill="#4a5568">$u_0$</text>
+  <!-- u1 (color 1, blue) -->
+  <circle cx="190" cy="50" r="16" fill="#3182ce" stroke="#2d3748" stroke-width="1.5"/>
+  <text x="190" y="56" text-anchor="middle" font-size="12" fill="white" font-weight="bold">1</text>
+  <text x="210" y="40" font-size="11" fill="#4a5568">$u_1$</text>
+  <!-- u2 (color 2, green) -->
+  <circle cx="190" cy="190" r="16" fill="#38a169" stroke="#2d3748" stroke-width="1.5"/>
+  <text x="190" y="196" text-anchor="middle" font-size="12" fill="white" font-weight="bold">2</text>
+  <text x="210" y="200" font-size="11" fill="#4a5568">$u_2$</text>
+  <!-- u3 (color 3, yellow) -->
+  <circle cx="50" cy="190" r="16" fill="#d69e2e" stroke="#2d3748" stroke-width="1.5"/>
+  <text x="50" y="196" text-anchor="middle" font-size="12" fill="white" font-weight="bold">3</text>
+  <text x="30" y="200" font-size="11" fill="#4a5568">$u_3$</text>
+  <!-- v (center, gray = not yet colored) -->
+  <circle cx="120" cy="120" r="14" fill="#e2e8f0" stroke="#4a5568" stroke-width="2" stroke-dasharray="4,3"/>
+  <text x="120" y="125" text-anchor="middle" font-size="11" fill="#4a5568">$v$?</text>
+  <!-- Annotation: H_{0,2} different components -->
+  <text x="120" y="210" text-anchor="middle" font-size="11" fill="#805ad5">$u_0(0)$ と $u_2(2)$：異なる $H_{0,2}$ 成分</text>
+
+  <!-- ===== Arrow ===== -->
+  <text x="270" y="115" text-anchor="middle" font-size="24" fill="#805ad5">&rArr;</text>
+  <text x="270" y="135" text-anchor="middle" font-size="10" fill="#805ad5">$u_0$ の成分で</text>
+  <text x="270" y="148" text-anchor="middle" font-size="10" fill="#805ad5">$0 \leftrightarrow 2$ 交換</text>
+
+  <!-- ===== After swap ===== -->
+  <text x="430" y="15" text-anchor="middle" font-size="13" fill="#4a5568" font-weight="bold">交換後</text>
+  <line x1="360" y1="50" x2="500" y2="50" stroke="#4a5568" stroke-width="1.5"/>
+  <line x1="500" y1="50" x2="500" y2="190" stroke="#4a5568" stroke-width="1.5"/>
+  <line x1="500" y1="190" x2="360" y2="190" stroke="#4a5568" stroke-width="1.5"/>
+  <line x1="360" y1="190" x2="360" y2="50" stroke="#4a5568" stroke-width="1.5"/>
+  <line x1="430" y1="120" x2="360" y2="50" stroke="#cbd5e0" stroke-width="1"/>
+  <line x1="430" y1="120" x2="500" y2="50" stroke="#cbd5e0" stroke-width="1"/>
+  <line x1="430" y1="120" x2="500" y2="190" stroke="#cbd5e0" stroke-width="1"/>
+  <line x1="430" y1="120" x2="360" y2="190" stroke="#cbd5e0" stroke-width="1"/>
+  <!-- u0 swapped: 0 -> 2 (green) -->
+  <circle cx="360" cy="50" r="16" fill="#38a169" stroke="#805ad5" stroke-width="3"/>
+  <text x="360" y="56" text-anchor="middle" font-size="12" fill="white" font-weight="bold">2</text>
+  <text x="340" y="40" font-size="11" fill="#805ad5">$u_0$</text>
+  <!-- u1 unchanged -->
+  <circle cx="500" cy="50" r="16" fill="#3182ce" stroke="#2d3748" stroke-width="1.5"/>
+  <text x="500" y="56" text-anchor="middle" font-size="12" fill="white" font-weight="bold">1</text>
+  <text x="520" y="40" font-size="11" fill="#4a5568">$u_1$</text>
+  <!-- u2 unchanged -->
+  <circle cx="500" cy="190" r="16" fill="#38a169" stroke="#2d3748" stroke-width="1.5"/>
+  <text x="500" y="196" text-anchor="middle" font-size="12" fill="white" font-weight="bold">2</text>
+  <text x="520" y="200" font-size="11" fill="#4a5568">$u_2$</text>
+  <!-- u3 unchanged -->
+  <circle cx="360" cy="190" r="16" fill="#d69e2e" stroke="#2d3748" stroke-width="1.5"/>
+  <text x="360" y="196" text-anchor="middle" font-size="12" fill="white" font-weight="bold">3</text>
+  <text x="340" y="200" font-size="11" fill="#4a5568">$u_3$</text>
+  <!-- v colored with 0 (red) -->
+  <circle cx="430" cy="120" r="14" fill="#e53e3e" stroke="#e53e3e" stroke-width="2"/>
+  <text x="430" y="126" text-anchor="middle" font-size="12" fill="white" font-weight="bold">0</text>
+  <text x="460" y="118" font-size="11" fill="#e53e3e" font-weight="bold">$v$!</text>
+  <!-- Annotation -->
+  <text x="430" y="210" text-anchor="middle" font-size="11" fill="#38a169">$N(v) = \{2, 1, 2, 3\}$：色0が空き → $v = 0$</text>
+</svg>
+<div class="figure-caption">$u_0$ と $u_2$ が $H_{0,2}$ の異なる成分にいる場合。$u_0$ の成分で $0 \leftrightarrow 2$ を交換すると色0が空き、$v$ に色0を割り当てられる。</div>
+</div>
+
+<p><strong>もう一つの場合</strong>（$u_0$ と $u_2$ が同じ $H_{0,2}$ 成分にいる場合）：</p>
+<div class="figure">
+<svg width="580" height="240" viewBox="0 0 580 240">
+  <!-- ===== Before ===== -->
+  <text x="120" y="15" text-anchor="middle" font-size="13" fill="#4a5568" font-weight="bold">交換前</text>
+  <line x1="50" y1="50" x2="190" y2="50" stroke="#4a5568" stroke-width="1.5"/>
+  <line x1="190" y1="50" x2="190" y2="190" stroke="#4a5568" stroke-width="1.5"/>
+  <line x1="190" y1="190" x2="50" y2="190" stroke="#4a5568" stroke-width="1.5"/>
+  <line x1="50" y1="190" x2="50" y2="50" stroke="#4a5568" stroke-width="1.5"/>
+  <line x1="120" y1="120" x2="50" y2="50" stroke="#cbd5e0" stroke-width="1"/>
+  <line x1="120" y1="120" x2="190" y2="50" stroke="#cbd5e0" stroke-width="1"/>
+  <line x1="120" y1="120" x2="190" y2="190" stroke="#cbd5e0" stroke-width="1"/>
+  <line x1="120" y1="120" x2="50" y2="190" stroke="#cbd5e0" stroke-width="1"/>
+  <!-- H_{0,2} chain connecting u0 and u2 (schematic curved path) -->
+  <path d="M 50,50 C 10,120 10,180 50,190 C 90,200 150,200 190,190"
+        stroke="#805ad5" stroke-width="2.5" fill="none" stroke-dasharray="6,4" opacity="0.5"/>
+  <text x="10" y="130" font-size="10" fill="#805ad5">$H_{0,2}$ のパス</text>
+  <!-- This path separates u1 and u3! -->
+  <circle cx="50" cy="50" r="16" fill="#e53e3e" stroke="#2d3748" stroke-width="1.5"/>
+  <text x="50" y="56" text-anchor="middle" font-size="12" fill="white" font-weight="bold">0</text>
+  <text x="30" y="40" font-size="11" fill="#4a5568">$u_0$</text>
+  <circle cx="190" cy="50" r="16" fill="#3182ce" stroke="#2d3748" stroke-width="1.5"/>
+  <text x="190" y="56" text-anchor="middle" font-size="12" fill="white" font-weight="bold">1</text>
+  <text x="210" y="40" font-size="11" fill="#4a5568">$u_1$</text>
+  <circle cx="190" cy="190" r="16" fill="#38a169" stroke="#2d3748" stroke-width="1.5"/>
+  <text x="190" y="196" text-anchor="middle" font-size="12" fill="white" font-weight="bold">2</text>
+  <text x="210" y="200" font-size="11" fill="#4a5568">$u_2$</text>
+  <circle cx="50" cy="190" r="16" fill="#d69e2e" stroke="#2d3748" stroke-width="1.5"/>
+  <text x="50" y="196" text-anchor="middle" font-size="12" fill="white" font-weight="bold">3</text>
+  <text x="30" y="200" font-size="11" fill="#4a5568">$u_3$</text>
+  <circle cx="120" cy="120" r="14" fill="#e2e8f0" stroke="#4a5568" stroke-width="2" stroke-dasharray="4,3"/>
+  <text x="120" y="125" text-anchor="middle" font-size="11" fill="#4a5568">$v$?</text>
+  <text x="120" y="228" text-anchor="middle" font-size="11" fill="#805ad5">$H_{0,2}$ パスが $u_1$ と $u_3$ を分離 → $H_{1,3}$ で別成分</text>
+
+  <!-- ===== Arrow ===== -->
+  <text x="270" y="115" text-anchor="middle" font-size="24" fill="#805ad5">&rArr;</text>
+  <text x="270" y="135" text-anchor="middle" font-size="10" fill="#805ad5">$u_1$ の成分で</text>
+  <text x="270" y="148" text-anchor="middle" font-size="10" fill="#805ad5">$1 \leftrightarrow 3$ 交換</text>
+
+  <!-- ===== After ===== -->
+  <text x="430" y="15" text-anchor="middle" font-size="13" fill="#4a5568" font-weight="bold">交換後</text>
+  <line x1="360" y1="50" x2="500" y2="50" stroke="#4a5568" stroke-width="1.5"/>
+  <line x1="500" y1="50" x2="500" y2="190" stroke="#4a5568" stroke-width="1.5"/>
+  <line x1="500" y1="190" x2="360" y2="190" stroke="#4a5568" stroke-width="1.5"/>
+  <line x1="360" y1="190" x2="360" y2="50" stroke="#4a5568" stroke-width="1.5"/>
+  <line x1="430" y1="120" x2="360" y2="50" stroke="#cbd5e0" stroke-width="1"/>
+  <line x1="430" y1="120" x2="500" y2="50" stroke="#cbd5e0" stroke-width="1"/>
+  <line x1="430" y1="120" x2="500" y2="190" stroke="#cbd5e0" stroke-width="1"/>
+  <line x1="430" y1="120" x2="360" y2="190" stroke="#cbd5e0" stroke-width="1"/>
+  <!-- u0 unchanged -->
+  <circle cx="360" cy="50" r="16" fill="#e53e3e" stroke="#2d3748" stroke-width="1.5"/>
+  <text x="360" y="56" text-anchor="middle" font-size="12" fill="white" font-weight="bold">0</text>
+  <text x="340" y="40" font-size="11" fill="#4a5568">$u_0$</text>
+  <!-- u1 swapped: 1 -> 3 -->
+  <circle cx="500" cy="50" r="16" fill="#d69e2e" stroke="#805ad5" stroke-width="3"/>
+  <text x="500" y="56" text-anchor="middle" font-size="12" fill="white" font-weight="bold">3</text>
+  <text x="520" y="40" font-size="11" fill="#805ad5">$u_1$</text>
+  <!-- u2 unchanged -->
+  <circle cx="500" cy="190" r="16" fill="#38a169" stroke="#2d3748" stroke-width="1.5"/>
+  <text x="500" y="196" text-anchor="middle" font-size="12" fill="white" font-weight="bold">2</text>
+  <text x="520" y="200" font-size="11" fill="#4a5568">$u_2$</text>
+  <!-- u3 unchanged -->
+  <circle cx="360" cy="190" r="16" fill="#d69e2e" stroke="#2d3748" stroke-width="1.5"/>
+  <text x="360" y="196" text-anchor="middle" font-size="12" fill="white" font-weight="bold">3</text>
+  <text x="340" y="200" font-size="11" fill="#4a5568">$u_3$</text>
+  <!-- v colored with 1 (blue) -->
+  <circle cx="430" cy="120" r="14" fill="#3182ce" stroke="#3182ce" stroke-width="2"/>
+  <text x="430" y="126" text-anchor="middle" font-size="12" fill="white" font-weight="bold">1</text>
+  <text x="460" y="118" font-size="11" fill="#3182ce" font-weight="bold">$v$!</text>
+  <text x="430" y="228" text-anchor="middle" font-size="11" fill="#38a169">$N(v) = \{0, 3, 2, 3\}$：色1が空き → $v = 1$</text>
+</svg>
+<div class="figure-caption">$u_0$ と $u_2$ が同じ $H_{0,2}$ 成分にいる場合。$H_{0,2}$ パスが $u_1$ と $u_3$ を分離するので、
+$u_1$ の $H_{1,3}$ 成分で $1 \leftrightarrow 3$ を交換。色1が空き、$v$ に割り当てられる。</div>
+</div>
+</div>
+
+<div class="example-block">
+<h4>具体例：次数5頂点を含む小さな三角形分割</h4>
+<p>もっとも簡単な例は<strong>車輪グラフ</strong> $W_5$（wheel graph）です。
+中心の頂点 $v$ は5つの近傍 $v_0, v_1, v_2, v_3, v_4$ を持ちます。</p>
+<div class="figure">
+<svg width="300" height="300" viewBox="0 0 300 300">
+  <!-- Title -->
+  <text x="150" y="20" text-anchor="middle" font-size="14" fill="#4a5568" font-weight="bold">車輪グラフ $W_5$</text>
+  <!-- Pentagon edges (outer cycle) -->
+  <line x1="150" y1="45" x2="248" y2="116" stroke="#cbd5e0" stroke-width="1.5"/>
+  <line x1="248" y1="116" x2="211" y2="228" stroke="#cbd5e0" stroke-width="1.5"/>
+  <line x1="211" y1="228" x2="89" y2="228" stroke="#cbd5e0" stroke-width="1.5"/>
+  <line x1="89" y1="228" x2="52" y2="116" stroke="#cbd5e0" stroke-width="1.5"/>
+  <line x1="52" y1="116" x2="150" y2="45" stroke="#cbd5e0" stroke-width="1.5"/>
+  <!-- Spoke edges (center to outer) -->
+  <line x1="150" y1="150" x2="150" y2="45" stroke="#a0aec0" stroke-width="1.5"/>
+  <line x1="150" y1="150" x2="248" y2="116" stroke="#a0aec0" stroke-width="1.5"/>
+  <line x1="150" y1="150" x2="211" y2="228" stroke="#a0aec0" stroke-width="1.5"/>
+  <line x1="150" y1="150" x2="89" y2="228" stroke="#a0aec0" stroke-width="1.5"/>
+  <line x1="150" y1="150" x2="52" y2="116" stroke="#a0aec0" stroke-width="1.5"/>
+  <!-- Center vertex v -->
+  <circle cx="150" cy="150" r="16" fill="#718096" stroke="#2d3748" stroke-width="2"/>
+  <text x="150" y="155" text-anchor="middle" font-size="14" fill="white" font-weight="bold">v</text>
+  <!-- Outer vertices -->
+  <circle cx="150" cy="45" r="14" fill="#e2e8f0" stroke="#2d3748" stroke-width="1.5"/>
+  <text x="150" y="50" text-anchor="middle" font-size="11" fill="#2d3748" font-weight="bold">$v_0$</text>
+  <circle cx="248" cy="116" r="14" fill="#e2e8f0" stroke="#2d3748" stroke-width="1.5"/>
+  <text x="248" y="121" text-anchor="middle" font-size="11" fill="#2d3748" font-weight="bold">$v_1$</text>
+  <circle cx="211" cy="228" r="14" fill="#e2e8f0" stroke="#2d3748" stroke-width="1.5"/>
+  <text x="211" y="233" text-anchor="middle" font-size="11" fill="#2d3748" font-weight="bold">$v_2$</text>
+  <circle cx="89" cy="228" r="14" fill="#e2e8f0" stroke="#2d3748" stroke-width="1.5"/>
+  <text x="89" y="233" text-anchor="middle" font-size="11" fill="#2d3748" font-weight="bold">$v_3$</text>
+  <circle cx="52" cy="116" r="14" fill="#e2e8f0" stroke="#2d3748" stroke-width="1.5"/>
+  <text x="52" y="121" text-anchor="middle" font-size="11" fill="#2d3748" font-weight="bold">$v_4$</text>
+</svg>
+<div class="figure-caption">車輪グラフ $W_5$：中心頂点 $v$ は次数5。外側の5頂点は5-サイクルを成す。</div>
+</div>
+<p>この $W_5$ から中心頂点 $v$ を除去すると、5角形（5-サイクル）だけが残ります。
+これが「近三角形分割」の最も単純な例です。</p>
+</div>
+
+<!-- ===== 4.2 近三角形分割 ===== -->
+<h2>近三角形分割（Near-triangulation）</h2>
+
+<div class="thm-box definition">
+<strong>定義（近三角形分割）.</strong>
+極小反例 $G$ の次数5頂点 $v$ を選び、$v$ とそれに接続するすべての辺を除去したグラフを
+$G \setminus v$ と書く。$G \setminus v$ は以下の性質を持つ<strong>近三角形分割</strong>（near-triangulation）である：
+<ul style="font-style:normal;">
+<li>頂点数：$V' = V - 1$</li>
+<li>$v$ の5つの近傍 $v_0, v_1, v_2, v_3, v_4$ は <strong>5-サイクル境界</strong>を形成する</li>
+<li>内部の面はすべて三角形</li>
+<li>外面（境界面）だけが五角形</li>
+<li>辺数：$E' = 3V' - 8$（オイラーの公式から）</li>
+</ul>
+</div>
+
+<div class="explanation">
+<h4>なぜ5-サイクルになるのか？</h4>
+<p>$G$ は三角形分割なので、$v$ の近傍の頂点は順に辺で結ばれています。
+つまり $v_0 - v_1 - v_2 - v_3 - v_4 - v_0$ という閉路（サイクル）を形成します。
+$v$ を取り除くと、この5-サイクルが「穴」の縁になります。</p>
+<p>内部（元の三角形分割の $v$ に関係しない部分）はそのまま残るので、
+内部面はすべて三角形のままです。</p>
+</div>
+
+<div class="example-block">
+<h4>具体例：$W_5$ からの頂点除去</h4>
+<p>車輪グラフ $W_5$ から中心 $v$ を除去すると、5-サイクルだけが残ります。</p>
+<div class="figure">
+<svg width="600" height="260" viewBox="0 0 600 260">
+  <!-- Left: W5 with center -->
+  <text x="140" y="20" text-anchor="middle" font-size="14" fill="#4a5568" font-weight="bold">$W_5$（除去前）</text>
+  <!-- Pentagon edges -->
+  <line x1="140" y1="50" x2="225" y2="112" stroke="#cbd5e0" stroke-width="1.5"/>
+  <line x1="225" y1="112" x2="193" y2="210" stroke="#cbd5e0" stroke-width="1.5"/>
+  <line x1="193" y1="210" x2="87" y2="210" stroke="#cbd5e0" stroke-width="1.5"/>
+  <line x1="87" y1="210" x2="55" y2="112" stroke="#cbd5e0" stroke-width="1.5"/>
+  <line x1="55" y1="112" x2="140" y2="50" stroke="#cbd5e0" stroke-width="1.5"/>
+  <!-- Spokes -->
+  <line x1="140" y1="140" x2="140" y2="50" stroke="#e53e3e" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <line x1="140" y1="140" x2="225" y2="112" stroke="#e53e3e" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <line x1="140" y1="140" x2="193" y2="210" stroke="#e53e3e" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <line x1="140" y1="140" x2="87" y2="210" stroke="#e53e3e" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <line x1="140" y1="140" x2="55" y2="112" stroke="#e53e3e" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <!-- Center -->
+  <circle cx="140" cy="140" r="16" fill="#e53e3e" stroke="#c53030" stroke-width="2"/>
+  <text x="140" y="145" text-anchor="middle" font-size="14" fill="white" font-weight="bold">v</text>
+  <!-- Outer -->
+  <circle cx="140" cy="50" r="13" fill="#e2e8f0" stroke="#2d3748" stroke-width="1.5"/>
+  <text x="140" y="38" text-anchor="middle" font-size="11" fill="#2d3748">$v_0$</text>
+  <circle cx="225" cy="112" r="13" fill="#e2e8f0" stroke="#2d3748" stroke-width="1.5"/>
+  <text x="242" y="106" text-anchor="start" font-size="11" fill="#2d3748">$v_1$</text>
+  <circle cx="193" cy="210" r="13" fill="#e2e8f0" stroke="#2d3748" stroke-width="1.5"/>
+  <text x="206" y="224" text-anchor="start" font-size="11" fill="#2d3748">$v_2$</text>
+  <circle cx="87" cy="210" r="13" fill="#e2e8f0" stroke="#2d3748" stroke-width="1.5"/>
+  <text x="72" y="224" text-anchor="end" font-size="11" fill="#2d3748">$v_3$</text>
+  <circle cx="55" cy="112" r="13" fill="#e2e8f0" stroke="#2d3748" stroke-width="1.5"/>
+  <text x="38" y="106" text-anchor="end" font-size="11" fill="#2d3748">$v_4$</text>
+
+  <!-- Arrow -->
+  <text x="300" y="135" text-anchor="middle" font-size="28" fill="#e53e3e">&rArr;</text>
+  <text x="300" y="155" text-anchor="middle" font-size="11" fill="#e53e3e">$v$ を除去</text>
+
+  <!-- Right: Pentagon only -->
+  <text x="460" y="20" text-anchor="middle" font-size="14" fill="#4a5568" font-weight="bold">$G \setminus v$（近三角形分割）</text>
+  <!-- Pentagon edges (thicker, highlighted) -->
+  <line x1="460" y1="50" x2="545" y2="112" stroke="#3182ce" stroke-width="2.5"/>
+  <line x1="545" y1="112" x2="513" y2="210" stroke="#3182ce" stroke-width="2.5"/>
+  <line x1="513" y1="210" x2="407" y2="210" stroke="#3182ce" stroke-width="2.5"/>
+  <line x1="407" y1="210" x2="375" y2="112" stroke="#3182ce" stroke-width="2.5"/>
+  <line x1="375" y1="112" x2="460" y2="50" stroke="#3182ce" stroke-width="2.5"/>
+  <!-- Pentagonal face label -->
+  <text x="460" y="150" text-anchor="middle" font-size="12" fill="#3182ce" font-style="italic">五角形の面</text>
+  <!-- Outer vertices -->
+  <circle cx="460" cy="50" r="13" fill="#ebf8ff" stroke="#3182ce" stroke-width="2"/>
+  <text x="460" y="38" text-anchor="middle" font-size="11" fill="#2d3748">$v_0$</text>
+  <circle cx="545" cy="112" r="13" fill="#ebf8ff" stroke="#3182ce" stroke-width="2"/>
+  <text x="562" y="106" text-anchor="start" font-size="11" fill="#2d3748">$v_1$</text>
+  <circle cx="513" cy="210" r="13" fill="#ebf8ff" stroke="#3182ce" stroke-width="2"/>
+  <text x="526" y="224" text-anchor="start" font-size="11" fill="#2d3748">$v_2$</text>
+  <circle cx="407" cy="210" r="13" fill="#ebf8ff" stroke="#3182ce" stroke-width="2"/>
+  <text x="392" y="224" text-anchor="end" font-size="11" fill="#2d3748">$v_3$</text>
+  <circle cx="375" cy="112" r="13" fill="#ebf8ff" stroke="#3182ce" stroke-width="2"/>
+  <text x="358" y="106" text-anchor="end" font-size="11" fill="#2d3748">$v_4$</text>
+</svg>
+<div class="figure-caption">左：$W_5$ の中心 $v$（赤）と辺（赤破線）を除去。右：残ったグラフ $G \setminus v$ は5-サイクル境界を持つ近三角形分割。</div>
+</div>
+</div>
+
+<div class="thm-box lemma">
+<strong>補題（辺数の公式）.</strong>
+$G \setminus v$ が $V'$ 頂点の近三角形分割（五角形の外面1つ、三角形の内部面）ならば、
+$$E' = 3V' - 8$$
+</div>
+
+<div class="proof-block">
+<span class="proof-title">証明.</span>
+オイラーの公式 $V' - E' + F' = 2$ を用いる。
+内部面の数を $f_3$、外面（五角形）が1つなので $F' = f_3 + 1$ である。
+各三角形面は辺を3本持つが、内部辺は2つの面で共有される。
+境界辺は5本あり、外面と内部面で1回ずつ共有される。
+辺の数え上げ：$2E' = 3f_3 + 5$、すなわち $f_3 = (2E' - 5)/3$。
+$F' = f_3 + 1 = (2E' - 5)/3 + 1 = (2E' - 2)/3$ をオイラーの公式に代入：
+$$V' - E' + \frac{2E' - 2}{3} = 2$$
+$$3V' - 3E' + 2E' - 2 = 6$$
+$$3V' - E' = 8$$
+$$E' = 3V' - 8$$
+<span class="proof-end">$\QED$</span>
+</div>
+
+<!-- ===== 4.3 境界の彩色 ===== -->
+<h2>境界の彩色</h2>
+
+<div class="thm-box">
+<strong>命題（極小性からの帰結）.</strong>
+$G$ が極小反例ならば、$G \setminus v$ は $G$ より頂点が少ないので、
+$G \setminus v$ は正則4彩色 $\varphi$ を持つ。
+</div>
+
+<div class="explanation">
+<h4>境界上の色の場合分け</h4>
+<p>$\varphi$ は $G \setminus v$ の正則4彩色です。5つの境界頂点 $v_0, \ldots, v_4$ に
+色集合 $\{0, 1, 2, 3\}$ の一部が割り当てられます。</p>
+<ul>
+<li><strong>境界に3色以下:</strong> 使われていない色で $v$ を塗れば $G$ 全体の正則4彩色が完成。矛盾！</li>
+<li><strong>境界に4色すべて:</strong> $v$ に使える色がない。<strong>これが唯一の困難なケース。</strong></li>
+</ul>
+<p>したがって、$G$ が真の反例であるためには、$G \setminus v$ の<strong>すべての</strong>正則4彩色において
+4色すべてが境界に現れなければなりません。</p>
+</div>
+
+<div class="thm-box">
+<strong>命題（鳩の巣原理による二重色）.</strong>
+5つの頂点に4色を配る場合、鳩の巣原理（5頂点、4色）により、
+少なくとも1つの色が2回以上使われる。正確に言えば：
+<ul style="font-style:normal;">
+<li>ちょうど1つの色が2回使われ、残り3色は各1回使われる</li>
+<li>この2回使われる色を <strong>$d$</strong>（二重色、double color）と呼ぶ</li>
+<li>色 $d$ を持つ2頂点を<strong>境界対</strong>（boundary pair）$b_1, b_2$ と呼ぶ</li>
+</ul>
+</div>
+
+<div class="example-block">
+<h4>具体例：$W_5$ の彩色</h4>
+<p>$G \setminus v$（5-サイクル）を正則4彩色した例：</p>
+<div class="figure">
+<svg width="340" height="300" viewBox="0 0 340 300">
+  <!-- Pentagon edges -->
+  <line x1="170" y1="45" x2="268" y2="116" stroke="#cbd5e0" stroke-width="2"/>
+  <line x1="268" y1="116" x2="231" y2="228" stroke="#cbd5e0" stroke-width="2"/>
+  <line x1="231" y1="228" x2="109" y2="228" stroke="#cbd5e0" stroke-width="2"/>
+  <line x1="109" y1="228" x2="72" y2="116" stroke="#cbd5e0" stroke-width="2"/>
+  <line x1="72" y1="116" x2="170" y2="45" stroke="#cbd5e0" stroke-width="2"/>
+  <!-- Vertices with colors -->
+  <!-- v0 = red (color 0, d) -->
+  <circle cx="170" cy="45" r="18" fill="#e53e3e" stroke="#2d3748" stroke-width="2"/>
+  <text x="170" y="51" text-anchor="middle" font-size="13" fill="white" font-weight="bold">0</text>
+  <text x="170" y="28" text-anchor="middle" font-size="12" fill="#2d3748">$v_0$</text>
+  <!-- v1 = blue (color 1) -->
+  <circle cx="268" cy="116" r="18" fill="#3182ce" stroke="#2d3748" stroke-width="2"/>
+  <text x="268" y="122" text-anchor="middle" font-size="13" fill="white" font-weight="bold">1</text>
+  <text x="290" y="108" text-anchor="start" font-size="12" fill="#2d3748">$v_1$</text>
+  <!-- v2 = red (color 0, d) — same as v0! -->
+  <circle cx="231" cy="228" r="18" fill="#e53e3e" stroke="#2d3748" stroke-width="2"/>
+  <text x="231" y="234" text-anchor="middle" font-size="13" fill="white" font-weight="bold">0</text>
+  <text x="249" y="244" text-anchor="start" font-size="12" fill="#2d3748">$v_2$</text>
+  <!-- v3 = green (color 2) -->
+  <circle cx="109" cy="228" r="18" fill="#38a169" stroke="#2d3748" stroke-width="2"/>
+  <text x="109" y="234" text-anchor="middle" font-size="13" fill="white" font-weight="bold">2</text>
+  <text x="89" y="244" text-anchor="end" font-size="12" fill="#2d3748">$v_3$</text>
+  <!-- v4 = yellow (color 3) -->
+  <circle cx="72" cy="116" r="18" fill="#d69e2e" stroke="#2d3748" stroke-width="2"/>
+  <text x="72" y="122" text-anchor="middle" font-size="13" fill="white" font-weight="bold">3</text>
+  <text x="50" y="108" text-anchor="end" font-size="12" fill="#2d3748">$v_4$</text>
+  <!-- Annotation -->
+  <text x="200" y="275" text-anchor="middle" font-size="12" fill="#e53e3e" font-weight="bold">$d = 0$（赤が二重色）</text>
+  <text x="200" y="293" text-anchor="middle" font-size="12" fill="#4a5568">$b_1 = v_0$, $b_2 = v_2$</text>
+  <!-- Highlight boundary pair with dotted arc -->
+  <path d="M 170 63 Q 260 150 231 210" fill="none" stroke="#e53e3e" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <text x="252" y="150" text-anchor="start" font-size="10" fill="#e53e3e">境界対</text>
+</svg>
+<div class="figure-caption">5-サイクルの正則4彩色。色0（赤）が $v_0$ と $v_2$ で二重に出現。$d = 0$、境界対は $(v_0, v_2)$。</div>
+</div>
+<p>この場合、4色すべてが境界に出現しているので、中心の $v$ に使える色がありません。
+ケンペ交換で境界の彩色を変更する必要があります。</p>
+</div>
+
+<!-- ===== 4.4 境界対の非隣接性 ===== -->
+<h2>境界対の非隣接性</h2>
+
+<div class="thm-box">
+<strong>命題（境界対は非隣接）.</strong>
+$\varphi$ が正則彩色ならば、同じ色 $d$ を持つ境界対 $b_1, b_2$ は
+5-サイクル上で<strong>隣接しない</strong>。
+</div>
+
+<div class="proof-block">
+<span class="proof-title">証明.</span>
+$\varphi$ が正則彩色であることは、隣接する頂点が異なる色を持つことを意味する。
+$b_1$ と $b_2$ は同じ色 $d$ を持つので、隣接していれば正則性に反する。$\QED$
+</div>
+
+<div class="explanation">
+<h4>5-サイクル上の距離</h4>
+<p>5-サイクル上で非隣接ということは、$b_1$ と $b_2$ の間の距離（サイクル上の最短パスの辺数）は
+<strong>ちょうど2</strong>であることを意味します（5-サイクルでは距離1か2しかなく、1は隣接）。</p>
+</div>
+
+<div class="example-block">
+<h4>5-サイクル上の非隣接位置</h4>
+<p>5-サイクルで同じ色が置ける位置の組み合わせを示します。</p>
+<div class="figure">
+<svg width="600" height="200" viewBox="0 0 600 200">
+  <!-- Case 1: v0, v2 -->
+  <text x="100" y="18" text-anchor="middle" font-size="12" fill="#4a5568" font-weight="bold">$(v_0, v_2)$：距離2</text>
+  <line x1="100" y1="35" x2="145" y2="68" stroke="#cbd5e0" stroke-width="1.5"/>
+  <line x1="145" y1="68" x2="128" y2="118" stroke="#cbd5e0" stroke-width="1.5"/>
+  <line x1="128" y1="118" x2="72" y2="118" stroke="#cbd5e0" stroke-width="1.5"/>
+  <line x1="72" y1="118" x2="55" y2="68" stroke="#cbd5e0" stroke-width="1.5"/>
+  <line x1="55" y1="68" x2="100" y2="35" stroke="#cbd5e0" stroke-width="1.5"/>
+  <circle cx="100" cy="35" r="11" fill="#e53e3e" stroke="#2d3748" stroke-width="1.5"/>
+  <circle cx="145" cy="68" r="11" fill="#e2e8f0" stroke="#2d3748" stroke-width="1.5"/>
+  <circle cx="128" cy="118" r="11" fill="#e53e3e" stroke="#2d3748" stroke-width="1.5"/>
+  <circle cx="72" cy="118" r="11" fill="#e2e8f0" stroke="#2d3748" stroke-width="1.5"/>
+  <circle cx="55" cy="68" r="11" fill="#e2e8f0" stroke="#2d3748" stroke-width="1.5"/>
+  <text x="100" y="150" text-anchor="middle" font-size="11" fill="#38a169" font-weight="bold">OK</text>
+
+  <!-- Case 2: v0, v1 (adjacent - forbidden) -->
+  <text x="300" y="18" text-anchor="middle" font-size="12" fill="#4a5568" font-weight="bold">$(v_0, v_1)$：距離1</text>
+  <line x1="300" y1="35" x2="345" y2="68" stroke="#cbd5e0" stroke-width="1.5"/>
+  <line x1="345" y1="68" x2="328" y2="118" stroke="#cbd5e0" stroke-width="1.5"/>
+  <line x1="328" y1="118" x2="272" y2="118" stroke="#cbd5e0" stroke-width="1.5"/>
+  <line x1="272" y1="118" x2="255" y2="68" stroke="#cbd5e0" stroke-width="1.5"/>
+  <line x1="255" y1="68" x2="300" y2="35" stroke="#cbd5e0" stroke-width="1.5"/>
+  <!-- Highlight the forbidden edge -->
+  <line x1="300" y1="35" x2="345" y2="68" stroke="#e53e3e" stroke-width="3"/>
+  <circle cx="300" cy="35" r="11" fill="#e53e3e" stroke="#2d3748" stroke-width="1.5"/>
+  <circle cx="345" cy="68" r="11" fill="#e53e3e" stroke="#2d3748" stroke-width="1.5"/>
+  <circle cx="328" cy="118" r="11" fill="#e2e8f0" stroke="#2d3748" stroke-width="1.5"/>
+  <circle cx="272" cy="118" r="11" fill="#e2e8f0" stroke="#2d3748" stroke-width="1.5"/>
+  <circle cx="255" cy="68" r="11" fill="#e2e8f0" stroke="#2d3748" stroke-width="1.5"/>
+  <text x="300" y="150" text-anchor="middle" font-size="11" fill="#e53e3e" font-weight="bold">NG（隣接！）</text>
+
+  <!-- Case 3: v1, v3 -->
+  <text x="500" y="18" text-anchor="middle" font-size="12" fill="#4a5568" font-weight="bold">$(v_1, v_3)$：距離2</text>
+  <line x1="500" y1="35" x2="545" y2="68" stroke="#cbd5e0" stroke-width="1.5"/>
+  <line x1="545" y1="68" x2="528" y2="118" stroke="#cbd5e0" stroke-width="1.5"/>
+  <line x1="528" y1="118" x2="472" y2="118" stroke="#cbd5e0" stroke-width="1.5"/>
+  <line x1="472" y1="118" x2="455" y2="68" stroke="#cbd5e0" stroke-width="1.5"/>
+  <line x1="455" y1="68" x2="500" y2="35" stroke="#cbd5e0" stroke-width="1.5"/>
+  <circle cx="500" cy="35" r="11" fill="#e2e8f0" stroke="#2d3748" stroke-width="1.5"/>
+  <circle cx="545" cy="68" r="11" fill="#e53e3e" stroke="#2d3748" stroke-width="1.5"/>
+  <circle cx="528" cy="118" r="11" fill="#e2e8f0" stroke="#2d3748" stroke-width="1.5"/>
+  <circle cx="472" cy="118" r="11" fill="#e53e3e" stroke="#2d3748" stroke-width="1.5"/>
+  <circle cx="455" cy="68" r="11" fill="#e2e8f0" stroke="#2d3748" stroke-width="1.5"/>
+  <text x="500" y="150" text-anchor="middle" font-size="11" fill="#38a169" font-weight="bold">OK</text>
+</svg>
+<div class="figure-caption">5-サイクル上で同じ色を持てる位置。距離2の対のみが許される（正則彩色の条件）。</div>
+</div>
+</div>
+
+<div class="thm-box corollary">
+<strong>系（標準配置）.</strong>
+一般性を失わず（WLOG）、次のように仮定してよい：
+<ul style="font-style:normal;">
+<li>$b_1 = v_0$, $b_2 = v_2$</li>
+<li>$d = \varphi(v_0) = \varphi(v_2)$（二重色）</li>
+<li>残りの3頂点 $v_1, v_3, v_4$ はそれぞれ異なる非$d$色を持つ</li>
+</ul>
+</div>
+
+<div class="explanation">
+<h4>なぜ一般性を失わないか</h4>
+<p>5-サイクルの回転対称性（5通り）と色の置換対称性を使えば、
+境界対の位置は $(v_0, v_2)$ に、二重色は $d$ に標準化できます。
+以後、この配置を<strong>標準配置</strong>と呼びます。</p>
+</div>
+
+<!-- ===== 4.5 連結度の定義 ===== -->
+<h2>連結度の定義</h2>
+
+<div class="thm-box definition">
+<strong>定義（連結色）.</strong>
+非$d$色 $x \in \{0,1,2,3\} \setminus \{d\}$ が<strong>連結色</strong>（connecting color）であるとは、
+$G \setminus v$ のケンペ部分グラフ $H_{d,x}$ において、
+$b_1$ と $b_2$ が<strong>同一の連結成分</strong>に属することをいう。
+</div>
+
+<div class="thm-box definition">
+<strong>定義（連結度）.</strong>
+$$\conn = \#\{x \in \{0,1,2,3\} \setminus \{d\} \mid x \text{ は連結色}\}$$
+すなわち、$\conn$ は3つの非$d$色のうち、$b_1$ と $b_2$ を繋ぐものの個数である。
+$\conn \in \{0, 1, 2, 3\}$ の値を取る。
+</div>
+
+<div class="explanation">
+<h4>連結度の直感</h4>
+<p>連結度は「境界対 $b_1$ と $b_2$ の周りのケンペ鎖がどれだけ絡み合っているか」を測ります。</p>
+<ul>
+<li><strong>$\conn = 0$:</strong> どの非$d$色も $b_1$ と $b_2$ を繋がない。すべての $H_{d,x}$ で $b_1$ と $b_2$ は別成分。</li>
+<li><strong>$\conn = 1$:</strong> ちょうど1色だけが繋ぐ。</li>
+<li><strong>$\conn = 2$:</strong> 2色が繋ぐ。</li>
+<li><strong>$\conn = 3$:</strong> 全色が繋ぐ。もっとも「絡み合った」状況。</li>
+</ul>
+<p>$\conn$ が小さいほど、ケンペ交換で境界の色を変えやすく、$v$ を塗りやすくなります。</p>
+</div>
+
+<div class="example-block">
+<h4>連結度の視覚的理解</h4>
+<p>標準配置 $\varphi(v_0) = \varphi(v_2) = d$（赤, 色0）のもとで、
+3つの非$d$色 $\gamma$（青, 色1）、$\alpha$（緑, 色2）、$\beta$（黄, 色3）を考えます。</p>
+<div class="figure">
+<svg width="500" height="350" viewBox="0 0 500 350">
+  <!-- 5-cycle boundary -->
+  <line x1="250" y1="40" x2="358" y2="118" stroke="#a0aec0" stroke-width="2"/>
+  <line x1="358" y1="118" x2="317" y2="248" stroke="#a0aec0" stroke-width="2"/>
+  <line x1="317" y1="248" x2="183" y2="248" stroke="#a0aec0" stroke-width="2"/>
+  <line x1="183" y1="248" x2="142" y2="118" stroke="#a0aec0" stroke-width="2"/>
+  <line x1="142" y1="118" x2="250" y2="40" stroke="#a0aec0" stroke-width="2"/>
+
+  <!-- Interior region label -->
+  <text x="250" y="170" text-anchor="middle" font-size="14" fill="#a0aec0" font-style="italic">$G \setminus v$ の内部</text>
+
+  <!-- Example Kempe path connecting b1 to b2 (through interior) -->
+  <path d="M 250 58 C 280 90, 320 130, 340 160 S 330 210, 317 230" fill="none" stroke="#805ad5" stroke-width="2" stroke-dasharray="6,3"/>
+  <text x="350" y="160" text-anchor="start" font-size="11" fill="#805ad5">$H_{d,\gamma}$ の経路？</text>
+
+  <!-- Vertices -->
+  <!-- v0 = d (red) -->
+  <circle cx="250" cy="40" r="20" fill="#e53e3e" stroke="#2d3748" stroke-width="2"/>
+  <text x="250" y="46" text-anchor="middle" font-size="14" fill="white" font-weight="bold">$d$</text>
+  <text x="250" y="18" text-anchor="middle" font-size="13" fill="#2d3748" font-weight="bold">$v_0 = b_1$</text>
+  <!-- v1 = gamma (blue) -->
+  <circle cx="358" cy="118" r="20" fill="#3182ce" stroke="#2d3748" stroke-width="2"/>
+  <text x="358" y="124" text-anchor="middle" font-size="14" fill="white" font-weight="bold">$\gamma$</text>
+  <text x="388" y="110" text-anchor="start" font-size="13" fill="#2d3748" font-weight="bold">$v_1$</text>
+  <!-- v2 = d (red) -->
+  <circle cx="317" cy="248" r="20" fill="#e53e3e" stroke="#2d3748" stroke-width="2"/>
+  <text x="317" y="254" text-anchor="middle" font-size="14" fill="white" font-weight="bold">$d$</text>
+  <text x="345" y="264" text-anchor="start" font-size="13" fill="#2d3748" font-weight="bold">$v_2 = b_2$</text>
+  <!-- v3 = alpha (green) -->
+  <circle cx="183" cy="248" r="20" fill="#38a169" stroke="#2d3748" stroke-width="2"/>
+  <text x="183" y="254" text-anchor="middle" font-size="14" fill="white" font-weight="bold">$\alpha$</text>
+  <text x="155" y="264" text-anchor="end" font-size="13" fill="#2d3748" font-weight="bold">$v_3$</text>
+  <!-- v4 = beta (yellow) -->
+  <circle cx="142" cy="118" r="20" fill="#d69e2e" stroke="#2d3748" stroke-width="2"/>
+  <text x="142" y="124" text-anchor="middle" font-size="14" fill="white" font-weight="bold">$\beta$</text>
+  <text x="112" y="110" text-anchor="end" font-size="13" fill="#2d3748" font-weight="bold">$v_4$</text>
+</svg>
+<div class="figure-caption">5-サイクル境界の標準配置。$v_0 = b_1$ と $v_2 = b_2$ が二重色 $d$（赤）。
+$v_1$ に $\gamma$（青）、$v_3$ に $\alpha$（緑）、$v_4$ に $\beta$（黄）。
+紫の破線は $H_{d,\gamma}$ で $b_1$ と $b_2$ を繋ぐ経路の可能性を示す。</div>
+</div>
+<p>$\gamma$ が連結色であるとは、紫の破線のような経路が $G \setminus v$ の内部に実際に存在し、
+$b_1$ と $b_2$ が $H_{d,\gamma}$ の同一成分に属することを意味します。</p>
+</div>
+
+<h3>連結度と部分的/全体的連結</h3>
+
+<div class="thm-box definition">
+<strong>定義（部分的連結と全体的連結）.</strong>
+色 $x$ が連結色であるとき、$H_{d,x}$ における $b_1, b_2$ を含む成分の情報をさらに細分する：
+<ul style="font-style:normal;">
+<li>$p_{d,x}$：$H_{d,x}$ の連結成分数</li>
+<li>$p_{d,x} \geq 2$（$b_1, b_2$ は同一成分だが、他の成分も存在する）のとき、$x$ は<strong>部分的連結</strong>（partially connecting）</li>
+<li>$p_{d,x} = 1$（$H_{d,x}$ 全体が1つの連結成分）のとき、$x$ は<strong>全体的連結</strong>（totally connecting）</li>
+</ul>
+</div>
+
+<div class="thm-box definition">
+<strong>定義（B4彩色）.</strong>
+正則4彩色 $\varphi$ が<strong>B4彩色</strong>であるとは、以下の条件をすべて満たすことをいう：
+<ul style="font-style:normal;">
+<li>$\conn = 1$（ちょうど1つの連結色 $\gamma$ が存在）</li>
+<li>$p_{d,\gamma} = 1$（$\gamma$ は全体的連結、すなわち $H_{d,\gamma}$ は連結）</li>
+</ul>
+B4彩色は、ケンペ交換で解決するのがもっとも困難なケースである。
+</div>
+
+<div class="explanation">
+<h4>なぜB4が困難なのか</h4>
+<p>B4彩色では、唯一の連結色 $\gamma$ に関するケンペ部分グラフ $H_{d,\gamma}$ が完全に連結です。
+これは $b_1$ と $b_2$ を含む成分が唯一の成分であることを意味します。</p>
+<p>$H_{d,\gamma}$ でケンペ交換を行うと、グラフ全体で色 $d$ と $\gamma$ が入れ替わります（部分的な交換ができない）。
+しかし他の2色（$\alpha, \beta$）は $b_1$ と $b_2$ を繋がないので、
+それらでのケンペ交換は境界対を「分離」できます。
+問題は、この分離操作の後に $\gamma$ が依然として問題を引き起こすかどうかです。</p>
+</div>
+
+<div class="example-block">
+<h4>連結度の各ケースのまとめ</h4>
+<div class="figure">
+<svg width="560" height="340" viewBox="0 0 560 340">
+  <!-- conn = 0 -->
+  <rect x="10" y="10" width="170" height="155" rx="8" fill="#f0fff4" stroke="#38a169" stroke-width="1.5"/>
+  <text x="95" y="32" text-anchor="middle" font-size="13" fill="#276749" font-weight="bold">$\conn = 0$</text>
+  <!-- Mini 5-cycle -->
+  <circle cx="95" cy="65" r="8" fill="#e53e3e" stroke="#2d3748" stroke-width="1"/>
+  <circle cx="130" cy="82" r="8" fill="#3182ce" stroke="#2d3748" stroke-width="1"/>
+  <circle cx="120" cy="118" r="8" fill="#e53e3e" stroke="#2d3748" stroke-width="1"/>
+  <circle cx="70" cy="118" r="8" fill="#38a169" stroke="#2d3748" stroke-width="1"/>
+  <circle cx="60" cy="82" r="8" fill="#d69e2e" stroke="#2d3748" stroke-width="1"/>
+  <line x1="95" y1="73" x2="122" y2="79" stroke="#a0aec0" stroke-width="1"/>
+  <line x1="130" y1="90" x2="120" y2="110" stroke="#a0aec0" stroke-width="1"/>
+  <line x1="112" y1="118" x2="78" y2="118" stroke="#a0aec0" stroke-width="1"/>
+  <line x1="70" y1="110" x2="60" y2="90" stroke="#a0aec0" stroke-width="1"/>
+  <line x1="68" y1="79" x2="87" y2="68" stroke="#a0aec0" stroke-width="1"/>
+  <text x="95" y="145" text-anchor="middle" font-size="10" fill="#4a5568">すべて非連結</text>
+  <text x="95" y="158" text-anchor="middle" font-size="10" fill="#38a169" font-weight="bold">BCTにより発生しない</text>
+
+  <!-- conn = 1 -->
+  <rect x="195" y="10" width="170" height="155" rx="8" fill="#fffff0" stroke="#d69e2e" stroke-width="1.5"/>
+  <text x="280" y="32" text-anchor="middle" font-size="13" fill="#975a16" font-weight="bold">$\conn = 1$</text>
+  <circle cx="280" cy="65" r="8" fill="#e53e3e" stroke="#2d3748" stroke-width="1"/>
+  <circle cx="315" cy="82" r="8" fill="#3182ce" stroke="#2d3748" stroke-width="1"/>
+  <circle cx="305" cy="118" r="8" fill="#e53e3e" stroke="#2d3748" stroke-width="1"/>
+  <circle cx="255" cy="118" r="8" fill="#38a169" stroke="#2d3748" stroke-width="1"/>
+  <circle cx="245" cy="82" r="8" fill="#d69e2e" stroke="#2d3748" stroke-width="1"/>
+  <line x1="280" y1="73" x2="307" y2="79" stroke="#a0aec0" stroke-width="1"/>
+  <line x1="315" y1="90" x2="305" y2="110" stroke="#a0aec0" stroke-width="1"/>
+  <line x1="297" y1="118" x2="263" y2="118" stroke="#a0aec0" stroke-width="1"/>
+  <line x1="255" y1="110" x2="245" y2="90" stroke="#a0aec0" stroke-width="1"/>
+  <line x1="253" y1="79" x2="272" y2="68" stroke="#a0aec0" stroke-width="1"/>
+  <!-- Connecting path for gamma -->
+  <path d="M 280 73 C 290 95, 295 100, 305 110" fill="none" stroke="#805ad5" stroke-width="2"/>
+  <text x="280" y="145" text-anchor="middle" font-size="10" fill="#4a5568">1色だけ連結</text>
+  <text x="280" y="158" text-anchor="middle" font-size="10" fill="#975a16" font-weight="bold">B4を含む</text>
+
+  <!-- conn = 2 -->
+  <rect x="380" y="10" width="170" height="155" rx="8" fill="#ebf8ff" stroke="#3182ce" stroke-width="1.5"/>
+  <text x="465" y="32" text-anchor="middle" font-size="13" fill="#2b6cb0" font-weight="bold">$\conn = 2$</text>
+  <circle cx="465" cy="65" r="8" fill="#e53e3e" stroke="#2d3748" stroke-width="1"/>
+  <circle cx="500" cy="82" r="8" fill="#3182ce" stroke="#2d3748" stroke-width="1"/>
+  <circle cx="490" cy="118" r="8" fill="#e53e3e" stroke="#2d3748" stroke-width="1"/>
+  <circle cx="440" cy="118" r="8" fill="#38a169" stroke="#2d3748" stroke-width="1"/>
+  <circle cx="430" cy="82" r="8" fill="#d69e2e" stroke="#2d3748" stroke-width="1"/>
+  <line x1="465" y1="73" x2="492" y2="79" stroke="#a0aec0" stroke-width="1"/>
+  <line x1="500" y1="90" x2="490" y2="110" stroke="#a0aec0" stroke-width="1"/>
+  <line x1="482" y1="118" x2="448" y2="118" stroke="#a0aec0" stroke-width="1"/>
+  <line x1="440" y1="110" x2="430" y2="90" stroke="#a0aec0" stroke-width="1"/>
+  <line x1="438" y1="79" x2="457" y2="68" stroke="#a0aec0" stroke-width="1"/>
+  <path d="M 465 73 C 475 95, 480 100, 490 110" fill="none" stroke="#805ad5" stroke-width="2"/>
+  <path d="M 465 73 C 450 90, 445 100, 440 110" fill="none" stroke="#805ad5" stroke-width="2" stroke-dasharray="4,2"/>
+  <text x="465" y="145" text-anchor="middle" font-size="10" fill="#4a5568">2色が連結</text>
+  <text x="465" y="158" text-anchor="middle" font-size="10" fill="#2b6cb0" font-weight="bold">比較的扱いやすい</text>
+
+  <!-- Summary table at bottom -->
+  <rect x="30" y="185" width="500" height="140" rx="6" fill="#f7fafc" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="280" y="210" text-anchor="middle" font-size="13" fill="#2d3748" font-weight="bold">場合分けの概要</text>
+  <line x1="50" y1="220" x2="510" y2="220" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="100" y="240" text-anchor="middle" font-size="11" fill="#4a5568" font-weight="bold">ケース</text>
+  <text x="260" y="240" text-anchor="middle" font-size="11" fill="#4a5568" font-weight="bold">説明</text>
+  <text x="450" y="240" text-anchor="middle" font-size="11" fill="#4a5568" font-weight="bold">難易度</text>
+  <line x1="50" y1="248" x2="510" y2="248" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="100" y="268" text-anchor="middle" font-size="11" fill="#4a5568">$\conn = 0$</text>
+  <text x="260" y="268" text-anchor="middle" font-size="11" fill="#4a5568">BCTにより発生しない（空虚）</text>
+  <text x="450" y="268" text-anchor="middle" font-size="11" fill="#38a169">---</text>
+  <text x="100" y="288" text-anchor="middle" font-size="11" fill="#4a5568">$\conn \geq 2$</text>
+  <text x="260" y="288" text-anchor="middle" font-size="11" fill="#4a5568">非連結色のケンペ交換で解決</text>
+  <text x="450" y="288" text-anchor="middle" font-size="11" fill="#38a169">易</text>
+  <text x="100" y="308" text-anchor="middle" font-size="11" fill="#4a5568">$\conn = 1$, 部分</text>
+  <text x="260" y="308" text-anchor="middle" font-size="11" fill="#4a5568">部分交換2回で解決</text>
+  <text x="450" y="308" text-anchor="middle" font-size="11" fill="#d69e2e">中</text>
+  <text x="100" y="328" text-anchor="middle" font-size="11" fill="#e53e3e" font-weight="bold">B4</text>
+  <text x="260" y="328" text-anchor="middle" font-size="11" fill="#4a5568">$\conn = 1$, 全体的。精密な解析が必要</text>
+  <text x="450" y="328" text-anchor="middle" font-size="11" fill="#e53e3e" font-weight="bold">難</text>
+</svg>
+<div class="figure-caption">連結度による場合分けの全体像。B4（$\conn = 1$ かつ全体的連結）が証明の核心。</div>
+</div>
+</div>
+
+<div class="warning">
+<strong>注意：</strong>
+$\conn = 0$ のケースは、一見もっとも簡単に見えますが、
+実は第6章で証明する<strong>境界連結性定理（BCT）</strong>により、
+4色すべてが境界に出現する場合には $\conn = 0$ は<strong>絶対に起こらない</strong>ことが分かります。
+したがって実際に対処すべきは $\conn \geq 1$ のケースだけです。
+</div>
+
+<!-- ===== Takeaway ===== -->
+<div class="takeaway">
+<h3>ポイント</h3>
+<ul>
+<li>四色定理が偽なら<strong>極小反例</strong> $G$（三角形分割）が存在し、$\deg(v) \leq 5$ の頂点を持つ。</li>
+<li>$\deg \leq 4$ は簡単に処理できるので、証明は <strong>$\deg(v) = 5$</strong> に帰着する。</li>
+<li>$G \setminus v$ は<strong>近三角形分割</strong>で、五角形の境界 $v_0, \ldots, v_4$ を持つ。</li>
+<li>極小性より $G \setminus v$ は正則4彩色を持ち、4色すべてが境界に現れる場合が問題。</li>
+<li>鳩の巣原理でちょうど1色 $d$ が2回出現。この2頂点（<strong>境界対</strong> $b_1, b_2$）は5-サイクル上で<strong>非隣接</strong>。</li>
+<li><strong>連結度</strong> $\conn$ = 非$d$色のうち $b_1, b_2$ を繋ぐ色の数。</li>
+<li><strong>B4彩色</strong>（$\conn = 1$ かつ全体的連結）がもっとも困難なケースであり、証明の核心。</li>
+</ul>
+</div>
+
+<div class="nav-footer">
+  <a href="03_kempe_chains.html">&larr; 前へ: ケンペ鎖と交換</a>
+  <a href="index.html">目次</a>
+  <a href="05_cycle_rank.html">次へ: サイクルランク恒等式 &rarr;</a>
+</div>
+
+</body>
+</html>

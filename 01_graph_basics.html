@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第1章: グラフ理論の基礎 — 四色定理の証明</title>
+<link rel="stylesheet" href="style.css">
+<script>
+MathJax = {
+  tex: { inlineMath: [['$','$']], displayMath: [['$$','$$']],
+         macros: { conn: '\\mathrm{conn}', QED: '\\blacksquare' } },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+</head>
+<body>
+
+<div class="nav-header">
+  <span class="nav-disabled">&larr; 前へ</span>
+  <a href="index.html">目次</a>
+  <a href="02_coloring.html">次へ &rarr;</a>
+</div>
+
+<p class="chapter-number">第1章</p>
+<h1>グラフ理論の基礎</h1>
+
+<div class="learning-box">
+<h3>このページで学ぶこと</h3>
+<ul>
+<li>グラフとは何か（頂点と辺）</li>
+<li>隣接・次数の概念</li>
+<li>平面グラフとは何か</li>
+<li>オイラーの公式</li>
+<li>三角形分割（triangulation）</li>
+</ul>
+</div>
+
+<!-- ===== 1.1 グラフとは ===== -->
+<h2>グラフとは</h2>
+
+<div class="thm-box definition">
+<strong>定義（グラフ）.</strong>
+<strong>グラフ</strong> $G = (V, E)$ とは、<strong>頂点</strong>（vertex）の有限集合 $V$ と、
+<strong>辺</strong>（edge）の集合 $E$ の組である。各辺は2つの異なる頂点を結ぶ。
+頂点 $u$ と $v$ を結ぶ辺を $\{u, v\}$ と書く。
+</div>
+
+<div class="explanation">
+<h4>平易な解説</h4>
+<p>グラフとは「点とそれらを結ぶ線」です。たとえば、友人関係を表すなら、
+人を「点」、友人関係を「線」で表します。数学では「点」を頂点、「線」を辺と呼びます。</p>
+<p>重要な約束：</p>
+<ul>
+<li>自分自身を結ぶ辺（ループ）は考えない</li>
+<li>同じ2頂点間に2本以上の辺（多重辺）は考えない</li>
+<li>辺に向きはない（無向グラフ）</li>
+</ul>
+</div>
+
+<div class="example-block">
+<h4>具体例：4頂点の完全グラフ $K_4$</h4>
+<div class="figure">
+<svg width="200" height="180" viewBox="0 0 200 180">
+  <!-- Edges -->
+  <line x1="100" y1="20" x2="30" y2="140" stroke="#4a5568" stroke-width="2"/>
+  <line x1="100" y1="20" x2="170" y2="140" stroke="#4a5568" stroke-width="2"/>
+  <line x1="100" y1="20" x2="100" y2="160" stroke="#4a5568" stroke-width="2"/>
+  <line x1="30" y1="140" x2="170" y2="140" stroke="#4a5568" stroke-width="2"/>
+  <line x1="30" y1="140" x2="100" y2="160" stroke="#4a5568" stroke-width="2"/>
+  <line x1="170" y1="140" x2="100" y2="160" stroke="#4a5568" stroke-width="2"/>
+  <!-- Vertices -->
+  <circle cx="100" cy="20" r="8" fill="#3182ce"/>
+  <circle cx="30" cy="140" r="8" fill="#3182ce"/>
+  <circle cx="170" cy="140" r="8" fill="#3182ce"/>
+  <circle cx="100" cy="160" r="8" fill="#3182ce"/>
+  <!-- Labels -->
+  <text x="100" y="10" text-anchor="middle" font-size="14" fill="#2d3748">$a$</text>
+  <text x="15" y="140" text-anchor="middle" font-size="14" fill="#2d3748">$b$</text>
+  <text x="185" y="140" text-anchor="middle" font-size="14" fill="#2d3748">$c$</text>
+  <text x="115" y="175" text-anchor="middle" font-size="14" fill="#2d3748">$d$</text>
+</svg>
+</div>
+<p>$K_4$ は4つの頂点 $\{a, b, c, d\}$ のすべての組を辺で結んだグラフです。
+$V = \{a, b, c, d\}$、$E = \{\{a,b\}, \{a,c\}, \{a,d\}, \{b,c\}, \{b,d\}, \{c,d\}\}$、
+辺の数は $\binom{4}{2} = 6$ 本です。</p>
+</div>
+
+<!-- ===== 1.2 隣接と次数 ===== -->
+<h2>隣接と次数</h2>
+
+<div class="thm-box definition">
+<strong>定義（隣接・近傍・次数）.</strong>
+辺 $\{u,v\} \in E$ が存在するとき、$u$ と $v$ は<strong>隣接する</strong>（adjacent）という。
+頂点 $v$ に隣接するすべての頂点の集合を $v$ の<strong>近傍</strong>（neighborhood）と呼び、
+$N(v)$ と書く。$v$ に接続する辺の数を $v$ の<strong>次数</strong>（degree）と呼び、
+$\mathrm{deg}(v) = |N(v)|$ と書く。
+</div>
+
+<div class="example-block">
+<h4>具体例</h4>
+<p>上の $K_4$ では、すべての頂点の次数は 3 です。例えば頂点 $a$ の近傍は
+$N(a) = \{b, c, d\}$ で、$\mathrm{deg}(a) = 3$ です。</p>
+
+<p>次のグラフを見てください：</p>
+<div class="figure">
+<svg width="260" height="160" viewBox="0 0 260 160">
+  <!-- Edges -->
+  <line x1="40" y1="80" x2="110" y2="30" stroke="#4a5568" stroke-width="2"/>
+  <line x1="40" y1="80" x2="110" y2="130" stroke="#4a5568" stroke-width="2"/>
+  <line x1="110" y1="30" x2="110" y2="130" stroke="#4a5568" stroke-width="2"/>
+  <line x1="110" y1="30" x2="190" y2="30" stroke="#4a5568" stroke-width="2"/>
+  <line x1="110" y1="130" x2="190" y2="130" stroke="#4a5568" stroke-width="2"/>
+  <line x1="190" y1="30" x2="190" y2="130" stroke="#4a5568" stroke-width="2"/>
+  <line x1="190" y1="30" x2="230" y2="80" stroke="#4a5568" stroke-width="2"/>
+  <line x1="190" y1="130" x2="230" y2="80" stroke="#4a5568" stroke-width="2"/>
+  <!-- Vertices -->
+  <circle cx="40" cy="80" r="8" fill="#3182ce"/>
+  <circle cx="110" cy="30" r="8" fill="#3182ce"/>
+  <circle cx="110" cy="130" r="8" fill="#3182ce"/>
+  <circle cx="190" cy="30" r="8" fill="#3182ce"/>
+  <circle cx="190" cy="130" r="8" fill="#3182ce"/>
+  <circle cx="230" cy="80" r="8" fill="#3182ce"/>
+  <!-- Labels with degree -->
+  <text x="20" y="78" text-anchor="middle" font-size="13" fill="#2d3748">deg 2</text>
+  <text x="110" y="18" text-anchor="middle" font-size="13" fill="#2d3748">deg 3</text>
+  <text x="110" y="148" text-anchor="middle" font-size="13" fill="#2d3748">deg 3</text>
+  <text x="190" y="18" text-anchor="middle" font-size="13" fill="#2d3748">deg 3</text>
+  <text x="190" y="148" text-anchor="middle" font-size="13" fill="#2d3748">deg 3</text>
+  <text x="250" y="78" text-anchor="middle" font-size="13" fill="#2d3748">deg 2</text>
+</svg>
+</div>
+<p>このグラフでは、左端と右端の頂点の次数は 2、中央の4頂点の次数は 3 です。</p>
+</div>
+
+<div class="thm-box">
+<strong>握手の補題.</strong>
+任意のグラフ $G = (V, E)$ において、
+$$\sum_{v \in V} \mathrm{deg}(v) = 2|E|$$
+</div>
+
+<div class="explanation">
+<h4>なぜ成り立つか</h4>
+<p>各辺はちょうど2つの頂点に寄与します。だから次数の合計は辺の数の2倍です。
+これは「参加者全員が握手した回数の合計は、握手の数の2倍」ということです。</p>
+</div>
+
+<!-- ===== 1.3 平面グラフ ===== -->
+<h2>平面グラフ</h2>
+
+<div class="thm-box definition">
+<strong>定義（平面グラフ）.</strong>
+グラフ $G$ が<strong>平面グラフ</strong>（planar graph）であるとは、
+$G$ を平面上に描いたときに辺が交差しないようにできることをいう。
+そのような描き方を $G$ の<strong>平面的埋め込み</strong>と呼ぶ。
+</div>
+
+<div class="example-block">
+<h4>具体例：$K_4$ は平面グラフ</h4>
+<div class="figure">
+<svg width="200" height="180" viewBox="0 0 200 180">
+  <!-- K4 planar embedding -->
+  <line x1="100" y1="20" x2="30" y2="150" stroke="#4a5568" stroke-width="2"/>
+  <line x1="100" y1="20" x2="170" y2="150" stroke="#4a5568" stroke-width="2"/>
+  <line x1="30" y1="150" x2="170" y2="150" stroke="#4a5568" stroke-width="2"/>
+  <!-- inner vertex connected to triangle -->
+  <line x1="100" y1="100" x2="100" y2="20" stroke="#4a5568" stroke-width="2"/>
+  <line x1="100" y1="100" x2="30" y2="150" stroke="#4a5568" stroke-width="2"/>
+  <line x1="100" y1="100" x2="170" y2="150" stroke="#4a5568" stroke-width="2"/>
+  <circle cx="100" cy="20" r="8" fill="#e53e3e"/>
+  <circle cx="30" cy="150" r="8" fill="#38a169"/>
+  <circle cx="170" cy="150" r="8" fill="#d69e2e"/>
+  <circle cx="100" cy="100" r="8" fill="#3182ce"/>
+</svg>
+<div class="figure-caption">$K_4$ の平面的埋め込み。辺の交差がありません。</div>
+</div>
+<p>外側の三角形の中に1つの頂点を置くことで、辺を交差させずに描けます。</p>
+</div>
+
+<div class="example-block">
+<h4>反例：$K_5$ は平面グラフでない</h4>
+<p>5頂点の完全グラフ $K_5$ は、どのように描いても辺が交差します。
+これはクラトフスキーの定理によって証明できます。
+四色定理の証明では、$K_5$ の非平面性が重要な役割を果たします。</p>
+</div>
+
+<!-- ===== 1.4 オイラーの公式 ===== -->
+<h2>オイラーの公式</h2>
+
+<p>平面グラフを平面に埋め込むと、辺によって平面がいくつかの領域に分割されます。
+これらの領域を<strong>面</strong>（face）と呼びます。
+外側の無限に広がる領域も1つの面として数えます。</p>
+
+<div class="thm-box">
+<strong>定理（オイラーの公式）.</strong>
+連結な平面グラフ $G$ を平面に埋め込んだとき、頂点数を $V$、辺数を $E$、
+面数を $F$ とすると、
+$$V - E + F = 2$$
+</div>
+
+<div class="example-block">
+<h4>具体例：$K_4$ で確認</h4>
+<p>上の $K_4$ の埋め込みでは：</p>
+<ul>
+<li>頂点数 $V = 4$</li>
+<li>辺数 $E = 6$</li>
+<li>面数 $F = 4$（内側の3つの三角形 + 外側の面）</li>
+</ul>
+<p>確認：$4 - 6 + 4 = 2$ ✓</p>
+</div>
+
+<div class="explanation">
+<h4>オイラーの公式の帰結</h4>
+<p>オイラーの公式から、平面グラフの辺数に上界が得られます。
+各面が少なくとも3つの辺に囲まれていることを使うと：</p>
+<ul>
+<li>$3F \leq 2E$（各面は3辺以上、各辺は2面に隣接）</li>
+<li>オイラーの公式と合わせて $E \leq 3V - 6$</li>
+</ul>
+<p>たとえば $V = 5$ のとき $E \leq 9$ ですが、$K_5$ は $E = 10$ なので平面グラフではありません。</p>
+</div>
+
+<!-- ===== 1.5 三角形分割 ===== -->
+<h2>三角形分割</h2>
+
+<div class="thm-box definition">
+<strong>定義（三角形分割）.</strong>
+連結な平面グラフの埋め込みにおいて、<strong>すべての面</strong>（外側を含む）が
+ちょうど3つの辺に囲まれているとき、このグラフを<strong>三角形分割</strong>
+（triangulation）または<strong>極大平面グラフ</strong>（maximal planar graph）と呼ぶ。
+</div>
+
+<div class="explanation">
+<h4>なぜ三角形分割が重要か</h4>
+<p>四色定理の証明では、<strong>極小反例</strong>（最小の反例）を考えます。
+もし反例が存在するなら、辺をできるだけ多く持つ反例を選べます（辺を追加しても
+彩色は難しくなるだけなので）。こうして選んだ極小反例は必ず三角形分割になります。</p>
+</div>
+
+<div class="example-block">
+<h4>具体例：三角形分割</h4>
+<div class="figure">
+<svg width="220" height="200" viewBox="0 0 220 200">
+  <!-- Outer triangle -->
+  <polygon points="110,15 15,185 205,185" fill="none" stroke="#4a5568" stroke-width="2"/>
+  <!-- Inner edges forming triangulation -->
+  <line x1="110" y1="15" x2="70" y2="120" stroke="#4a5568" stroke-width="2"/>
+  <line x1="110" y1="15" x2="150" y2="120" stroke="#4a5568" stroke-width="2"/>
+  <line x1="70" y1="120" x2="150" y2="120" stroke="#4a5568" stroke-width="2"/>
+  <line x1="70" y1="120" x2="15" y2="185" stroke="#4a5568" stroke-width="2"/>
+  <line x1="70" y1="120" x2="205" y2="185" stroke="#4a5568" stroke-width="2"/>
+  <line x1="150" y1="120" x2="15" y2="185" stroke="#4a5568" stroke-width="2"/>
+  <line x1="150" y1="120" x2="205" y2="185" stroke="#4a5568" stroke-width="2"/>
+  <!-- Vertices -->
+  <circle cx="110" cy="15" r="7" fill="#3182ce"/>
+  <circle cx="15" cy="185" r="7" fill="#3182ce"/>
+  <circle cx="205" cy="185" r="7" fill="#3182ce"/>
+  <circle cx="70" cy="120" r="7" fill="#3182ce"/>
+  <circle cx="150" cy="120" r="7" fill="#3182ce"/>
+</svg>
+<div class="figure-caption">5頂点の三角形分割。すべての面が三角形です。</div>
+</div>
+<p>三角形分割では $E = 3V - 6$（等号成立）。$V = 5$ なら $E = 9$。</p>
+</div>
+
+<div class="thm-box">
+<strong>命題（三角形分割における次数5以下の頂点）.</strong>
+三角形分割 $G$（$V \geq 4$）には、$\mathrm{deg}(v) \leq 5$ なる頂点 $v$ が必ず存在する。
+</div>
+
+<div class="proof-block">
+<span class="proof-title">証明.</span>
+背理法による。すべての頂点が次数6以上と仮定すると、握手の補題より
+$$2E = \sum_{v} \mathrm{deg}(v) \geq 6V$$
+よって $E \geq 3V$ となるが、$E = 3V - 6$ に矛盾する（$V \geq 4$ では $3V - 6 < 3V$）。
+<span class="proof-end">$\QED$</span>
+</div>
+
+<div class="explanation">
+<h4>この命題が意味すること</h4>
+<p>三角形分割には「次数の小さい頂点」が必ず存在します。
+四色定理の証明では、この次数 $\leq 5$ の頂点を取り除いてグラフを小さくし、
+帰納法を適用します。次数4以下の場合は簡単に処理でき、
+<strong>次数5の場合</strong>が証明の核心です。</p>
+</div>
+
+<div class="takeaway">
+<h3>ポイント</h3>
+<ul>
+<li>グラフは頂点と辺の組。隣接する頂点の数が次数。</li>
+<li>平面グラフは辺が交差しないように描ける。</li>
+<li>オイラーの公式 $V - E + F = 2$ が基本的な制約を与える。</li>
+<li>三角形分割（全面が三角形）は辺を最大限持つ平面グラフ。</li>
+<li>三角形分割には必ず次数 $\leq 5$ の頂点がある &mdash; これが証明の出発点。</li>
+</ul>
+</div>
+
+<div class="nav-footer">
+  <span class="nav-disabled">&larr; 前へ</span>
+  <a href="index.html">目次</a>
+  <a href="02_coloring.html">次へ: グラフ彩色 &rarr;</a>
+</div>
+
+</body>
+</html>

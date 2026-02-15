@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第9章: 積の上界の帰結 — 四色定理の証明</title>
+<link rel="stylesheet" href="style.css">
+<script>
+MathJax = {
+  tex: { inlineMath: [['$','$']], displayMath: [['$$','$$']],
+         macros: { conn: '\\mathrm{conn}', QED: '\\blacksquare' } },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+</head>
+<body>
+
+<div class="nav-header">
+  <a href="08_product_bound.html">&larr; 前へ</a>
+  <a href="index.html">目次</a>
+  <a href="10_b4.html">次へ &rarr;</a>
+</div>
+
+<p class="chapter-number">第9章</p>
+<h1>積の上界の帰結</h1>
+
+<div class="learning-box">
+<h3>このページで学ぶこと</h3>
+<ul>
+<li>定理5：積の上界から導かれる4つの帰結</li>
+<li>サイクルランクの制約</li>
+<li>成分数の和の制約</li>
+<li>各帰結の証明と具体例</li>
+</ul>
+</div>
+
+<div class="prereq-box">
+<strong>前提:</strong> 第5章（相補対恒等式）、第7章（系2: $p_{c,d} \geq 1 + L_{a,b}$）、第8章（積の上界）
+</div>
+
+<!-- ===== 定理5 ===== -->
+<h2>定理5：サイクルランクの帰結</h2>
+
+<div class="thm-box">
+<strong>定理5（サイクルランクの帰結）.</strong>
+積の上界を仮定する。相補対 $\{a,b\}$, $\{c,d\}$ に対し：
+<ol style="font-style:normal;">
+<li><strong>(i)</strong> $L_{a,b} \cdot L_{c,d} = 0$（高々一方のみ閉路を持つ）</li>
+<li><strong>(ii)</strong> $L_{a,b} \leq 1$（サイクルランクは高々1）</li>
+<li><strong>(iii)</strong> $p_{a,b} = 1 \implies L_{c,d} = 0$（一方が連結なら他方は森）</li>
+<li><strong>(iv)</strong> $p_{a,b} + p_{c,d} \leq 3$（成分数の和は高々3）</li>
+</ol>
+</div>
+
+<p>以下、各項目を個別に証明します。積の上界 $p_{a,b} \cdot p_{c,d} \leq 2$
+および系2（$p_{c,d} \geq 1 + L_{a,b}$）を用います。</p>
+
+<!-- ===== (iii) ===== -->
+<h3>帰結 (iii) の証明：$p_{a,b} = 1 \implies L_{c,d} = 0$</h3>
+
+<div class="proof-block">
+<span class="proof-title">証明.</span>
+これは系2そのものです。系2より $p_{a,b} \geq 1 + L_{c,d}$。
+$p_{a,b} = 1$ ならば $1 \geq 1 + L_{c,d}$、すなわち $L_{c,d} \leq 0$。
+$L_{c,d} \geq 0$ と合わせて $L_{c,d} = 0$。
+<span class="proof-end">$\QED$</span>
+</div>
+
+<div class="explanation">
+<h4>意味</h4>
+<p>ケンペ部分グラフ $H_{a,b}$ が連結（1つのかたまり）なら、
+相補の $H_{c,d}$ はすべての成分が木（閉路なし）。
+これは積の上界すら使わず、系2だけで成り立ちます。</p>
+</div>
+
+<!-- ===== (i) ===== -->
+<h3>帰結 (i) の証明：$L_{a,b} \cdot L_{c,d} = 0$</h3>
+
+<div class="proof-block">
+<span class="proof-title">証明.</span>
+$L_{a,b} \geq 1$ と仮定する。系2より $p_{c,d} \geq 1 + L_{a,b} \geq 2$。
+積の上界より $p_{a,b} \cdot p_{c,d} \leq 2$。$p_{c,d} \geq 2$ なので
+$p_{a,b} \leq 2 / p_{c,d} \leq 1$。$p_{a,b} \geq 1$ より $p_{a,b} = 1$。
+帰結 (iii) より $L_{c,d} = 0$。
+
+<p>対称的に $L_{c,d} \geq 1$ を仮定すれば $L_{a,b} = 0$。
+よって両方同時に $\geq 1$ にはなれず、$L_{a,b} \cdot L_{c,d} = 0$。</p>
+<span class="proof-end">$\QED$</span>
+</div>
+
+<div class="explanation">
+<h4>意味</h4>
+<p>相補対の両方が同時に閉路を持つことは<strong>ありえない</strong>。
+「閉路のコスト」はあまりにも大きく、一方が閉路を持つと
+他方はそれを支えるために成分を増やさなければならず、
+積の上界に抵触するのです。</p>
+</div>
+
+<!-- ===== (ii) ===== -->
+<h3>帰結 (ii) の証明：$L_{a,b} \leq 1$</h3>
+
+<div class="proof-block">
+<span class="proof-title">証明.</span>
+帰結 (i) の証明で見たように、$L_{a,b} \geq 1$ ならば $p_{a,b} = 1$ かつ $L_{c,d} = 0$。
+定理2（相補対恒等式）より：
+$$L_{a,b} = L_{a,b} + L_{c,d} = p_{a,b} + p_{c,d} - 1 - m$$
+$p_{a,b} = 1$ を代入すると $L_{a,b} = p_{c,d} - m$。
+
+<p>積の上界より $p_{c,d} \leq 2 / p_{a,b} = 2$。
+$m \geq 1$（境界の構造から）なので：</p>
+$$L_{a,b} = p_{c,d} - m \leq 2 - 1 = 1$$
+<span class="proof-end">$\QED$</span>
+</div>
+
+<div class="explanation">
+<h4>意味</h4>
+<p>どのケンペ部分グラフも、サイクルランクは高々1。
+つまり「多くとも1つの余分な閉路」しか持てません。
+ほとんどの成分は木で、高々1つの成分だけが1つの閉路を持てます。</p>
+</div>
+
+<!-- ===== (iv) ===== -->
+<h3>帰結 (iv) の証明：$p_{a,b} + p_{c,d} \leq 3$</h3>
+
+<div class="proof-block">
+<span class="proof-title">証明.</span>
+$p = p_{a,b}$, $q = p_{c,d}$ とおく。$p, q \geq 1$ かつ $p \cdot q \leq 2$。
+$p + q$ を最大化する。
+<ul>
+<li>$p = 1, q = 2$: $p + q = 3$ ✓</li>
+<li>$p = 2, q = 1$: $p + q = 3$ ✓</li>
+<li>$p = 1, q = 1$: $p + q = 2$ ✓</li>
+</ul>
+これ以外は $p \cdot q > 2$。よって $p + q \leq 3$。
+<span class="proof-end">$\QED$</span>
+</div>
+
+<div class="explanation">
+<h4>意味</h4>
+<p>相補ペアの成分数の和は高々3。
+可能な組み合わせ $(p, q)$ は $(1,1)$, $(1,2)$, $(2,1)$ の3パターンだけです。</p>
+</div>
+
+<!-- ===== まとめ表 ===== -->
+<h2>定理5のまとめ</h2>
+
+<div class="example-block">
+<h4>すべての可能なケース</h4>
+<table>
+<tr><th>$p_{a,b}$</th><th>$p_{c,d}$</th><th>$L_{a,b}$</th><th>$L_{c,d}$</th><th>注記</th></tr>
+<tr><td>1</td><td>1</td><td>0 or 1</td><td>0</td><td>※$L_{a,b}=1$の場合あり</td></tr>
+<tr><td>1</td><td>2</td><td>0 or 1</td><td>0</td><td>※$L_{a,b}=1$の場合あり</td></tr>
+<tr><td>2</td><td>1</td><td>0</td><td>0 or 1</td><td>対称的</td></tr>
+</table>
+<p>実際の制約：$p = 1$ のとき $L \in \{0, 1\}$（相補対恒等式と $p_{c,d} \leq 2$, $m \geq 1$ から）。
+$p = 2$ のとき $L = 0$。</p>
+</div>
+
+<div class="takeaway">
+<h3>ポイント</h3>
+<ul>
+<li>積の上界 $p \cdot q \leq 2$ から、ケンペ部分グラフの構造が極めて強く制約される。</li>
+<li>$L \cdot L' = 0$：相補対の両方が同時に閉路を持つことはない。</li>
+<li>$L \leq 1$：どのケンペ部分グラフもサイクルランクは高々1。</li>
+<li>$p + q \leq 3$：相補対の成分数の和は高々3。</li>
+<li>これらの制約が、次章のB4構造定理の基礎となる。</li>
+</ul>
+</div>
+
+<div class="nav-footer">
+  <a href="08_product_bound.html">&larr; 前へ: 積の上界</a>
+  <a href="index.html">目次</a>
+  <a href="10_b4.html">次へ: B4彩色の構造 &rarr;</a>
+</div>
+
+</body>
+</html>

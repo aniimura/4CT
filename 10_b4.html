@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第10章: B4彩色の構造 — 四色定理の証明</title>
+<link rel="stylesheet" href="style.css">
+<script>
+MathJax = {
+  tex: { inlineMath: [['$','$']], displayMath: [['$$','$$']],
+         macros: { conn: '\\mathrm{conn}', QED: '\\blacksquare' } },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+</head>
+<body>
+
+<div class="nav-header">
+  <a href="09_consequences.html">&larr; 前へ</a>
+  <a href="index.html">目次</a>
+  <a href="11_conservation.html">次へ &rarr;</a>
+</div>
+
+<p class="chapter-number">第10章</p>
+<h1>B4彩色の構造</h1>
+
+<div class="learning-box">
+<h3>このページで学ぶこと</h3>
+<ul>
+<li>B4彩色とは何か（復習と詳細）</li>
+<li>定理6：B4彩色におけるすべての成分数とサイクルランクの決定</li>
+<li>B4がなぜ「最も困難なケース」なのか</li>
+<li>具体例での確認</li>
+</ul>
+</div>
+
+<div class="prereq-box">
+<strong>前提:</strong> 第4章（連結度の定義）、第8〜9章（積の上界とその帰結）
+</div>
+
+<!-- ===== 10.1 B4彩色の復習 ===== -->
+<h2>B4彩色の復習</h2>
+
+<p>第4章で導入した概念を復習します。</p>
+
+<div class="thm-box definition">
+<strong>定義（B4彩色）.</strong>
+近三角形分割 $G \setminus v$ の正則4彩色 $\varphi$ が <strong>B4彩色</strong> であるとは：
+<ol style="font-style:normal;">
+<li>$\conn = 1$（非 $d$ 色のうちちょうど1つが連結色）</li>
+<li>唯一の連結色 $\gamma$ が<strong>全域的</strong>（$p_{d,\gamma} = 1$）</li>
+</ol>
+</div>
+
+<div class="explanation">
+<h4>標準的な設定</h4>
+<p>B4彩色では、一般性を失わず以下のように固定できます：</p>
+<ul>
+<li>$b_1 = v_0$, $b_2 = v_2$：境界対（ともに色 $d$）</li>
+<li>$v_1$：色 $\gamma$（唯一の連結色、$v_0$ と $v_2$ を結ぶ）</li>
+<li>$v_3$：色 $\alpha$（非連結色の一つ）</li>
+<li>$v_4$：色 $\beta$（非連結色のもう一つ）</li>
+</ul>
+
+<div class="figure">
+<svg width="280" height="260" viewBox="0 0 280 260">
+  <!-- Pentagon -->
+  <polygon points="140,20 260,100 220,230 60,230 20,100"
+           fill="none" stroke="#a0aec0" stroke-width="1.5" stroke-dasharray="5,5"/>
+  <!-- Edges of the 5-cycle -->
+  <line x1="140" y1="20" x2="260" y2="100" stroke="#4a5568" stroke-width="2"/>
+  <line x1="260" y1="100" x2="220" y2="230" stroke="#4a5568" stroke-width="2"/>
+  <line x1="220" y1="230" x2="60" y2="230" stroke="#4a5568" stroke-width="2"/>
+  <line x1="60" y1="230" x2="20" y2="100" stroke="#4a5568" stroke-width="2"/>
+  <line x1="20" y1="100" x2="140" y2="20" stroke="#4a5568" stroke-width="2"/>
+  <!-- Connecting chain v0-v1-v2 (schematic, through interior) -->
+  <path d="M 20,100 C 80,60 200,60 260,100" stroke="#805ad5" stroke-width="2.5"
+        fill="none" stroke-dasharray="8,4"/>
+  <text x="140" y="55" text-anchor="middle" font-size="11" fill="#805ad5">$H_{d,\gamma}$ で連結</text>
+  <!-- Vertices -->
+  <circle cx="140" cy="20" r="16" fill="#3182ce"/>
+  <circle cx="260" cy="100" r="16" fill="#e53e3e"/>
+  <circle cx="220" cy="230" r="16" fill="#38a169"/>
+  <circle cx="60" cy="230" r="16" fill="#d69e2e"/>
+  <circle cx="20" cy="100" r="16" fill="#e53e3e"/>
+  <!-- Labels -->
+  <text x="140" y="26" text-anchor="middle" font-size="13" fill="white" font-weight="bold">$\gamma$</text>
+  <text x="260" y="106" text-anchor="middle" font-size="13" fill="white" font-weight="bold">$d$</text>
+  <text x="220" y="236" text-anchor="middle" font-size="13" fill="white" font-weight="bold">$\alpha$</text>
+  <text x="60" y="236" text-anchor="middle" font-size="13" fill="white" font-weight="bold">$\beta$</text>
+  <text x="20" y="106" text-anchor="middle" font-size="13" fill="white" font-weight="bold">$d$</text>
+  <!-- Vertex labels -->
+  <text x="147" y="8" font-size="11" fill="#4a5568">$v_1$</text>
+  <text x="275" y="95" font-size="11" fill="#4a5568">$v_2$</text>
+  <text x="237" y="237" font-size="11" fill="#4a5568">$v_3$</text>
+  <text x="40" y="245" font-size="11" fill="#4a5568">$v_4$</text>
+  <text x="3" y="90" font-size="11" fill="#4a5568">$v_0$</text>
+</svg>
+<div class="figure-caption">B4彩色の構造。$v_0$ と $v_2$ は色 $d$ で、$\gamma$ 経由で $H_{d,\gamma}$ 内で連結。</div>
+</div>
+</div>
+
+<!-- ===== 10.2 定理6 ===== -->
+<h2>定理6：B4構造定理</h2>
+
+<div class="thm-box">
+<strong>定理6（B4構造定理）.</strong>
+B4彩色において、境界 $v_0 = d, v_1 = \gamma, v_2 = d, v_3 = \alpha, v_4 = \beta$
+のもとで：
+$$p_{d,\gamma} = 1, \quad p_{d,\alpha} = 2, \quad p_{d,\beta} = 2$$
+$$p_{\alpha,\gamma} = 1, \quad p_{\gamma,\beta} = 1$$
+$$L_{d,\alpha} = L_{d,\beta} = L_{\alpha,\beta} = 0$$
+</div>
+
+<div class="explanation">
+<h4>定理の意味</h4>
+<p>B4彩色では、6つのケンペ部分グラフの成分数がほぼ完全に決まります。
+これは「最も困難なケースの構造は実は高度に規則的」ということを示しています。</p>
+<table>
+<tr><th>ペア</th><th>$p$</th><th>$L$</th><th>解釈</th></tr>
+<tr><td>$\{d,\gamma\}$</td><td>1</td><td>—</td><td>連結（B4の定義そのもの）</td></tr>
+<tr><td>$\{d,\alpha\}$</td><td>2</td><td>0</td><td>ちょうど2成分、すべて木</td></tr>
+<tr><td>$\{d,\beta\}$</td><td>2</td><td>0</td><td>ちょうど2成分、すべて木</td></tr>
+<tr><td>$\{\gamma,\beta\}$</td><td>1</td><td>0</td><td>連結、相補のため森</td></tr>
+<tr><td>$\{\alpha,\gamma\}$</td><td>1</td><td>0</td><td>連結、相補のため森</td></tr>
+<tr><td>$\{\alpha,\beta\}$</td><td>—</td><td>0</td><td>森</td></tr>
+</table>
+</div>
+
+<h3>証明</h3>
+
+<div class="proof-block">
+<span class="proof-title">証明.</span>
+
+<div class="step">
+<span class="step-number">ステップ1：$p_{d,\gamma} = 1$.</span>
+B4の定義より、$\gamma$ は全域的連結色なので $p_{d,\gamma} = 1$。
+</div>
+
+<div class="step">
+<span class="step-number">ステップ2：$p_{d,\alpha} = 2$, $p_{\gamma,\beta} = 1$.</span>
+$\alpha$ は非連結色なので、$b_1$ と $b_2$ は $H_{d,\alpha}$ の異なる成分にある。
+よって $p_{d,\alpha} \geq 2$。
+
+<p>$\{d,\alpha\}$ と $\{\gamma,\beta\}$ は相補対。積の上界より：</p>
+$$p_{d,\alpha} \cdot p_{\gamma,\beta} \leq 2$$
+<p>$p_{d,\alpha} \geq 2$ なので $p_{\gamma,\beta} \leq 1$。$p \geq 1$ より $p_{\gamma,\beta} = 1$。
+すると $p_{d,\alpha} \leq 2$。合わせて $p_{d,\alpha} = 2$。</p>
+</div>
+
+<div class="step">
+<span class="step-number">ステップ3：$p_{d,\beta} = 2$, $p_{\alpha,\gamma} = 1$.</span>
+$\beta$ も非連結色なので $p_{d,\beta} \geq 2$。
+$\{d,\beta\}$ と $\{\alpha,\gamma\}$ は相補対。積の上界より：
+$$p_{d,\beta} \cdot p_{\alpha,\gamma} \leq 2$$
+同様の議論で $p_{\alpha,\gamma} = 1$, $p_{d,\beta} = 2$。
+</div>
+
+<div class="step">
+<span class="step-number">ステップ4：サイクルランク.</span>
+定理5 (iii) を適用：
+<ul>
+<li>$p_{\gamma,\beta} = 1 \implies L_{d,\alpha} = 0$</li>
+<li>$p_{\alpha,\gamma} = 1 \implies L_{d,\beta} = 0$</li>
+<li>$p_{d,\gamma} = 1 \implies L_{\alpha,\beta} = 0$</li>
+</ul>
+</div>
+<span class="proof-end">$\QED$</span>
+</div>
+
+<!-- ===== 10.3 なぜB4が困難か ===== -->
+<h2>なぜB4が最も困難なケースか</h2>
+
+<div class="explanation">
+<h4>ケンペの失敗</h4>
+<p>1879年のケンペは B4 ケースで致命的な誤りを犯しました。
+ケンペは $\{d,\alpha\}$ と $\{d,\beta\}$ の<strong>2つの交換を同時に</strong>行おうとしました。
+しかし1つ目の交換が2つ目のケンペ鎖の構造を壊してしまう可能性があり、
+ヒーウッドが1890年にこの誤りを指摘しました。</p>
+<p>本証明では<strong>一度に1回だけ</strong>交換を行い、
+交換後の状態を代数的に追跡します。</p>
+</div>
+
+<p>B4の困難さは具体的に以下の点にあります：</p>
+<ul>
+<li>$\gamma$ は全域的（$p_{d,\gamma} = 1$）なので $\{d,\gamma\}$-交換は境界全体に影響する</li>
+<li>$\alpha$, $\beta$ は非連結だが、$\{d,\alpha\}$-交換が $\gamma$ と $\beta$ の構造を変えうる</li>
+<li>交換後に再び B4 になると、無限ループの危険がある</li>
+</ul>
+
+<p>次章以降で、保存則と B4非再帰定理がこの問題をどう解決するかを見ます。</p>
+
+<div class="example-block">
+<h4>$p_{d,\alpha} = 2$ の意味</h4>
+<p>$H_{d,\alpha}$ がちょうど2つの成分に分かれるということは、
+$b_1$ を含む成分と $b_2$ を含む成分が別々に存在するということです。
+ケースCで行う「非連結 $\{d,\alpha\}$-交換」とは、
+$b_1$ を含む成分だけを交換する（$b_2$ の成分には触れない）操作です。</p>
+<div class="figure">
+<svg width="300" height="150" viewBox="0 0 300 150">
+  <!-- Component 1 -->
+  <ellipse cx="80" cy="75" rx="70" ry="55" fill="#fee2e2" stroke="#e53e3e" stroke-width="1.5"/>
+  <text x="80" y="25" text-anchor="middle" font-size="12" fill="#c53030">成分1（$b_1$ を含む）</text>
+  <circle cx="40" cy="70" r="10" fill="#e53e3e"/><text x="40" y="75" text-anchor="middle" font-size="10" fill="white">$d$</text>
+  <circle cx="80" cy="55" r="10" fill="#38a169"/><text x="80" y="60" text-anchor="middle" font-size="10" fill="white">$\alpha$</text>
+  <circle cx="70" cy="95" r="10" fill="#e53e3e"/><text x="70" y="100" text-anchor="middle" font-size="10" fill="white">$d$</text>
+  <circle cx="115" cy="80" r="10" fill="#38a169"/><text x="115" y="85" text-anchor="middle" font-size="10" fill="white">$\alpha$</text>
+  <line x1="50" y1="68" x2="70" y2="58" stroke="#4a5568" stroke-width="1.5"/>
+  <line x1="80" y1="65" x2="74" y2="86" stroke="#4a5568" stroke-width="1.5"/>
+  <line x1="80" y1="92" x2="105" y2="82" stroke="#4a5568" stroke-width="1.5"/>
+  <text x="25" y="72" font-size="10" fill="#c53030">$b_1$</text>
+  <!-- Component 2 -->
+  <ellipse cx="230" cy="75" rx="55" ry="45" fill="#fee2e2" stroke="#e53e3e" stroke-width="1.5"/>
+  <text x="230" y="30" text-anchor="middle" font-size="12" fill="#c53030">成分2（$b_2$ を含む）</text>
+  <circle cx="210" cy="70" r="10" fill="#e53e3e"/><text x="210" y="75" text-anchor="middle" font-size="10" fill="white">$d$</text>
+  <circle cx="250" cy="80" r="10" fill="#38a169"/><text x="250" y="85" text-anchor="middle" font-size="10" fill="white">$\alpha$</text>
+  <line x1="220" y1="72" x2="240" y2="78" stroke="#4a5568" stroke-width="1.5"/>
+  <text x="195" y="68" font-size="10" fill="#c53030">$b_2$</text>
+</svg>
+<div class="figure-caption">$H_{d,\alpha}$ の2成分。非連結交換では成分1のみを交換する。</div>
+</div>
+</div>
+
+<div class="takeaway">
+<h3>ポイント</h3>
+<ul>
+<li><strong>定理6</strong>：B4彩色の構造は積の上界によって完全に決定される。</li>
+<li>非連結色 $\alpha$, $\beta$ はそれぞれ $p = 2$（ちょうど2成分）。</li>
+<li>相補の成分は連結（$p = 1$）で森（$L = 0$）。</li>
+<li>B4はケンペが失敗したケース。本証明は1回ずつ交換して代数的に追跡する。</li>
+<li>$p_{d,\alpha} = 2$ であることが「非連結交換」を可能にする。</li>
+</ul>
+</div>
+
+<div class="nav-footer">
+  <a href="09_consequences.html">&larr; 前へ: 積の上界の帰結</a>
+  <a href="index.html">目次</a>
+  <a href="11_conservation.html">次へ: 保存則 &rarr;</a>
+</div>
+
+</body>
+</html>

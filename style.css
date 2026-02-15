@@ -1,0 +1,321 @@
+/* ===== Four Color Theorem Education Site - Shared CSS ===== */
+
+/* --- Reset & Base --- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 30px 25px 60px;
+  font-family: "Noto Serif JP", "游明朝", "YuMincho", "CMU Serif",
+               "Times New Roman", Georgia, serif;
+  font-size: 11.5pt;
+  line-height: 1.85;
+  color: #1a1a1a;
+  background: #fdfdfd;
+}
+
+/* --- Typography --- */
+h1 {
+  font-size: 1.6em;
+  text-align: center;
+  margin: 0.5em 0 0.3em;
+  font-weight: bold;
+  color: #222;
+}
+
+h2 {
+  font-size: 1.25em;
+  margin-top: 2.2em;
+  margin-bottom: 0.7em;
+  padding-bottom: 0.3em;
+  border-bottom: 2px solid #2c5282;
+  color: #2c5282;
+}
+
+h3 {
+  font-size: 1.08em;
+  margin-top: 1.8em;
+  margin-bottom: 0.5em;
+  color: #2d3748;
+}
+
+p { margin: 0.7em 0; text-align: justify; }
+ul, ol { margin: 0.7em 0 0.7em 1.5em; }
+li { margin: 0.3em 0; }
+
+a { color: #2b6cb0; text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* --- Navigation --- */
+.nav-header, .nav-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 0.92em;
+  color: #4a5568;
+}
+.nav-footer {
+  border-bottom: none;
+  border-top: 1px solid #e2e8f0;
+  margin-top: 3em;
+  padding-top: 15px;
+}
+.nav-header a, .nav-footer a {
+  padding: 4px 10px;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+.nav-header a:hover, .nav-footer a:hover {
+  background: #ebf4ff;
+  text-decoration: none;
+}
+.nav-disabled { color: #cbd5e0; }
+.chapter-number {
+  font-size: 0.85em;
+  color: #718096;
+  text-align: center;
+  margin-top: 1.5em;
+  margin-bottom: 0;
+}
+
+/* --- Learning Objectives Box --- */
+.learning-box {
+  margin: 1.5em 0;
+  padding: 1em 1.2em;
+  background: #ebf8ff;
+  border-left: 4px solid #3182ce;
+  border-radius: 0 6px 6px 0;
+}
+.learning-box h3 {
+  margin-top: 0;
+  color: #2b6cb0;
+  font-size: 1em;
+  border: none;
+}
+.learning-box ul { margin: 0.3em 0 0 1.2em; }
+
+/* --- Prerequisite Box --- */
+.prereq-box {
+  margin: 0.8em 0 1.5em;
+  padding: 0.7em 1em;
+  background: #fefcbf;
+  border-left: 4px solid #d69e2e;
+  border-radius: 0 6px 6px 0;
+  font-size: 0.93em;
+}
+.prereq-box strong { color: #975a16; }
+
+/* --- Theorem / Definition / Lemma Boxes --- */
+.thm-box {
+  margin: 1.5em 0;
+  padding: 0.8em 1.2em;
+  background: #f7fafc;
+  border: 1px solid #bee3f8;
+  border-left: 4px solid #3182ce;
+  border-radius: 0 6px 6px 0;
+  font-style: italic;
+}
+.thm-box > strong { font-style: normal; color: #2c5282; }
+.thm-box.definition {
+  font-style: normal;
+  border-left-color: #38a169;
+  border-color: #c6f6d5;
+  background: #f0fff4;
+}
+.thm-box.definition > strong { color: #276749; }
+.thm-box.lemma {
+  border-left-color: #805ad5;
+  border-color: #e9d8fd;
+  background: #faf5ff;
+}
+.thm-box.lemma > strong { color: #553c9a; }
+.thm-box.corollary {
+  border-left-color: #dd6b20;
+  border-color: #feebc8;
+  background: #fffaf0;
+}
+.thm-box.corollary > strong { color: #c05621; }
+.thm-box.comp {
+  border: 1px dashed #a0aec0;
+  border-left: 4px solid #e53e3e;
+  background: #fff5f5;
+}
+.thm-box.comp > strong { color: #c53030; }
+
+/* --- Proof Block --- */
+.proof-block {
+  margin: 0.8em 0 1.5em;
+  padding: 0.5em 0;
+}
+.proof-block > .proof-title {
+  font-style: italic;
+  font-weight: bold;
+  color: #4a5568;
+}
+.proof-end { float: right; color: #2c5282; }
+
+/* --- Explanation Block (plain language) --- */
+.explanation {
+  margin: 1.2em 0;
+  padding: 1em 1.2em;
+  background: #fffff0;
+  border: 1px solid #ecc94b;
+  border-radius: 6px;
+  font-size: 0.97em;
+}
+.explanation h4 {
+  margin: 0 0 0.5em;
+  color: #975a16;
+  font-size: 1em;
+}
+
+/* --- Example Block --- */
+.example-block {
+  margin: 1.5em 0;
+  padding: 1em 1.2em;
+  background: #f0fff4;
+  border: 1px solid #9ae6b4;
+  border-radius: 6px;
+}
+.example-block h4 {
+  margin: 0 0 0.5em;
+  color: #276749;
+  font-size: 1em;
+}
+
+/* --- Key Takeaway Box --- */
+.takeaway {
+  margin: 2em 0 1em;
+  padding: 1em 1.2em;
+  background: #ebf4ff;
+  border: 2px solid #3182ce;
+  border-radius: 6px;
+}
+.takeaway h3 {
+  margin-top: 0;
+  color: #2b6cb0;
+  font-size: 1.05em;
+  border: none;
+}
+
+/* --- Math Display --- */
+.math-block {
+  margin: 1em 0;
+  text-align: center;
+  overflow-x: auto;
+}
+
+/* --- SVG Figures --- */
+.figure {
+  margin: 1.5em 0;
+  text-align: center;
+}
+.figure svg {
+  max-width: 100%;
+  height: auto;
+}
+.figure-caption {
+  font-size: 0.9em;
+  color: #4a5568;
+  margin-top: 0.5em;
+}
+
+/* --- Table --- */
+table {
+  border-collapse: collapse;
+  margin: 1em auto;
+  font-size: 0.95em;
+}
+th, td {
+  border: 1px solid #a0aec0;
+  padding: 6px 14px;
+  text-align: center;
+}
+th {
+  background: #edf2f7;
+  font-weight: bold;
+  color: #2d3748;
+}
+
+/* --- Step-by-step --- */
+.step {
+  margin: 1em 0;
+  padding: 0.8em 1em;
+  border-left: 3px solid #a0aec0;
+  background: #f7fafc;
+}
+.step-number {
+  font-weight: bold;
+  color: #2c5282;
+}
+
+/* --- Warning / Note --- */
+.warning {
+  margin: 1em 0;
+  padding: 0.7em 1em;
+  background: #fff5f5;
+  border-left: 4px solid #e53e3e;
+  border-radius: 0 4px 4px 0;
+  font-size: 0.95em;
+}
+
+/* --- Roadmap (index page) --- */
+.roadmap {
+  margin: 1.5em 0;
+}
+.roadmap-item {
+  display: flex;
+  align-items: flex-start;
+  margin: 0.6em 0;
+  padding: 0.6em 0.8em;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+.roadmap-item:hover { background: #f7fafc; }
+.roadmap-number {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  line-height: 36px;
+  text-align: center;
+  border-radius: 50%;
+  background: #3182ce;
+  color: white;
+  font-weight: bold;
+  font-size: 0.85em;
+  margin-right: 12px;
+}
+.roadmap-number.part2 { background: #805ad5; }
+.roadmap-number.part3 { background: #e53e3e; }
+.roadmap-number.part4 { background: #38a169; }
+.roadmap-content { flex: 1; }
+.roadmap-content a { font-weight: bold; }
+.roadmap-content .desc {
+  font-size: 0.9em;
+  color: #718096;
+  margin-top: 0.1em;
+}
+
+/* --- Part Headers (index) --- */
+.part-header {
+  margin-top: 2em;
+  margin-bottom: 0.5em;
+  padding: 0.4em 0.8em;
+  font-size: 1.05em;
+  font-weight: bold;
+  border-radius: 4px;
+}
+.part-header.part1 { background: #ebf8ff; color: #2b6cb0; }
+.part-header.part2 { background: #faf5ff; color: #553c9a; }
+.part-header.part3 { background: #fff5f5; color: #c53030; }
+.part-header.part4 { background: #f0fff4; color: #276749; }
+
+/* --- Print --- */
+@media print {
+  body { font-size: 10.5pt; margin: 0; padding: 0 1cm; }
+  .nav-header, .nav-footer { display: none; }
+  .thm-box, .explanation, .example-block, .takeaway { break-inside: avoid; }
+}

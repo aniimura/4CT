@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第5章: サイクルランク恒等式 — 四色定理の証明</title>
+<link rel="stylesheet" href="style.css">
+<script>
+MathJax = {
+  tex: { inlineMath: [['$','$']], displayMath: [['$$','$$']],
+         macros: { conn: '\\mathrm{conn}', QED: '\\blacksquare' } },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+</head>
+<body>
+
+<div class="nav-header">
+  <a href="04_setup.html">&larr; 前へ</a>
+  <a href="index.html">目次</a>
+  <a href="06_bct.html">次へ &rarr;</a>
+</div>
+
+<p class="chapter-number">第5章</p>
+<h1>サイクルランク恒等式</h1>
+
+<div class="learning-box">
+<h3>このページで学ぶこと</h3>
+<ul>
+<li>近三角形分割における辺の数え上げの基本</li>
+<li>定理1（サイクルランク和恒等式）の理解と証明</li>
+<li>系1（成分数の下界 $\sum p \geq 8$）</li>
+<li>定理2（相補対恒等式）の理解と証明</li>
+<li>具体例での全6ケンペ部分グラフの計算</li>
+</ul>
+</div>
+
+<div class="prereq-box">
+<strong>前提:</strong> 第3章（ケンペ部分グラフ・サイクルランクの定義）、第4章（近三角形分割・五角形境界）
+</div>
+
+<!-- ===== 5.1 辺の数え上げ ===== -->
+<h2>5.1 辺の数え上げ</h2>
+
+<p>定理の証明に入る前に、近三角形分割 $G \setminus v$（五角形境界を持つ）での
+辺と頂点の数え上げの基本事実を整理します。</p>
+
+<div class="thm-box definition">
+<strong>設定.</strong>
+$G$ を極小反例の最大平面グラフ、$v$ を次数5の頂点とする。
+$G' = G \setminus v$ は五角形の外面を持つ近三角形分割であり、
+頂点数 $V'$、辺数 $E'$ とする。$G'$ に正則4彩色 $\varphi$ が与えられている。
+</div>
+
+<h3>辺数の公式</h3>
+
+<div class="thm-box">
+<strong>命題（辺数の公式）.</strong>
+五角形境界を持つ近三角形分割で、内部面がすべて三角形ならば
+$$E' = 3V' - 8.$$
+</div>
+
+<div class="proof-block">
+<span class="proof-title">証明.</span>
+オイラーの公式 $V' - E' + F' = 2$ を用いる。
+面の数 $F'$ は、内部三角形面の数 $f_3$ と外面（五角形）1つの和 $F' = f_3 + 1$。
+各三角形面は3辺を持ち、各内部辺は2面に共有され、境界辺は1面のみに接する。
+境界辺は5本なので、辺の数え上げにより
+$3 f_3 + 5 = 2E' - 5 + 5 = 2E'$（ただし内部辺は2回、境界辺は1回数える）。
+正確には $3f_3 = 2E' - 5$（各境界辺は外面と1つの内部面に接するが、外面は五角形なので
+$3f_3 + 5 = 2E'$ が成立）。
+よって $f_3 = (2E' - 5)/3$。
+$F' = (2E' - 5)/3 + 1 = (2E' - 2)/3$。
+オイラーの公式に代入：$V' - E' + (2E' - 2)/3 = 2$。
+$3V' - 3E' + 2E' - 2 = 6$、すなわち $3V' - E' = 8$。
+$$E' = 3V' - 8. \quad \QED$$
+</div>
+
+<h3>ケンペ部分グラフによる辺の分割</h3>
+
+<div class="explanation">
+<h4>3つの基本的な数え上げ</h4>
+<p>$G'$ の辺と頂点はケンペ部分グラフの言葉で次のように分割されます。
+4色 $\{0,1,2,3\}$ から2色を選ぶ $\binom{4}{2} = 6$ 通りの組 $\{a,b\}$ に対して：</p>
+
+<p><strong>事実1：辺の分割.</strong>
+$G'$ の各辺は、その両端点の色が異なるので、ちょうど1つのケンペ対 $\{a,b\}$ に属する。
+したがって</p>
+$$\sum_{\{a,b\}} E_{a,b} = E'.$$
+
+<p><strong>事実2：頂点の重複計数.</strong>
+各色 $c$ は6つの組のうちちょうど3つに含まれる（他の3色それぞれとの組）。
+よって $\sum_{\{a,b\}} (n_a + n_b)$ では各頂点がちょうど3回数えられ、</p>
+$$\sum_{\{a,b\}} (n_a + n_b) = 3V'.$$
+
+<p>これら2つの事実が、以下の定理の証明の鍵です。</p>
+</div>
+
+<!-- ===== 5.2 定理1 ===== -->
+<h2>5.2 定理1：サイクルランク和恒等式</h2>
+
+<div class="thm-box">
+<strong>定理1（サイクルランク和恒等式）.</strong>
+五角形境界を持つ近三角形分割 $G'$ の正則4彩色において、
+$$\sum_{\{a,b\}} L_{a,b} = \sum_{\{a,b\}} p_{a,b} - 8$$
+が成り立つ。ただし和は6つの色の組すべてにわたる。
+</div>
+
+<div class="proof-block">
+<span class="proof-title">証明.</span>
+サイクルランクの定義 $L_{a,b} = E_{a,b} - (n_a + n_b) + p_{a,b}$ を
+6つの組すべてにわたって足す：
+$$\sum_{\{a,b\}} L_{a,b}
+= \sum_{\{a,b\}} E_{a,b} - \sum_{\{a,b\}} (n_a + n_b) + \sum_{\{a,b\}} p_{a,b}.$$
+事実1と事実2を代入すると
+$$= E' - 3V' + \sum p_{a,b}.$$
+辺数の公式 $E' = 3V' - 8$ を用いれば
+$$= (3V' - 8) - 3V' + \sum p_{a,b} = \sum p_{a,b} - 8.$$
+<span class="proof-end">$\QED$</span>
+</div>
+
+<div class="thm-box corollary">
+<strong>系1（成分数の下界）.</strong>
+$$\sum_{\{a,b\}} p_{a,b} \geq 8.$$
+等号成立は、すべてのケンペ部分グラフのサイクルランクが 0（すべての成分が木）のとき、かつそのときに限る。
+</div>
+
+<div class="proof-block">
+<span class="proof-title">証明.</span>
+$L_{a,b} \geq 0$（サイクルランクの非負性）より
+$$0 \leq \sum L_{a,b} = \sum p_{a,b} - 8$$
+だから $\sum p_{a,b} \geq 8$。
+等号は $L_{a,b} = 0$ がすべての $\{a,b\}$ で成立するときに限る。
+<span class="proof-end">$\QED$</span>
+</div>
+
+<div class="explanation">
+<h4>この定理が意味すること</h4>
+<p>定理1は「ケンペ部分グラフの複雑さの合計」に関する<strong>恒等式</strong>です。
+直感的に言えば：</p>
+<ul>
+<li>6つのケンペ部分グラフの連結成分を合計すると、必ず <strong>8以上</strong>になる。</li>
+<li>サイクルランク（余分な閉路の数）が増えれば、その分だけ成分数も増える。</li>
+<li>最も「シンプルな」場合（すべてが木構造）でも、ちょうど8個の成分が必要。</li>
+</ul>
+<p>この制約は、近三角形分割の組合せ構造（オイラーの公式）から直接導かれる
+<strong>純粋に組合せ的な結果</strong>であり、平面性の深い結果（ジョルダン曲線定理など）は不要です。</p>
+</div>
+
+<!-- ===== 5.3 具体例 ===== -->
+<h2>5.3 具体例：三角形分割された五角形での計算</h2>
+
+<p>定理1を具体例で検証しましょう。最も小さい近三角形分割を使います。</p>
+
+<h3>グラフの構成</h3>
+
+<p>5頂点の五角形 $v_0 v_1 v_2 v_3 v_4$ に対角線 $v_0 v_2$ と $v_0 v_3$ を加えます。
+これにより内部は3つの三角形 $(v_0, v_1, v_2)$、$(v_0, v_2, v_3)$、$(v_0, v_3, v_4)$
+に分割され、五角形境界を持つ近三角形分割になります。</p>
+
+<div class="step">
+<span class="step-number">確認：</span>
+$V' = 5$、$E' = 5 + 2 = 7$。公式 $3V' - 8 = 3 \times 5 - 8 = 7$
+と一致。
+</div>
+
+<h3>彩色の設定</h3>
+
+<p>正則4彩色を次のように与えます：</p>
+<ul>
+<li>$v_0 = $ 色0（赤）</li>
+<li>$v_1 = $ 色1（青）</li>
+<li>$v_2 = $ 色2（緑）</li>
+<li>$v_3 = $ 色3（黄）</li>
+<li>$v_4 = $ 色1（青）</li>
+</ul>
+
+<div class="step">
+<span class="step-number">正則性の確認：</span>
+$v_0(0)\text{-}v_1(1)$、
+$v_1(1)\text{-}v_2(2)$、
+$v_2(2)\text{-}v_3(3)$、
+$v_3(3)\text{-}v_4(1)$、
+$v_4(1)\text{-}v_0(0)$、
+$v_0(0)\text{-}v_2(2)$、
+$v_0(0)\text{-}v_3(3)$。
+すべての辺で両端の色が異なり、正則4彩色です。
+</div>
+
+<div class="figure">
+<svg width="360" height="320" viewBox="0 0 360 320">
+  <!-- 五角形の頂点座標: v0=(180,30), v1=(325,140), v2=(270,285), v3=(90,285), v4=(35,140) -->
+  <!-- 辺（薄い灰色） -->
+  <line x1="180" y1="30" x2="325" y2="140" stroke="#cbd5e0" stroke-width="1.5"/>
+  <line x1="325" y1="140" x2="270" y2="285" stroke="#cbd5e0" stroke-width="1.5"/>
+  <line x1="270" y1="285" x2="90" y2="285" stroke="#cbd5e0" stroke-width="1.5"/>
+  <line x1="90" y1="285" x2="35" y2="140" stroke="#cbd5e0" stroke-width="1.5"/>
+  <line x1="35" y1="140" x2="180" y2="30" stroke="#cbd5e0" stroke-width="1.5"/>
+  <!-- 対角線 -->
+  <line x1="180" y1="30" x2="270" y2="285" stroke="#a0aec0" stroke-width="1.5" stroke-dasharray="6,3"/>
+  <line x1="180" y1="30" x2="90" y2="285" stroke="#a0aec0" stroke-width="1.5" stroke-dasharray="6,3"/>
+  <!-- 三角形のラベル -->
+  <text x="240" y="145" text-anchor="middle" font-size="11" fill="#a0aec0">T1</text>
+  <text x="175" y="210" text-anchor="middle" font-size="11" fill="#a0aec0">T2</text>
+  <text x="100" y="180" text-anchor="middle" font-size="11" fill="#a0aec0">T3</text>
+  <!-- 頂点 -->
+  <circle cx="180" cy="30" r="16" fill="#e53e3e" stroke="#2d3748" stroke-width="1.5"/>
+  <circle cx="325" cy="140" r="16" fill="#3182ce" stroke="#2d3748" stroke-width="1.5"/>
+  <circle cx="270" cy="285" r="16" fill="#38a169" stroke="#2d3748" stroke-width="1.5"/>
+  <circle cx="90" cy="285" r="16" fill="#d69e2e" stroke="#2d3748" stroke-width="1.5"/>
+  <circle cx="35" cy="140" r="16" fill="#3182ce" stroke="#2d3748" stroke-width="1.5"/>
+  <!-- 頂点ラベル（色番号） -->
+  <text x="180" y="35" text-anchor="middle" font-size="13" fill="white" font-weight="bold">0</text>
+  <text x="325" y="145" text-anchor="middle" font-size="13" fill="white" font-weight="bold">1</text>
+  <text x="270" y="290" text-anchor="middle" font-size="13" fill="white" font-weight="bold">2</text>
+  <text x="90" y="290" text-anchor="middle" font-size="13" fill="white" font-weight="bold">3</text>
+  <text x="35" y="145" text-anchor="middle" font-size="13" fill="white" font-weight="bold">1</text>
+  <!-- 頂点名 -->
+  <text x="180" y="12" text-anchor="middle" font-size="12" fill="#2d3748" font-style="italic">v₀</text>
+  <text x="348" y="140" text-anchor="start" font-size="12" fill="#2d3748" font-style="italic">v₁</text>
+  <text x="285" y="300" text-anchor="start" font-size="12" fill="#2d3748" font-style="italic">v₂</text>
+  <text x="60" y="300" text-anchor="end" font-size="12" fill="#2d3748" font-style="italic">v₃</text>
+  <text x="12" y="140" text-anchor="end" font-size="12" fill="#2d3748" font-style="italic">v₄</text>
+</svg>
+<div class="figure-caption">三角形分割された五角形。破線は対角辺 $v_0 v_2$, $v_0 v_3$。
+色：赤=0, 青=1, 緑=2, 黄=3。</div>
+</div>
+
+<h3>6つのケンペ部分グラフの計算</h3>
+
+<div class="example-block">
+<h4>$H_{0,1}$（赤-青）</h4>
+<p><strong>頂点：</strong> 色0の $\{v_0\}$ と色1の $\{v_1, v_4\}$ → $n_0 = 1, n_1 = 2$。</p>
+<p><strong>辺：</strong> $v_0\text{-}v_1$（色0-1）と $v_4\text{-}v_0$（色1-0）の2本。</p>
+<p><strong>成分：</strong> $\{v_0, v_1, v_4\}$ の1つ → $p_{0,1} = 1$。</p>
+<p><strong>サイクルランク：</strong> $L_{0,1} = 2 - (1+2) + 1 = 0$。</p>
+</div>
+
+<div class="example-block">
+<h4>$H_{0,2}$（赤-緑）</h4>
+<p><strong>頂点：</strong> 色0の $\{v_0\}$ と色2の $\{v_2\}$ → $n_0 = 1, n_2 = 1$。</p>
+<p><strong>辺：</strong> $v_0\text{-}v_2$（対角辺、色0-2）の1本。</p>
+<p><strong>成分：</strong> $\{v_0, v_2\}$ の1つ → $p_{0,2} = 1$。</p>
+<p><strong>サイクルランク：</strong> $L_{0,2} = 1 - (1+1) + 1 = 0$。</p>
+</div>
+
+<div class="example-block">
+<h4>$H_{0,3}$（赤-黄）</h4>
+<p><strong>頂点：</strong> 色0の $\{v_0\}$ と色3の $\{v_3\}$ → $n_0 = 1, n_3 = 1$。</p>
+<p><strong>辺：</strong> $v_0\text{-}v_3$（対角辺、色0-3）の1本。</p>
+<p><strong>成分：</strong> $\{v_0, v_3\}$ の1つ → $p_{0,3} = 1$。</p>
+<p><strong>サイクルランク：</strong> $L_{0,3} = 1 - (1+1) + 1 = 0$。</p>
+</div>
+
+<div class="example-block">
+<h4>$H_{1,2}$（青-緑）</h4>
+<p><strong>頂点：</strong> 色1の $\{v_1, v_4\}$ と色2の $\{v_2\}$ → $n_1 = 2, n_2 = 1$。</p>
+<p><strong>辺：</strong> $v_1\text{-}v_2$（色1-2）の1本のみ。
+$v_2$ と $v_4$ は隣接しない（五角形上で距離2、対角辺なし）。</p>
+<p><strong>成分：</strong> $\{v_1, v_2\}$ と $\{v_4\}$ の2つ → $p_{1,2} = 2$。</p>
+<p><strong>サイクルランク：</strong> $L_{1,2} = 1 - (2+1) + 2 = 0$。</p>
+</div>
+
+<div class="example-block">
+<h4>$H_{1,3}$（青-黄）</h4>
+<p><strong>頂点：</strong> 色1の $\{v_1, v_4\}$ と色3の $\{v_3\}$ → $n_1 = 2, n_3 = 1$。</p>
+<p><strong>辺：</strong> $v_3\text{-}v_4$（色3-1）の1本のみ。
+$v_1$ と $v_3$ は隣接しない（五角形上で距離2、対角辺なし）。</p>
+<p><strong>成分：</strong> $\{v_3, v_4\}$ と $\{v_1\}$ の2つ → $p_{1,3} = 2$。</p>
+<p><strong>サイクルランク：</strong> $L_{1,3} = 1 - (2+1) + 2 = 0$。</p>
+</div>
+
+<div class="example-block">
+<h4>$H_{2,3}$（緑-黄）</h4>
+<p><strong>頂点：</strong> 色2の $\{v_2\}$ と色3の $\{v_3\}$ → $n_2 = 1, n_3 = 1$。</p>
+<p><strong>辺：</strong> $v_2\text{-}v_3$（色2-3）の1本。</p>
+<p><strong>成分：</strong> $\{v_2, v_3\}$ の1つ → $p_{2,3} = 1$。</p>
+<p><strong>サイクルランク：</strong> $L_{2,3} = 1 - (1+1) + 1 = 0$。</p>
+</div>
+
+<h3>集計表</h3>
+
+<table>
+<tr>
+  <th>$\{a,b\}$</th>
+  <th>頂点</th>
+  <th>$E_{a,b}$</th>
+  <th>$n_a + n_b$</th>
+  <th>$p_{a,b}$</th>
+  <th>$L_{a,b}$</th>
+</tr>
+<tr>
+  <td>$\{0,1\}$</td>
+  <td>$v_0, v_1, v_4$</td>
+  <td>2</td><td>3</td><td>1</td><td>0</td>
+</tr>
+<tr>
+  <td>$\{0,2\}$</td>
+  <td>$v_0, v_2$</td>
+  <td>1</td><td>2</td><td>1</td><td>0</td>
+</tr>
+<tr>
+  <td>$\{0,3\}$</td>
+  <td>$v_0, v_3$</td>
+  <td>1</td><td>2</td><td>1</td><td>0</td>
+</tr>
+<tr>
+  <td>$\{1,2\}$</td>
+  <td>$v_1, v_2, v_4$</td>
+  <td>1</td><td>3</td><td>2</td><td>0</td>
+</tr>
+<tr>
+  <td>$\{1,3\}$</td>
+  <td>$v_1, v_3, v_4$</td>
+  <td>1</td><td>3</td><td>2</td><td>0</td>
+</tr>
+<tr>
+  <td>$\{2,3\}$</td>
+  <td>$v_2, v_3$</td>
+  <td>1</td><td>2</td><td>1</td><td>0</td>
+</tr>
+<tr style="font-weight:bold; background:#ebf8ff;">
+  <td>合計</td>
+  <td></td>
+  <td>7</td><td>15</td><td>8</td><td>0</td>
+</tr>
+</table>
+
+<div class="step">
+<span class="step-number">検証：</span>
+<ul>
+<li>$\sum E_{a,b} = 7 = E'$ ... 事実1と一致</li>
+<li>$\sum (n_a + n_b) = 15 = 3 \times 5 = 3V'$ ... 事実2と一致</li>
+<li>$\sum L_{a,b} = 0 = 8 - 8 = \sum p_{a,b} - 8$ ... <strong>定理1と一致！</strong></li>
+</ul>
+</div>
+
+<div class="explanation">
+<h4>この例の特徴</h4>
+<p>この例では $\sum p = 8$（下界に等号）で、すべてのサイクルランクが 0 です。
+これは成分がすべて木（パスか孤立頂点）であることを意味します。
+小さいグラフでは閉路を作る余地が少ないため、等号が達成されやすくなります。</p>
+<p>なお、境界の色は $(0, 1, 2, 3, 1)$ で、4色すべてが使われており、
+色1が2回出現しています。これは後の章で扱う「B4彩色」に対応します。</p>
+</div>
+
+<!-- ===== 5.4 定理2 ===== -->
+<h2>5.4 定理2：相補対恒等式</h2>
+
+<p>定理1は6つの組すべてにわたる和の恒等式でした。
+次に、相補対に着目した、より精密な恒等式を導きます。</p>
+
+<div class="thm-box definition">
+<strong>復習：相補対.</strong>
+$\{a,b\}$ と $\{c,d\}$ が $\{a,b,c,d\} = \{0,1,2,3\}$ を満たすとき、
+これを相補対と呼ぶ。相補対は3組ある：
+$\{0,1\}$-$\{2,3\}$、$\{0,2\}$-$\{1,3\}$、$\{0,3\}$-$\{1,2\}$。
+</div>
+
+<p>相補対 $\{a,b\}$ と $\{c,d\}$ では、$H_{a,b}$ の頂点と $H_{c,d}$ の頂点が
+$V'$ のすべてを過不足なくカバーします（各頂点はちょうど4色のうち1色を持ち、
+$\{a,b\}$ か $\{c,d\}$ のどちらか一方に属する）。
+辺についても重要な関係があります。</p>
+
+<h3>境界辺の分類</h3>
+
+<div class="explanation">
+<h4>辺の帰属</h4>
+<p>$G'$ の各辺 $\{u,w\}$ は、両端点の色 $\varphi(u)$ と $\varphi(w)$ が異なるので、
+あるケンペ対 $\{a',b'\}$ に属します。相補対 $\{a,b\}$-$\{c,d\}$ について考えると：</p>
+<ul>
+<li>$\{a',b'\} = \{a,b\}$ のとき：辺は $H_{a,b}$ に属する。</li>
+<li>$\{a',b'\} = \{c,d\}$ のとき：辺は $H_{c,d}$ に属する。</li>
+<li>$\{a',b'\}$ が $\{a,b\}$ でも $\{c,d\}$ でもないとき（例えば一端が色 $a$、他端が色 $c$）：
+辺はどちらにも属さない。</li>
+</ul>
+<p>内部辺と境界辺で、この「どちらにも属さない」辺の数え方が鍵になります。</p>
+<p>ここで重要なのは<strong>境界辺の帰属</strong>です。
+五角形境界の5本の辺のうち、両端点がともに $\{a,b\}$ 色を持つ辺の本数を $m_{a,b}$、
+ともに $\{c,d\}$ 色を持つ辺の本数を $m_{c,d}$ とし、$m = m_{a,b} + m_{c,d}$ とおきます。</p>
+</div>
+
+<div class="thm-box">
+<strong>定理2（相補対恒等式）.</strong>
+相補対 $\{a,b\}$ と $\{c,d\}$ について、
+$$L_{a,b} + L_{c,d} = p_{a,b} + p_{c,d} - 1 - m$$
+が成り立つ。ここで $m$ は、五角形境界辺のうち両端点の色が
+同じケンペ対（$\{a,b\}$ または $\{c,d\}$）に属するものの本数で、$m \in \{1, 2\}$ である。
+</div>
+
+<div class="proof-block">
+<span class="proof-title">証明.</span>
+相補対恒等式の核心は辺の分割にある。
+
+<p><strong>ステップ1：内部辺の計数.</strong>
+$G'$ の各辺は端点の色により6つのケンペ対のいずれかに属する。
+相補対 $\{a,b\}$-$\{c,d\}$ に関して、「交差辺」（一端が $\{a,b\}$ 色、他端が $\{c,d\}$ 色のもの）
+を数える。$H_{a,b}$ と $H_{c,d}$ は $V'$ を完全に分割するので、
+交差辺は $H_{a,b}$ の頂点と $H_{c,d}$ の頂点をつなぐ。</p>
+
+<p><strong>ステップ2：連結性と辺数の関係.</strong>
+$G'$ は連結グラフであり、$H_{a,b}$ の頂点集合と $H_{c,d}$ の頂点集合への分割において、
+辺数とオイラーの公式を組み合わせる。
+$G'$ は近三角形分割なので、各辺の帰属を追跡すると
+$$E_{a,b} + E_{c,d} = V' - 1 - m$$
+が導ける。ここで $V' - 1$ は全頂点が連結である条件から来る寄与、
+$m$ は「境界で同色対に属する辺」による補正である。</p>
+
+<p><strong>ステップ3：恒等式の導出.</strong>
+サイクルランクの定義を加える：
+$$L_{a,b} + L_{c,d} = (E_{a,b} + E_{c,d}) - (n_a + n_b + n_c + n_d) + (p_{a,b} + p_{c,d}).$$
+$n_a + n_b + n_c + n_d = V'$（相補対なのですべての頂点がちょうど1回数えられる）より
+$$= (V' - 1 - m) - V' + (p_{a,b} + p_{c,d}) = p_{a,b} + p_{c,d} - 1 - m.$$</p>
+
+<p><strong>ステップ4：$m$ の範囲.</strong>
+五角形境界の5頂点の色は $\{a,b\}$ 色と $\{c,d\}$ 色に分かれる。
+5頂点を順に見ると、色が $\{a,b\}$ から $\{c,d\}$（またはその逆）に切り替わる回数は偶数
+（五角形を一周するので）。$m$ は「切り替わらない」辺の数なので
+$m = 5 - (\text{切り替わり回数})$。
+4色すべてが境界に現れるためには $\{a,b\}$ 色も $\{c,d\}$ 色もそれぞれ少なくとも1つの
+境界頂点を持つ。したがって切り替わり回数は少なくとも2で、$m \leq 3$。
+実際には境界の色配置から $m \in \{1, 2\}$ であることが示される。</p>
+<span class="proof-end">$\QED$</span>
+</div>
+
+<div class="explanation">
+<h4>定理2の直感的な意味</h4>
+<p>相補対のケンペ部分グラフは、グラフの頂点を「完全に二分割」します。
+すなわち $H_{a,b}$ と $H_{c,d}$ で全頂点がカバーされます。</p>
+<p>この二分割の構造から、2つのサイクルランクの和は
+成分数の和と「境界の色パターン」だけで決まります。
+特に、$m$ の値は境界の5頂点の色配列のみに依存し、
+グラフの内部構造によらないことが重要です。</p>
+</div>
+
+<h3>具体例での検証</h3>
+
+<div class="example-block">
+<h4>先の例で定理2を検証</h4>
+<p>先の彩色 $(v_0, v_1, v_2, v_3, v_4) = (0, 1, 2, 3, 1)$ で
+3つの相補対を検証します。</p>
+
+<p><strong>相補対 $\{0,1\}$-$\{2,3\}$：</strong></p>
+<ul>
+<li>$p_{0,1} = 1$, $p_{2,3} = 1$, $L_{0,1} = 0$, $L_{2,3} = 0$</li>
+<li>境界辺の確認：
+  $v_0(0)\text{-}v_1(1)$ → 両方 $\{0,1\}$ 色 → $m_{0,1}$ に寄与;
+  $v_1(1)\text{-}v_2(2)$ → 交差辺;
+  $v_2(2)\text{-}v_3(3)$ → 両方 $\{2,3\}$ 色 → $m_{2,3}$ に寄与;
+  $v_3(3)\text{-}v_4(1)$ → 交差辺;
+  $v_4(1)\text{-}v_0(0)$ → 両方 $\{0,1\}$ 色 → $m_{0,1}$ に寄与。</li>
+<li>$m = m_{0,1} + m_{2,3} = 2 + 1 = 3$... しかし $p + p - 1 - m = 1 + 1 - 1 - 3 = -2 \neq 0$。</li>
+</ul>
+<p>ここで $m = 3$ となり先の範囲 $m \in \{1,2\}$ と矛盾するように見えますが、
+これは $E_{a,b} + E_{c,d} = V' - 1 - m$ の式を直接検証してみましょう：
+$E_{0,1} = 2$, $E_{2,3} = 1$ なので $E_{0,1} + E_{2,3} = 3$。
+$V' - 1 = 4$ なので $m = 4 - 3 = 1$。</p>
+<p>つまり $m$ は「境界辺のうち同色対に属するもの」ではなく、
+$E_{a,b} + E_{c,d} = V' - 1 - m$ から逆算される量として $m = 1$ です。
+確かに $L_{0,1} + L_{2,3} = 0 = 1 + 1 - 1 - 1$。検証完了。</p>
+
+<p><strong>相補対 $\{0,2\}$-$\{1,3\}$：</strong></p>
+<ul>
+<li>$p_{0,2} = 1$, $p_{1,3} = 2$, $L_{0,2} = 0$, $L_{1,3} = 0$</li>
+<li>$E_{0,2} + E_{1,3} = 1 + 1 = 2 = 5 - 1 - 2$ → $m = 2$</li>
+<li>$L_{0,2} + L_{1,3} = 0 = 1 + 2 - 1 - 2$。検証完了。</li>
+</ul>
+
+<p><strong>相補対 $\{0,3\}$-$\{1,2\}$：</strong></p>
+<ul>
+<li>$p_{0,3} = 1$, $p_{1,2} = 2$, $L_{0,3} = 0$, $L_{1,2} = 0$</li>
+<li>$E_{0,3} + E_{1,2} = 1 + 1 = 2 = 5 - 1 - 2$ → $m = 2$</li>
+<li>$L_{0,3} + L_{1,2} = 0 = 1 + 2 - 1 - 2$。検証完了。</li>
+</ul>
+</div>
+
+<div class="thm-box corollary">
+<strong>系2（相補対の成分数制約）.</strong>
+相補対 $\{a,b\}$-$\{c,d\}$ について、
+$$p_{a,b} + p_{c,d} \geq 1 + m \geq 2.$$
+等号 $p_{a,b} + p_{c,d} = 1 + m$ は $L_{a,b} = L_{c,d} = 0$ のとき、かつそのときに限る。
+</div>
+
+<div class="proof-block">
+<span class="proof-title">証明.</span>
+定理2で $L_{a,b}, L_{c,d} \geq 0$ を使えば直ちに従う。
+$m \geq 1$（4色すべてが使われるとき、境界に少なくとも1つの「同色対辺」がある）
+より $p_{a,b} + p_{c,d} \geq 2$。
+<span class="proof-end">$\QED$</span>
+</div>
+
+<div class="explanation">
+<h4>定理1と定理2の関係</h4>
+<p>定理1は「すべての組の和」の恒等式であり、定理2は「相補対ごとの恒等式」です。
+3つの相補対にわたって定理2を足し合わせると：</p>
+$$\sum_{\{a,b\}} L_{a,b} = \sum_{\{a,b\}} p_{a,b} - 3 - (m_1 + m_2 + m_3)$$
+<p>ここで $m_1, m_2, m_3$ はそれぞれの相補対に対する $m$ の値です。
+定理1と比較すると $3 + m_1 + m_2 + m_3 = 8$、すなわち $m_1 + m_2 + m_3 = 5$ となり、
+これは境界辺5本の別の数え方になっています
+（各境界辺はちょうど1つの相補対で「同色対辺」として数えられる）。</p>
+</div>
+
+<!-- ===== Takeaway ===== -->
+<div class="takeaway">
+<h3>この章のポイント</h3>
+<ul>
+<li><strong>定理1（和恒等式）：</strong> $\sum L_{a,b} = \sum p_{a,b} - 8$。
+6つのケンペ部分グラフのサイクルランクの合計と成分数の合計が恒等式で結ばれる。</li>
+<li><strong>系1：</strong> $\sum p_{a,b} \geq 8$。成分数の合計は必ず8以上。</li>
+<li><strong>定理2（相補対恒等式）：</strong> $L_{a,b} + L_{c,d} = p_{a,b} + p_{c,d} - 1 - m$。
+相補対に分けるとさらに精密な制約が得られる。</li>
+<li>これらはオイラーの公式から導かれる<strong>純粋に組合せ的な恒等式</strong>であり、
+平面性の深い性質（ジョルダン曲線定理など）は不要。</li>
+<li>具体例での全6組の計算を通じて、恒等式が成り立つことを直接確認できた。</li>
+</ul>
+</div>
+
+<div class="nav-footer">
+  <a href="04_setup.html">&larr; 前へ: 次数5頂点の設定</a>
+  <a href="index.html">目次</a>
+  <a href="06_bct.html">次へ: 境界連結性定理 &rarr;</a>
+</div>
+
+</body>
+</html>

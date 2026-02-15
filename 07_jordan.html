@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第7章: ジョルダン分離補題 — 四色定理の証明</title>
+<link rel="stylesheet" href="style.css">
+<script>
+MathJax = {
+  tex: { inlineMath: [['$','$']], displayMath: [['$$','$$']],
+         macros: { conn: '\\mathrm{conn}', QED: '\\blacksquare' } },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+</head>
+<body>
+
+<div class="nav-header">
+  <a href="06_bct.html">&larr; 前へ</a>
+  <a href="index.html">目次</a>
+  <a href="08_product_bound.html">次へ &rarr;</a>
+</div>
+
+<p class="chapter-number">第7章</p>
+<h1>ジョルダン分離補題</h1>
+
+<div class="learning-box">
+<h3>このページで学ぶこと</h3>
+<ul>
+<li>ジョルダンの閉曲線定理とは</li>
+<li>定理4（ジョルダン分離補題）：ケンペ閉路が相補色を分離する</li>
+<li>系2：$p_{c,d} \geq 1 + L_{a,b}$</li>
+<li>なぜ閉路が重要か</li>
+</ul>
+</div>
+
+<div class="prereq-box">
+<strong>前提:</strong> 第3章（ケンペ部分グラフ、サイクルランク）、第5章（相補対）
+</div>
+
+<!-- ===== 7.1 ジョルダンの閉曲線定理 ===== -->
+<h2>ジョルダンの閉曲線定理</h2>
+
+<p>この章で使う基本的な事実は、直感的には当たり前に見えるが厳密な証明は
+意外に難しい有名な定理です。</p>
+
+<div class="thm-box">
+<strong>ジョルダンの閉曲線定理.</strong>
+平面上の単純閉曲線（自分自身と交わらない閉じた曲線）は、
+平面を<strong>内部</strong>と<strong>外部</strong>のちょうど2つの連結領域に分割する。
+</div>
+
+<div class="explanation">
+<h4>平易な解説</h4>
+<p>平面に閉じた曲線（円、楕円、不規則な形 — ただし自分と交差しない）を描くと、
+平面は「曲線の内側」と「曲線の外側」に分かれます。
+内側の点から外側の点へ移動するには、必ず曲線を横切る必要があります。</p>
+<div class="figure">
+<svg width="300" height="200" viewBox="0 0 300 200">
+  <!-- Closed curve -->
+  <path d="M 80,100 C 80,40 220,40 220,100 C 220,160 80,160 80,100 Z"
+        fill="#ebf8ff" stroke="#3182ce" stroke-width="2.5" fill-opacity="0.3"/>
+  <!-- Inside point -->
+  <circle cx="150" cy="100" r="5" fill="#e53e3e"/>
+  <text x="150" y="85" text-anchor="middle" font-size="13" fill="#e53e3e">内部</text>
+  <!-- Outside point -->
+  <circle cx="40" cy="50" r="5" fill="#38a169"/>
+  <text x="40" y="40" text-anchor="middle" font-size="13" fill="#38a169">外部</text>
+  <circle cx="260" cy="170" r="5" fill="#38a169"/>
+  <text x="260" y="190" text-anchor="middle" font-size="13" fill="#38a169">外部</text>
+</svg>
+<div class="figure-caption">閉曲線による平面の分割。赤点は内部、緑点は外部。</div>
+</div>
+</div>
+
+<p>平面グラフにおいて、ケンペ部分グラフ $H_{a,b}$ が<strong>閉路</strong>（サイクル）を
+含む場合、その閉路は平面上の単純閉曲線として描けます。
+ジョルダンの閉曲線定理により、この閉路は平面を2つの領域に分けます。</p>
+
+<!-- ===== 7.2 定理4 ===== -->
+<h2>定理4：ジョルダン分離補題</h2>
+
+<div class="thm-box">
+<strong>定理4（ジョルダン分離補題）.</strong>
+$\{a,b\}$ と $\{c,d\}$ を相補対とする。
+$H_{a,b}$ が閉路を含むならば、$p_{c,d} \geq 2$。
+</div>
+
+<div class="explanation">
+<h4>定理の意味</h4>
+<p>もし「赤-青」のケンペ部分グラフの中に閉じた回路（閉路）があれば、
+「緑-黄」のケンペ部分グラフは少なくとも2つの部分に分断されます。</p>
+<p>つまり：<strong>一方の色ペアに閉路があると、相補色ペアが分離される</strong>。</p>
+</div>
+
+<h3>証明</h3>
+
+<div class="proof-block">
+<span class="proof-title">証明.</span>
+
+<div class="step">
+<span class="step-number">ステップ1：閉路の存在.</span>
+$H_{a,b}$ の中に閉路 $\mathcal{C}$ が存在するとする。
+$\mathcal{C}$ の頂点はすべて色 $a$ または $b$ を持つ。
+</div>
+
+<div class="step">
+<span class="step-number">ステップ2：領域の分割.</span>
+$G \setminus v$ の平面的埋め込みにおいて、$\mathcal{C}$ は単純閉曲線である。
+ジョルダンの閉曲線定理により、$\mathcal{C}$ は円板を2つの領域
+$R_{\mathrm{in}}$（内部）と $R_{\mathrm{out}}$（外部）に分ける。
+</div>
+
+<div class="step">
+<span class="step-number">ステップ3：両側に $\{c,d\}$-頂点が存在.</span>
+グラフは三角形分割から来ているので、$\mathcal{C}$ の各辺は三角形の一辺である。
+各三角形の第三の頂点は $\mathcal{C}$ 上にないので色 $c$ か $d$ を持つ。
+$\mathcal{C}$ の内側の三角形と外側の三角形がそれぞれ存在するので、
+$R_{\mathrm{in}}$ と $R_{\mathrm{out}}$ の両方に $\{c,d\}$-色の頂点が存在する。
+</div>
+
+<div class="figure">
+<svg width="340" height="280" viewBox="0 0 340 280">
+  <!-- Cycle in H_{a,b} -->
+  <polygon points="170,30 260,100 240,210 100,210 80,100"
+           fill="#ebf8ff" stroke="#805ad5" stroke-width="3" fill-opacity="0.2"/>
+  <!-- Labels for cycle vertices (alternating a,b colors) -->
+  <circle cx="170" cy="30" r="10" fill="#e53e3e"/>
+  <circle cx="260" cy="100" r="10" fill="#3182ce"/>
+  <circle cx="240" cy="210" r="10" fill="#e53e3e"/>
+  <circle cx="100" cy="210" r="10" fill="#3182ce"/>
+  <circle cx="80" cy="100" r="10" fill="#e53e3e"/>
+  <text x="170" y="17" text-anchor="middle" font-size="12" fill="#e53e3e">$a$</text>
+  <text x="278" y="100" text-anchor="middle" font-size="12" fill="#3182ce">$b$</text>
+  <text x="255" y="222" text-anchor="middle" font-size="12" fill="#e53e3e">$a$</text>
+  <text x="85" y="222" text-anchor="middle" font-size="12" fill="#3182ce">$b$</text>
+  <text x="63" y="100" text-anchor="middle" font-size="12" fill="#e53e3e">$a$</text>
+  <!-- Inner {c,d} vertices -->
+  <circle cx="170" cy="130" r="10" fill="#38a169"/>
+  <circle cx="150" cy="170" r="10" fill="#d69e2e"/>
+  <text x="190" y="128" text-anchor="start" font-size="12" fill="#38a169">$c$</text>
+  <text x="165" y="175" text-anchor="start" font-size="12" fill="#d69e2e">$d$</text>
+  <text x="170" y="90" text-anchor="middle" font-size="14" fill="#4a5568" font-weight="bold">内部</text>
+  <!-- Outer {c,d} vertex -->
+  <circle cx="300" cy="30" r="10" fill="#d69e2e"/>
+  <circle cx="30" cy="250" r="10" fill="#38a169"/>
+  <text x="315" y="25" text-anchor="start" font-size="12" fill="#d69e2e">$d$</text>
+  <text x="10" y="265" text-anchor="start" font-size="12" fill="#38a169">$c$</text>
+  <text x="310" y="220" text-anchor="middle" font-size="14" fill="#4a5568" font-weight="bold">外部</text>
+</svg>
+<div class="figure-caption">$H_{a,b}$ の閉路（紫の五角形）が $\{c,d\}$-頂点を内部と外部に分離する。</div>
+</div>
+
+<div class="step">
+<span class="step-number">ステップ4：$\{c,d\}$-パスは閉路を横切れない.</span>
+$H_{c,d}$ のパス（色 $c$ と $d$ の頂点だけを使うパス）は、
+$\mathcal{C}$（色 $a$ と $b$ の頂点だけからなる）を横切ることができない。
+なぜなら、$\{c,d\}$ と $\{a,b\}$ は色を共有しないからである。
+</div>
+
+<div class="step">
+<span class="step-number">ステップ5：結論.</span>
+内部の $\{c,d\}$-頂点と外部の $\{c,d\}$-頂点は $H_{c,d}$ 内で
+パスで結ぶことができない。
+よって $H_{c,d}$ は少なくとも2つの連結成分を持ち、$p_{c,d} \geq 2$。
+<span class="proof-end">$\QED$</span>
+</div>
+</div>
+
+<div class="explanation">
+<h4>証明のキーポイント</h4>
+<p>この証明の核心は「色の排他性」です：</p>
+<ul>
+<li>$\{a,b\}$ の閉路上の頂点は色 $a$ か $b$ しか持たない</li>
+<li>$\{c,d\}$ のパス上の頂点は色 $c$ か $d$ しか持たない</li>
+<li>$\{a,b\} \cap \{c,d\} = \emptyset$（相補対の定義）</li>
+<li>よって $\{c,d\}$-パスは $\{a,b\}$-閉路の頂点を通れない → 閉路を横切れない</li>
+</ul>
+</div>
+
+<!-- ===== 7.3 系2 ===== -->
+<h2>系2</h2>
+
+<div class="thm-box corollary">
+<strong>系2.</strong>
+相補対 $\{a,b\}$, $\{c,d\}$ に対し、
+$$p_{c,d} \geq 1 + L_{a,b}$$
+特に $p_{c,d} = 1$ ならば $L_{a,b} = 0$。
+</div>
+
+<div class="proof-block">
+<span class="proof-title">証明.</span>
+$H_{a,b}$ のサイクルランクが $L_{a,b}$ であるとき、$H_{a,b}$ は少なくとも
+$L_{a,b}$ 個の独立な閉路を含む。
+各閉路が定理4の議論で $H_{c,d}$ に少なくとも1つの追加成分を生むので、
+$p_{c,d} \geq 1 + L_{a,b}$。
+
+<p>対偶をとると：$p_{c,d} = 1$（$H_{c,d}$ が連結）ならば $L_{a,b} = 0$
+（$H_{a,b}$ は閉路を持たない、すなわち各成分が木）。</p>
+<span class="proof-end">$\QED$</span>
+</div>
+
+<div class="explanation">
+<h4>平易な解説</h4>
+<p>系2は定理4の定量的な強化です：</p>
+<ul>
+<li>$H_{a,b}$ に閉路が1つ → $p_{c,d} \geq 2$（相補のグラフが最低2個に分かれる）</li>
+<li>$H_{a,b}$ に独立な閉路が2つ → $p_{c,d} \geq 3$（最低3個に分かれる）</li>
+<li>一般に閉路が $L$ 個 → $p_{c,d} \geq 1 + L$</li>
+</ul>
+<p><strong>対偶</strong>が特に有用です：もし相補ペアの一方が連結（$p = 1$）なら、
+他方は「森」（閉路なし）でなければならない。</p>
+</div>
+
+<!-- ===== 7.4 具体例 ===== -->
+<h2>具体例</h2>
+
+<div class="example-block">
+<h4>例1：すべて木の場合</h4>
+<p>第5章の近三角形分割の例（$v_0=0, v_1=1, v_2=0, v_3=2, v_4=3$、内部辺 $v_0$-$v_2$, $v_0$-$v_3$）を思い出しましょう。</p>
+<p>この例ではすべてのサイクルランクが 0 でした。
+つまりすべてのケンペ部分グラフは木（閉路なし）です。
+系2は $p_{c,d} \geq 1 + 0 = 1$ を与えますが、これは自明（成分数は常に $\geq 1$）です。</p>
+</div>
+
+<div class="example-block">
+<h4>例2：閉路がある場合</h4>
+<p>もう少し大きなグラフを考えます。
+$H_{0,1}$ が4頂点の閉路を含むとしましょう（頂点 $u_1(0), u_2(1), u_3(0), u_4(1)$ が
+閉路 $u_1$-$u_2$-$u_3$-$u_4$-$u_1$ を形成）。</p>
+<p>このとき：</p>
+<ul>
+<li>$L_{0,1} \geq 1$（少なくとも1つの閉路）</li>
+<li>系2より $p_{2,3} \geq 2$（$H_{2,3}$ は少なくとも2成分）</li>
+<li>閉路の内側に色2の頂点、外側に色3の頂点がある場合、これらは $H_{2,3}$ 内で結べない</li>
+</ul>
+</div>
+
+<!-- ===== 7.5 この章の位置づけ ===== -->
+<h2>証明全体での役割</h2>
+
+<p>ジョルダン分離補題は、ケンペ部分グラフの構造に<strong>幾何学的制約</strong>を与えます：</p>
+
+<ul>
+<li>一方のペアが「込み入った」構造（閉路あり）を持つと、相補ペアは「分断される」</li>
+<li>これにより、「$p$ が小さい（連結に近い）」ペアの相補は「$L$ が小さい（木に近い）」ことが分かる</li>
+<li>次章で導入する<strong>積の上界</strong>（$p \cdot q \leq 2$）と組み合わせることで、
+すべてのペアの構造が強く制約されます</li>
+</ul>
+
+<div class="takeaway">
+<h3>ポイント</h3>
+<ul>
+<li><strong>定理4</strong>：$H_{a,b}$ に閉路があれば $p_{c,d} \geq 2$（相補ペアが分離）</li>
+<li>原理：閉路は平面を2領域に分け、相補色の頂点は閉路を横切れない</li>
+<li><strong>系2</strong>：$p_{c,d} \geq 1 + L_{a,b}$（閉路が多いほど分離も大きい）</li>
+<li>対偶：$p_{c,d} = 1$ ⇒ $L_{a,b} = 0$（相補が連結なら、こちらは森）</li>
+<li>この補題は無条件に成立（積の上界は不要）</li>
+</ul>
+</div>
+
+<div class="nav-footer">
+  <a href="06_bct.html">&larr; 前へ: BCT</a>
+  <a href="index.html">目次</a>
+  <a href="08_product_bound.html">次へ: 積の上界 &rarr;</a>
+</div>
+
+</body>
+</html>

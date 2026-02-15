@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第11章: 保存則 — 四色定理の証明</title>
+<link rel="stylesheet" href="style.css">
+<script>
+MathJax = {
+  tex: { inlineMath: [['$','$']], displayMath: [['$$','$$']],
+         macros: { conn: '\\mathrm{conn}', QED: '\\blacksquare' } },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+</head>
+<body>
+
+<div class="nav-header">
+  <a href="10_b4.html">&larr; 前へ</a>
+  <a href="index.html">目次</a>
+  <a href="12_no_b4_recursion.html">次へ &rarr;</a>
+</div>
+
+<p class="chapter-number">第11章</p>
+<h1>保存則</h1>
+
+<div class="learning-box">
+<h3>このページで学ぶこと</h3>
+<ul>
+<li>ケンペ交換で何が保存されるか</li>
+<li>補題1（保存則）の正確な主張</li>
+<li>辺数と頂点数の保存</li>
+<li>サイクルランクと成分数の関係式</li>
+</ul>
+</div>
+
+<div class="prereq-box">
+<strong>前提:</strong> 第3章（ケンペ交換）、第5章（サイクルランク）
+</div>
+
+<!-- ===== 11.1 問題の設定 ===== -->
+<h2>なぜ保存則が必要か</h2>
+
+<p>B4彩色から非連結 $\{d,\alpha\}$-交換を行うと、新しい彩色 $\varphi'$ が得られます。
+この新しい彩色の構造（成分数やサイクルランク）を知りたいのですが、
+直接計算するのは難しい。そこで「交換の前後で変わらないもの（保存量）」を見つけ、
+間接的に新しい彩色の構造を推論します。</p>
+
+<div class="explanation">
+<h4>物理学のアナロジー</h4>
+<p>物理学ではエネルギー保存則が重要です：反応前後でエネルギーの総量は変わらない。
+同様に、ケンペ交換の前後で「辺と頂点の特定の組み合わせ」が保存されます。
+この保存量が、交換後の状態を制約する強力なツールとなります。</p>
+</div>
+
+<!-- ===== 11.2 補題1 ===== -->
+<h2>補題1：保存則</h2>
+
+<div class="thm-box lemma">
+<strong>補題1（保存則）.</strong>
+$\{d,\alpha\}$-ケンペ交換のもとで、$d, \alpha$ 以外の任意の色 $\xi$ に対し：
+$$e'_{d,\xi} + e'_{\alpha,\xi} = e_{d,\xi} + e_{\alpha,\xi}$$
+$$n'_d + n'_\alpha = n_d + n_\alpha$$
+ここで $e_{a,b}$ は $H_{a,b}$ の辺数、$n_c$ は色 $c$ の頂点数。
+</div>
+
+<div class="explanation">
+<h4>何が言われているか</h4>
+<p>$\{d,\alpha\}$-交換は、鎖 $C$ 上で $d$ と $\alpha$ を入れ替えます。
+このとき、第三の色 $\xi$（例えば $\gamma$ や $\beta$）から見ると：</p>
+<ul>
+<li><strong>辺の保存：</strong>「$d$-$\xi$ の辺」と「$\alpha$-$\xi$ の辺」の<strong>合計</strong>は変わらない</li>
+<li><strong>頂点の保存：</strong>「$d$ 色の頂点」と「$\alpha$ 色の頂点」の<strong>合計</strong>は変わらない</li>
+</ul>
+<p>個々の $e_{d,\xi}$ や $e_{\alpha,\xi}$ は変化しますが、その<strong>和</strong>は不変です。</p>
+</div>
+
+<h3>証明</h3>
+
+<div class="proof-block">
+<span class="proof-title">証明.</span>
+
+<div class="step">
+<span class="step-number">頂点の保存.</span>
+交換する鎖 $C$ 上で、$d$ 色の頂点が $\alpha$ 色に変わり、
+$\alpha$ 色の頂点が $d$ 色に変わる。
+$C$ 外の頂点の色は変わらない。
+よって $n'_d + n'_\alpha = n_d + n_\alpha$（$d$ と $\alpha$ の総数は同じ）。
+</div>
+
+<div class="step">
+<span class="step-number">辺の保存.</span>
+色 $\xi$ の頂点 $u$ を考える（$u$ は $C$ に含まれない ── $\xi \neq d, \alpha$ だから）。
+$u$ の近傍のうち $C$ に属する頂点 $w$ は、色が $d \to \alpha$ または $\alpha \to d$
+に変わる。
+<ul>
+<li>元々 $w$ が $d$ 色で、辺 $\{u,w\}$ が $H_{d,\xi}$ に属していたなら、
+交換後は $w$ が $\alpha$ 色になり、辺 $\{u,w\}$ は $H_{\alpha,\xi}$ に属する</li>
+<li>元々 $w$ が $\alpha$ 色なら、辺は $H_{\alpha,\xi}$ から $H_{d,\xi}$ に移動する</li>
+</ul>
+つまり各辺は $H_{d,\xi}$ と $H_{\alpha,\xi}$ の間を「移動」するだけで、
+新しく生まれたり消えたりはしない。よって $e'_{d,\xi} + e'_{\alpha,\xi} = e_{d,\xi} + e_{\alpha,\xi}$。
+</div>
+
+<span class="proof-end">$\QED$</span>
+</div>
+
+<!-- ===== 11.3 サイクルランクへの帰結 ===== -->
+<h2>サイクルランクへの帰結</h2>
+
+<p>保存則をサイクルランクの定義 $L = E - V + p$ に代入すると：</p>
+
+<div class="thm-box">
+<strong>系（サイクルランクの保存）.</strong>
+$$L'_{d,\xi} + L'_{\alpha,\xi} = L_{d,\xi} + L_{\alpha,\xi} + (p'_{d,\xi} + p'_{\alpha,\xi}) - (p_{d,\xi} + p_{\alpha,\xi})$$
+</div>
+
+<div class="proof-block">
+<span class="proof-title">導出.</span>
+$L_{d,\xi} = e_{d,\xi} - (n_d + n_\xi) + p_{d,\xi}$ であるから：
+$$L_{d,\xi} + L_{\alpha,\xi} = (e_{d,\xi} + e_{\alpha,\xi}) - (n_d + n_\alpha) - 2n_\xi + (p_{d,\xi} + p_{\alpha,\xi})$$
+交換後も同様の式が成り立ち、辺数と頂点数の和は保存されるので、差をとると上の式が得られる。
+<span class="proof-end">$\QED$</span>
+</div>
+
+<div class="explanation">
+<h4>この式の使い方</h4>
+<p>$L \geq 0$（サイクルランクは非負）であることを使って、成分数の和に下界を与えます：</p>
+$$L'_{d,\xi} + L'_{\alpha,\xi} \geq 0$$
+$$\implies p'_{d,\xi} + p'_{\alpha,\xi} \geq p_{d,\xi} + p_{\alpha,\xi} - L_{d,\xi} - L_{\alpha,\xi}$$
+<p>B4彩色では $L_{d,\beta} = L_{\alpha,\beta} = 0$（定理6）なので、$\xi = \beta$ の場合：</p>
+$$p'_{d,\beta} + p'_{\alpha,\beta} \geq p_{d,\beta} + p_{\alpha,\beta} = 2 + p_{\alpha,\beta} \geq 3$$
+<p>この不等式が次章の B4非再帰定理の鍵となります。</p>
+</div>
+
+<!-- ===== 11.4 具体例 ===== -->
+<h2>具体例</h2>
+
+<div class="example-block">
+<h4>B4彩色からの非連結 $\{d,\alpha\}$-交換</h4>
+<p>B4の設定（定理6）で、$\xi = \beta$ として保存則を適用：</p>
+
+<table>
+<tr><th></th><th>交換前</th><th>交換後</th><th>保存量</th></tr>
+<tr><td>$e_{d,\beta} + e_{\alpha,\beta}$</td><td>$e + e'$</td><td>$e'' + e'''$</td>
+    <td>$e + e' = e'' + e'''$ ✓</td></tr>
+<tr><td>$n_d + n_\alpha$</td><td>$n + m$</td><td>$n' + m'$</td>
+    <td>$n + m = n' + m'$ ✓</td></tr>
+<tr><td>$p_{d,\beta} + p_{\alpha,\beta}$</td><td>$2 + p_{\alpha,\beta}$</td>
+    <td>$p'_{d,\beta} + p'_{\alpha,\beta}$</td><td>変化しうる</td></tr>
+<tr><td>$L_{d,\beta} + L_{\alpha,\beta}$</td><td>$0 + 0 = 0$</td>
+    <td>$L'_{d,\beta} + L'_{\alpha,\beta} \geq 0$</td><td>増加しうる</td></tr>
+</table>
+
+<p>辺と頂点の和は保存される。サイクルランクは増加しうるが非負。
+成分数の和に下界：$p'_{d,\beta} + p'_{\alpha,\beta} \geq 2 + p_{\alpha,\beta} \geq 3$。</p>
+</div>
+
+<div class="takeaway">
+<h3>ポイント</h3>
+<ul>
+<li><strong>補題1</strong>：$\{d,\alpha\}$-交換で、第三色 $\xi$ に対する辺数の和と頂点数の和は保存される。</li>
+<li>サイクルランクの和の変化は成分数の和の変化に等しい。</li>
+<li>$L \geq 0$ を使うことで、成分数の和に<strong>下界</strong>が得られる。</li>
+<li>B4彩色では $L_{d,\beta} = L_{\alpha,\beta} = 0$（定理6）なので、$p'_{d,\beta} + p'_{\alpha,\beta} \geq 3$。</li>
+<li>この下界が B4非再帰定理（次章）の証明の核心。</li>
+</ul>
+</div>
+
+<div class="nav-footer">
+  <a href="10_b4.html">&larr; 前へ: B4彩色の構造</a>
+  <a href="index.html">目次</a>
+  <a href="12_no_b4_recursion.html">次へ: B4非再帰定理 &rarr;</a>
+</div>
+
+</body>
+</html>

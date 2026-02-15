@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第6章: 境界連結性定理（BCT） — 四色定理の証明</title>
+<link rel="stylesheet" href="style.css">
+<script>
+MathJax = {
+  tex: { inlineMath: [['$','$']], displayMath: [['$$','$$']],
+         macros: { conn: '\\mathrm{conn}', QED: '\\blacksquare' } },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+</head>
+<body>
+
+<div class="nav-header">
+  <a href="05_cycle_rank.html">&larr; 前へ</a>
+  <a href="index.html">目次</a>
+  <a href="07_jordan.html">次へ &rarr;</a>
+</div>
+
+<p class="chapter-number">第6章</p>
+<h1>境界連結性定理（BCT）</h1>
+
+<div class="learning-box">
+<h3>このページで学ぶこと</h3>
+<ul>
+<li>連結色（connecting color）の定義を理解する</li>
+<li>連結度 $\conn$ の定義を理解する</li>
+<li>定理3（BCT）：4色が境界に現れるなら $\conn \geq 1$</li>
+<li>BCT の証明を完全に理解する</li>
+<li>具体例で BCT を確認する</li>
+</ul>
+</div>
+
+<div class="prereq-box">
+<strong>前提:</strong> 第3章（ケンペ鎖）、第4章（次数5の設定）
+</div>
+
+<!-- ===== 6.1 連結色と連結度 ===== -->
+<h2>6.1 連結色と連結度（復習・詳細）</h2>
+
+<p>第4章で導入した B4 の設定を思い出しましょう。次数5の頂点 $v$ を除去して得られる近三角形分割 $G \setminus v$ に、
+境界（5角形）$v_0, v_1, v_2, v_3, v_4$ があります。
+ここで4色すべてが境界に現れ、ちょうど1対の非隣接頂点が同じ色を共有する状況が B4 設定です。</p>
+
+<div class="thm-box definition">
+<strong>定義（B4 設定の記号）.</strong>
+正則4彩色 $\varphi$ のもとで、境界頂点の色が次のように配置されている場合を考える：
+<ul style="font-style:normal;">
+<li>$v_0$ と $v_2$ が同じ色 $d$ を持つ（$\varphi(v_0) = \varphi(v_2) = d$）</li>
+<li>$v_1, v_3, v_4$ は互いに異なる非 $d$ 色を持つ</li>
+<li>$b_1 = v_0$, $b_2 = v_2$ を<strong>境界対</strong>（boundary pair）と呼ぶ</li>
+</ul>
+このとき、4色すべて $\{d, \alpha, \beta, \gamma\}$ が境界 $N(v)$ に現れている。
+</div>
+
+<div class="thm-box definition">
+<strong>定義（連結色）.</strong>
+色 $x \neq d$ が<strong>連結色</strong>（connecting color）であるとは、
+$b_1 = v_0$ と $b_2 = v_2$ が $\{d, x\}$-ケンペ部分グラフ $H_{d,x}$ の<strong>同じ連結成分</strong>に属することをいう。
+</div>
+
+<div class="thm-box definition">
+<strong>定義（連結度）.</strong>
+$$\conn = \#\{ x \in \{0,1,2,3\} \setminus \{d\} \mid x \text{ は連結色} \}$$
+すなわち、$\conn$ は $d$ 以外の色のうち、$b_1$ と $b_2$ を $H_{d,x}$ 内で繋ぐ色の個数である。
+取りうる値は $\conn \in \{0, 1, 2, 3\}$ である。
+</div>
+
+<div class="explanation">
+<h4>直感的な理解</h4>
+<p>連結色とは、重複色 $d$ と組み合わせたケンペ部分グラフにおいて、
+2つの同色境界頂点 $b_1$ と $b_2$ を「内部を通って結びつける」色のことです。</p>
+<p>例えば $d$ が赤で $\gamma$ が青のとき、$H_{\text{赤},\text{青}}$（赤-青ケンペ部分グラフ）の中で
+$b_1$（赤）から $b_2$（赤）へたどり着ける経路があれば、青は連結色です。
+赤と青の頂点が交互に並ぶ鎖が、グラフの内部を通って $b_1$ と $b_2$ を結んでいるイメージです。</p>
+<p>$\conn$ は、このような「結びつける力」を持つ色が何色あるかを数えたものです。</p>
+</div>
+
+<div class="example-block">
+<h4>連結色の図解</h4>
+<p>以下の図では、5角形境界の頂点 $v_0(d)$-$v_1(\gamma)$-$v_2(d)$-$v_3(\alpha)$-$v_4(\beta)$ を示しています。
+色 $\gamma$ のケンペ鎖（$H_{d,\gamma}$ の成分）が $v_0$ と $v_2$ を内部で繋いでいます。</p>
+<div class="figure">
+<svg width="460" height="280" viewBox="0 0 460 280">
+  <!-- Pentagon boundary -->
+  <polygon points="230,30 370,120 330,250 130,250 90,120"
+           fill="none" stroke="#a0aec0" stroke-width="1.5" stroke-dasharray="6,3"/>
+
+  <!-- Interior connecting chain (schematic) -->
+  <path d="M230,30 C260,80 280,130 230,160 C180,190 200,220 175,245"
+        fill="none" stroke="#805ad5" stroke-width="3" stroke-dasharray="none" opacity="0.5"/>
+  <text x="290" y="140" font-size="12" fill="#805ad5" font-weight="bold">H_{d,γ} の鎖</text>
+
+  <!-- Edge v0-v1 (d-γ, in H_{d,γ}) -->
+  <line x1="230" y1="30" x2="370" y2="120" stroke="#805ad5" stroke-width="3"/>
+  <!-- Edge v1-v2 (γ-d, in H_{d,γ}) -->
+  <line x1="370" y1="120" x2="330" y2="250" stroke="#805ad5" stroke-width="3"/>
+  <!-- Other boundary edges (not in H_{d,γ}) -->
+  <line x1="330" y1="250" x2="130" y2="250" stroke="#cbd5e0" stroke-width="1.5"/>
+  <line x1="130" y1="250" x2="90" y2="120" stroke="#cbd5e0" stroke-width="1.5"/>
+  <line x1="90" y1="120" x2="230" y2="30" stroke="#cbd5e0" stroke-width="1.5"/>
+
+  <!-- Vertices -->
+  <circle cx="230" cy="30" r="18" fill="#e53e3e" stroke="#2d3748" stroke-width="2"/>
+  <circle cx="370" cy="120" r="18" fill="#3182ce" stroke="#2d3748" stroke-width="2"/>
+  <circle cx="330" cy="250" r="18" fill="#e53e3e" stroke="#2d3748" stroke-width="2"/>
+  <circle cx="130" cy="250" r="18" fill="#38a169" stroke="#2d3748" stroke-width="2"/>
+  <circle cx="90" cy="120" r="18" fill="#d69e2e" stroke="#2d3748" stroke-width="2"/>
+
+  <!-- Labels -->
+  <text x="230" y="35" text-anchor="middle" font-size="13" fill="white" font-weight="bold">d</text>
+  <text x="370" y="125" text-anchor="middle" font-size="12" fill="white" font-weight="bold">γ</text>
+  <text x="330" y="255" text-anchor="middle" font-size="13" fill="white" font-weight="bold">d</text>
+  <text x="130" y="255" text-anchor="middle" font-size="12" fill="white" font-weight="bold">α</text>
+  <text x="90" y="125" text-anchor="middle" font-size="12" fill="white" font-weight="bold">β</text>
+
+  <!-- Vertex names -->
+  <text x="230" y="12" text-anchor="middle" font-size="12" fill="#4a5568">v₀ = b₁</text>
+  <text x="405" y="110" text-anchor="start" font-size="12" fill="#4a5568">v₁</text>
+  <text x="350" y="265" text-anchor="start" font-size="12" fill="#4a5568">v₂ = b₂</text>
+  <text x="100" y="270" text-anchor="start" font-size="12" fill="#4a5568">v₃</text>
+  <text x="55" y="110" text-anchor="end" font-size="12" fill="#4a5568">v₄</text>
+
+  <!-- Legend -->
+  <line x1="20" y1="15" x2="50" y2="15" stroke="#805ad5" stroke-width="3"/>
+  <text x="55" y="19" font-size="11" fill="#4a5568">H_{d,γ} の辺（連結）</text>
+</svg>
+<div class="figure-caption">5角形境界と連結色 $\gamma$。紫の太線が $H_{d,\gamma}$ の辺で、
+$v_0$（色 $d$）と $v_2$（色 $d$）が $v_1$（色 $\gamma$）を経由して同じ成分に属する。</div>
+</div>
+</div>
+
+<!-- ===== 6.2 定理3：境界連結性定理 ===== -->
+<h2>6.2 定理3：境界連結性定理</h2>
+
+<div class="thm-box">
+<strong>定理3（境界連結性定理, BCT）.</strong>
+$G \setminus v$ を次数5頂点 $v$ の除去で得られる5角形境界付き近三角形分割とし、
+$\varphi$ を $G \setminus v$ の正則4彩色で、4色すべてが $N(v)$ に現れるものとする。
+このとき
+$$\conn \geq 1.$$
+すなわち、少なくとも1つの非 $d$ 色が $b_1$ と $b_2$ を繋ぐ。
+</div>
+
+<div class="explanation">
+<h4>定理の意味</h4>
+<p>この定理は一見当たり前に思えるかもしれませんが、非常に強力です。
+B4 設定（4色が境界に現れる状況）では、2つの同色頂点 $b_1, b_2$ が
+「完全に孤立する」こと（$\conn = 0$）は<strong>絶対に起こらない</strong>と主張しています。</p>
+<p>必ず少なくとも1色は、ケンペ鎖を通じて $b_1$ と $b_2$ を結びつけます。</p>
+</div>
+
+<!-- ===== 6.3 BCTの証明 ===== -->
+<h2>6.3 BCT の証明</h2>
+
+<p>BCT の証明は驚くほど簡潔です。以下、6つのステップで示します。</p>
+
+<div class="proof-block">
+<span class="proof-title">証明.</span>
+
+<div class="step">
+<span class="step-number">ステップ 1：同色頂点は非隣接.</span>
+$b_1 = v_0$ と $b_2 = v_2$ はともに色 $d$ を持つ。$\varphi$ は正則彩色なので、
+$b_1$ と $b_2$ は隣接しない。実際、5角形 $v_0, v_1, v_2, v_3, v_4$ 上で
+$v_0$ と $v_2$ は隣接していない（$v_1$ によって隔てられている）。
+</div>
+
+<div class="step">
+<span class="step-number">ステップ 2：共通隣接頂点の存在.</span>
+5角形上の任意の2つの非隣接頂点は、<strong>ちょうど1つの共通隣接頂点</strong>を持つ。
+$v_0$ と $v_2$ の場合、共通隣接頂点は $m = v_1$ である。
+（$v_0$ の5角形上の隣接頂点は $v_1$ と $v_4$、$v_2$ の隣接頂点は $v_1$ と $v_3$ なので、
+共通するのは $v_1$ のみ。）
+</div>
+
+<div class="step">
+<span class="step-number">ステップ 3：共通隣接頂点の色.</span>
+$\varphi$ は正則彩色であるから：
+<ul>
+<li>$\varphi(v_1) \neq \varphi(v_0) = d$（$v_1$ と $v_0$ は隣接するため）</li>
+<li>$\varphi(v_1) \neq \varphi(v_2) = d$（$v_1$ と $v_2$ は隣接するため）</li>
+</ul>
+したがって $\varphi(v_1) = c$ なる色 $c \neq d$ が存在する。この色を $\gamma$ と呼ぶ。
+</div>
+
+<div class="step">
+<span class="step-number">ステップ 4：パス $b_1 \text{---} v_1 \text{---} b_2$ を考える.</span>
+3頂点のパス $v_0 \text{---} v_1 \text{---} v_2$（すなわち $b_1 \text{---} m \text{---} b_2$）に注目する。
+各頂点の色は：
+<ul>
+<li>$v_0$：色 $d$</li>
+<li>$v_1$：色 $\gamma$（$\neq d$）</li>
+<li>$v_2$：色 $d$</li>
+</ul>
+</div>
+
+<div class="step">
+<span class="step-number">ステップ 5：パスのすべての辺は $H_{d,\gamma}$ に属する.</span>
+<ul>
+<li>辺 $v_0 \text{---} v_1$：一方が色 $d$（$v_0$）、他方が色 $\gamma$（$v_1$） → $H_{d,\gamma}$ の辺</li>
+<li>辺 $v_1 \text{---} v_2$：一方が色 $\gamma$（$v_1$）、他方が色 $d$（$v_2$） → $H_{d,\gamma}$ の辺</li>
+</ul>
+したがって $v_0, v_1, v_2$ はすべて $H_{d,\gamma}$ の<strong>同一の連結成分</strong>に属する。
+特に $b_1 = v_0$ と $b_2 = v_2$ は $H_{d,\gamma}$ で連結される。
+</div>
+
+<div class="step">
+<span class="step-number">ステップ 6：結論.</span>
+$\gamma$ は連結色であるから、$\conn \geq 1$。
+</div>
+<span class="proof-end">$\QED$</span>
+</div>
+
+<div class="explanation">
+<h4>証明のポイント</h4>
+<p>この証明で用いた事実は、わずか3つだけです：</p>
+<ol>
+<li><strong>正則彩色の性質：</strong>隣接する頂点は異なる色を持つ</li>
+<li><strong>5角形の構造：</strong>非隣接頂点は共通隣接頂点を1つ持つ</li>
+<li><strong>ケンペ部分グラフの定義：</strong>色 $a$ と色 $b$ を端点に持つ辺は $H_{a,b}$ に属する</li>
+</ol>
+<p>平面性に関する議論は一切不要です（初期設定として5角形境界があること以外は）。
+これが BCT の美しさです。たった1段落で完結する、驚くほどシンプルな証明です。</p>
+</div>
+
+<div class="example-block">
+<h4>証明の視覚化</h4>
+<p>パス $b_1 \text{---} m \text{---} b_2$ が $H_{d,\gamma}$ 内に存在することを図で確認します。</p>
+<div class="figure">
+<svg width="500" height="200" viewBox="0 0 500 200">
+  <!-- The key path b1 — m — b2 -->
+  <!-- Edge b1-m (in H_{d,γ}) -->
+  <line x1="80" y1="100" x2="250" y2="100" stroke="#805ad5" stroke-width="4"/>
+  <!-- Edge m-b2 (in H_{d,γ}) -->
+  <line x1="250" y1="100" x2="420" y2="100" stroke="#805ad5" stroke-width="4"/>
+
+  <!-- Vertices -->
+  <circle cx="80" cy="100" r="22" fill="#e53e3e" stroke="#805ad5" stroke-width="3"/>
+  <circle cx="250" cy="100" r="22" fill="#3182ce" stroke="#805ad5" stroke-width="3"/>
+  <circle cx="420" cy="100" r="22" fill="#e53e3e" stroke="#805ad5" stroke-width="3"/>
+
+  <!-- Color labels inside -->
+  <text x="80" y="105" text-anchor="middle" font-size="14" fill="white" font-weight="bold">d</text>
+  <text x="250" y="105" text-anchor="middle" font-size="13" fill="white" font-weight="bold">γ</text>
+  <text x="420" y="105" text-anchor="middle" font-size="14" fill="white" font-weight="bold">d</text>
+
+  <!-- Vertex names -->
+  <text x="80" y="145" text-anchor="middle" font-size="13" fill="#4a5568" font-weight="bold">b₁ = v₀</text>
+  <text x="250" y="145" text-anchor="middle" font-size="13" fill="#4a5568" font-weight="bold">m = v₁</text>
+  <text x="420" y="145" text-anchor="middle" font-size="13" fill="#4a5568" font-weight="bold">b₂ = v₂</text>
+
+  <!-- Edge labels -->
+  <text x="165" y="85" text-anchor="middle" font-size="12" fill="#805ad5" font-weight="bold">H_{d,γ} の辺</text>
+  <text x="335" y="85" text-anchor="middle" font-size="12" fill="#805ad5" font-weight="bold">H_{d,γ} の辺</text>
+
+  <!-- Annotation -->
+  <text x="250" y="180" text-anchor="middle" font-size="12" fill="#4a5568">→ 3頂点とも同じ連結成分に属する → γ は連結色</text>
+
+  <!-- Brace-like indicator for "same component" -->
+  <path d="M60,55 Q250,25 440,55" fill="none" stroke="#2c5282" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <text x="250" y="45" text-anchor="middle" font-size="11" fill="#2c5282">H_{d,γ} の同一成分</text>
+</svg>
+<div class="figure-caption">BCT の核心：パス $b_1$-$m$-$b_2$ の2辺がともに $H_{d,\gamma}$ に属する。
+したがって $b_1$ と $b_2$ は $H_{d,\gamma}$ で連結。</div>
+</div>
+</div>
+
+<!-- ===== 6.4 具体例 ===== -->
+<h2>6.4 具体例</h2>
+
+<div class="example-block">
+<h4>具体例：5角形境界での BCT の確認</h4>
+<p>以下の彩色を考えます：</p>
+<ul>
+<li>$v_0$：色 0（赤）</li>
+<li>$v_1$：色 1（青）</li>
+<li>$v_2$：色 0（赤）</li>
+<li>$v_3$：色 2（緑）</li>
+<li>$v_4$：色 3（黄）</li>
+</ul>
+<p>ここで $d = 0$（赤）、$\gamma = 1$（青）、$\alpha = 2$（緑）、$\beta = 3$（黄）です。
+$b_1 = v_0$、$b_2 = v_2$ がともに色 0（赤）を持ちます。</p>
+
+<div class="figure">
+<svg width="420" height="320" viewBox="0 0 420 320">
+  <!-- Pentagon edges -->
+  <!-- v0-v1 (0-1: H_{0,1} edge) -->
+  <line x1="210" y1="40" x2="350" y2="130" stroke="#805ad5" stroke-width="3.5"/>
+  <!-- v1-v2 (1-0: H_{0,1} edge) -->
+  <line x1="350" y1="130" x2="300" y2="270" stroke="#805ad5" stroke-width="3.5"/>
+  <!-- v2-v3 (0-2: H_{0,2} edge) -->
+  <line x1="300" y1="270" x2="120" y2="270" stroke="#cbd5e0" stroke-width="1.5"/>
+  <!-- v3-v4 (2-3: neither H_{0,x}) -->
+  <line x1="120" y1="270" x2="70" y2="130" stroke="#cbd5e0" stroke-width="1.5"/>
+  <!-- v4-v0 (3-0: H_{0,3} edge) -->
+  <line x1="70" y1="130" x2="210" y2="40" stroke="#cbd5e0" stroke-width="1.5"/>
+
+  <!-- Highlight H_{0,1} path: v0-v1-v2 -->
+  <!-- (Already drawn as purple lines above) -->
+
+  <!-- Vertices -->
+  <circle cx="210" cy="40" r="20" fill="#e53e3e" stroke="#805ad5" stroke-width="3"/>
+  <circle cx="350" cy="130" r="20" fill="#3182ce" stroke="#805ad5" stroke-width="3"/>
+  <circle cx="300" cy="270" r="20" fill="#e53e3e" stroke="#805ad5" stroke-width="3"/>
+  <circle cx="120" cy="270" r="20" fill="#38a169" stroke="#2d3748" stroke-width="2"/>
+  <circle cx="70" cy="130" r="20" fill="#d69e2e" stroke="#2d3748" stroke-width="2"/>
+
+  <!-- Color numbers -->
+  <text x="210" y="45" text-anchor="middle" font-size="14" fill="white" font-weight="bold">0</text>
+  <text x="350" y="135" text-anchor="middle" font-size="14" fill="white" font-weight="bold">1</text>
+  <text x="300" y="275" text-anchor="middle" font-size="14" fill="white" font-weight="bold">0</text>
+  <text x="120" y="275" text-anchor="middle" font-size="14" fill="white" font-weight="bold">2</text>
+  <text x="70" y="135" text-anchor="middle" font-size="14" fill="white" font-weight="bold">3</text>
+
+  <!-- Vertex names -->
+  <text x="210" y="18" text-anchor="middle" font-size="12" fill="#4a5568" font-weight="bold">v₀ (b₁)</text>
+  <text x="390" y="125" text-anchor="start" font-size="12" fill="#4a5568" font-weight="bold">v₁</text>
+  <text x="320" y="290" text-anchor="start" font-size="12" fill="#4a5568" font-weight="bold">v₂ (b₂)</text>
+  <text x="85" y="292" text-anchor="start" font-size="12" fill="#4a5568" font-weight="bold">v₃</text>
+  <text x="30" y="125" text-anchor="end" font-size="12" fill="#4a5568" font-weight="bold">v₄</text>
+
+  <!-- Legend -->
+  <rect x="15" y="5" width="170" height="22" rx="3" fill="white" stroke="#e2e8f0" stroke-width="1"/>
+  <line x1="22" y1="16" x2="48" y2="16" stroke="#805ad5" stroke-width="3"/>
+  <text x="55" y="20" font-size="11" fill="#4a5568">H_{0,1} の辺（連結）</text>
+</svg>
+<div class="figure-caption">5角形境界の彩色例。紫の太線と紫の頂点枠が $H_{0,1}$ のパスを示す。
+$v_0(0) \text{---} v_1(1) \text{---} v_2(0)$ が $H_{0,1}$ 内で連結。</div>
+</div>
+
+<h4>色ごとの連結性の確認</h4>
+
+<p><strong>色 1（青）：$H_{0,1}$ の確認</strong></p>
+<ul>
+<li>辺 $v_0(0) \text{---} v_1(1)$：色が $0$ と $1$ → $H_{0,1}$ の辺</li>
+<li>辺 $v_1(1) \text{---} v_2(0)$：色が $1$ と $0$ → $H_{0,1}$ の辺</li>
+<li>パス $v_0 \text{---} v_1 \text{---} v_2$ により $b_1$ と $b_2$ は $H_{0,1}$ で連結</li>
+<li>→ <strong>色 1 は連結色</strong></li>
+</ul>
+
+<p><strong>色 2（緑）：$H_{0,2}$ の確認</strong></p>
+<ul>
+<li>辺 $v_2(0) \text{---} v_3(2)$：色が $0$ と $2$ → $H_{0,2}$ の辺（$v_2$ と $v_3$ が繋がる）</li>
+<li>辺 $v_0(0) \text{---} v_1(1)$：$v_1$ は色 1 なので $H_{0,2}$ の辺ではない</li>
+<li>辺 $v_4(3) \text{---} v_0(0)$：$v_4$ は色 3 なので $H_{0,2}$ の辺ではない</li>
+<li>5角形の辺だけでは $v_0$ から $v_2$ へ $\{0,2\}$ 色の頂点だけで到達できない</li>
+<li>$H_{0,2}$ の成分：$\{v_0\}$ と $\{v_2, v_3\}$ に分離</li>
+<li>→ <strong>色 2 は連結色ではない</strong>（5角形だけを見た場合）</li>
+</ul>
+
+<p><strong>色 3（黄）：$H_{0,3}$ の確認</strong></p>
+<ul>
+<li>辺 $v_4(3) \text{---} v_0(0)$：色が $3$ と $0$ → $H_{0,3}$ の辺（$v_0$ と $v_4$ が繋がる）</li>
+<li>$v_2(0)$ に隣接する $v_1(1)$ と $v_3(2)$ は色 3 でないので、$v_2$ は $H_{0,3}$ で孤立</li>
+<li>$H_{0,3}$ の成分：$\{v_0, v_4\}$ と $\{v_2\}$ に分離</li>
+<li>→ <strong>色 3 は連結色ではない</strong>（5角形だけを見た場合）</li>
+</ul>
+
+<p><strong>結論：</strong> $\conn = 1$。連結色は $\gamma = 1$（青）の1色のみ。
+BCT の主張 $\conn \geq 1$ は確かに成り立っています。</p>
+
+<p><em>注意：</em>ここでは境界（5角形）の辺だけで確認しましたが、
+実際のグラフにはさらに内部の辺が存在するため、$H_{0,2}$ や $H_{0,3}$ が内部を通じて
+$b_1$ と $b_2$ を結ぶ可能性はあります。しかし BCT は最低限 $\conn \geq 1$ を保証しているのであり、
+少なくとも $\gamma$ が連結であることは、内部の構造に依存せず<strong>境界だけから</strong>わかるのです。</p>
+</div>
+
+<div class="example-block">
+<h4>全色のケンペ部分グラフを並べて比較</h4>
+<p>上の例で、$H_{0,1}$、$H_{0,2}$、$H_{0,3}$ を並べて描くと、$\gamma = 1$ だけが
+$b_1$ と $b_2$ を境界上で繋いでいることが明確にわかります。</p>
+<div class="figure">
+<svg width="600" height="180" viewBox="0 0 600 180">
+  <!-- H_{0,1}: connected -->
+  <text x="100" y="15" text-anchor="middle" font-size="13" fill="#2c5282" font-weight="bold">H_{0,1}：連結</text>
+  <!-- edges -->
+  <line x1="30" y1="55" x2="100" y2="90" stroke="#805ad5" stroke-width="3"/>
+  <line x1="100" y1="90" x2="170" y2="55" stroke="#805ad5" stroke-width="3"/>
+  <!-- other edges grayed -->
+  <line x1="170" y1="55" x2="170" y2="140" stroke="#e2e8f0" stroke-width="1"/>
+  <line x1="170" y1="140" x2="30" y2="140" stroke="#e2e8f0" stroke-width="1"/>
+  <line x1="30" y1="140" x2="30" y2="55" stroke="#e2e8f0" stroke-width="1"/>
+  <!-- vertices in H -->
+  <circle cx="30" cy="55" r="14" fill="#e53e3e" stroke="#805ad5" stroke-width="2.5"/>
+  <circle cx="100" cy="90" r="14" fill="#3182ce" stroke="#805ad5" stroke-width="2.5"/>
+  <circle cx="170" cy="55" r="14" fill="#e53e3e" stroke="#805ad5" stroke-width="2.5"/>
+  <!-- vertices not in H -->
+  <circle cx="170" cy="140" r="10" fill="#e2e8f0" stroke="#a0aec0" stroke-width="1"/>
+  <circle cx="30" cy="140" r="10" fill="#e2e8f0" stroke="#a0aec0" stroke-width="1"/>
+  <!-- labels -->
+  <text x="30" y="60" text-anchor="middle" font-size="11" fill="white" font-weight="bold">0</text>
+  <text x="100" y="95" text-anchor="middle" font-size="11" fill="white" font-weight="bold">1</text>
+  <text x="170" y="60" text-anchor="middle" font-size="11" fill="white" font-weight="bold">0</text>
+  <text x="100" y="165" text-anchor="middle" font-size="11" fill="#38a169" font-weight="bold">連結!</text>
+
+  <!-- H_{0,2}: disconnected -->
+  <text x="310" y="15" text-anchor="middle" font-size="13" fill="#c53030" font-weight="bold">H_{0,2}：非連結</text>
+  <line x1="240" y1="55" x2="310" y2="90" stroke="#e2e8f0" stroke-width="1"/>
+  <line x1="310" y1="90" x2="380" y2="55" stroke="#e2e8f0" stroke-width="1"/>
+  <line x1="380" y1="55" x2="380" y2="140" stroke="#805ad5" stroke-width="3"/>
+  <line x1="380" y1="140" x2="240" y2="140" stroke="#e2e8f0" stroke-width="1"/>
+  <line x1="240" y1="140" x2="240" y2="55" stroke="#e2e8f0" stroke-width="1"/>
+  <!-- vertices in H -->
+  <circle cx="240" cy="55" r="14" fill="#e53e3e" stroke="#2d3748" stroke-width="1.5"/>
+  <circle cx="380" cy="55" r="14" fill="#e53e3e" stroke="#2d3748" stroke-width="1.5"/>
+  <circle cx="380" cy="140" r="14" fill="#38a169" stroke="#2d3748" stroke-width="1.5"/>
+  <!-- vertices not in H -->
+  <circle cx="310" cy="90" r="10" fill="#e2e8f0" stroke="#a0aec0" stroke-width="1"/>
+  <circle cx="240" cy="140" r="10" fill="#e2e8f0" stroke="#a0aec0" stroke-width="1"/>
+  <!-- labels -->
+  <text x="240" y="60" text-anchor="middle" font-size="11" fill="white" font-weight="bold">0</text>
+  <text x="380" y="60" text-anchor="middle" font-size="11" fill="white" font-weight="bold">0</text>
+  <text x="380" y="145" text-anchor="middle" font-size="11" fill="white" font-weight="bold">2</text>
+  <text x="310" y="165" text-anchor="middle" font-size="11" fill="#c53030" font-weight="bold">分離</text>
+
+  <!-- H_{0,3}: disconnected -->
+  <text x="510" y="15" text-anchor="middle" font-size="13" fill="#c53030" font-weight="bold">H_{0,3}：非連結</text>
+  <line x1="440" y1="55" x2="510" y2="90" stroke="#e2e8f0" stroke-width="1"/>
+  <line x1="510" y1="90" x2="580" y2="55" stroke="#e2e8f0" stroke-width="1"/>
+  <line x1="580" y1="55" x2="580" y2="140" stroke="#e2e8f0" stroke-width="1"/>
+  <line x1="580" y1="140" x2="440" y2="140" stroke="#e2e8f0" stroke-width="1"/>
+  <line x1="440" y1="140" x2="440" y2="55" stroke="#805ad5" stroke-width="3"/>
+  <!-- vertices in H -->
+  <circle cx="440" cy="55" r="14" fill="#e53e3e" stroke="#2d3748" stroke-width="1.5"/>
+  <circle cx="580" cy="55" r="14" fill="#e53e3e" stroke="#2d3748" stroke-width="1.5"/>
+  <circle cx="440" cy="140" r="14" fill="#d69e2e" stroke="#2d3748" stroke-width="1.5"/>
+  <!-- vertices not in H -->
+  <circle cx="510" cy="90" r="10" fill="#e2e8f0" stroke="#a0aec0" stroke-width="1"/>
+  <circle cx="580" cy="140" r="10" fill="#e2e8f0" stroke="#a0aec0" stroke-width="1"/>
+  <!-- labels -->
+  <text x="440" y="60" text-anchor="middle" font-size="11" fill="white" font-weight="bold">0</text>
+  <text x="580" y="60" text-anchor="middle" font-size="11" fill="white" font-weight="bold">0</text>
+  <text x="440" y="145" text-anchor="middle" font-size="11" fill="white" font-weight="bold">3</text>
+  <text x="510" y="165" text-anchor="middle" font-size="11" fill="#c53030" font-weight="bold">分離</text>
+</svg>
+<div class="figure-caption">3つのケンペ部分グラフの比較。$H_{0,1}$ のみが $b_1$（左上、色0）と $b_2$（右上、色0）を連結する。
+$H_{0,2}$ と $H_{0,3}$ では $b_1$ と $b_2$ は異なる成分に属する。</div>
+</div>
+</div>
+
+<!-- ===== 6.5 BCTが排除するもの ===== -->
+<h2>6.5 BCT が排除するもの</h2>
+
+<p>BCT の登場前は、B4 設定の解析で $\conn$ の値として $0, 1, 2, 3$ の4つの場合を
+すべて扱う必要がありました。特に $\conn = 0$（どの色も $b_1$ と $b_2$ を繋がない）の場合は
+厄介であり、この場合のケンペ交換の解析には困難が伴いました。</p>
+
+<div class="thm-box corollary">
+<strong>系（$\conn = 0$ の排除）.</strong>
+B4 設定において、$\conn = 0$ は<strong>起こりえない</strong>（空な場合である）。
+したがって、B4 設定の解析では $\conn \in \{1, 2, 3\}$ の3つの場合のみを考えればよい。
+</div>
+
+<div class="explanation">
+<h4>この排除がなぜ重要か</h4>
+<p>$\conn = 0$ は「どのケンペ鎖も $b_1$ と $b_2$ を結ばない」状況です。
+この場合、どの非連結交換を行っても境界対の構造が予測しにくく、
+場合分けが爆発的に増える恐れがありました。</p>
+<p>BCT により $\conn = 0$ が不可能とわかったことで：</p>
+<ul>
+<li><strong>場合の数が減少：</strong>4つの場合 → 3つの場合</li>
+<li><strong>最悪ケースの排除：</strong>最も扱いにくい $\conn = 0$ が消えた</li>
+<li><strong>連結色の存在保証：</strong>必ず「連結色 $\gamma$」が存在するので、
+この色を軸にした解析が常に可能</li>
+</ul>
+<p>後の章（第10章以降）で B4 彩色の詳細な構造を解析する際に、
+この排除が証明の大幅な簡略化をもたらします。</p>
+</div>
+
+<div class="example-block">
+<h4>$\conn$ の場合分けの全体像</h4>
+<table>
+<tr><th>$\conn$</th><th>意味</th><th>BCT による状態</th></tr>
+<tr><td>$0$</td><td>連結色なし</td><td style="background:#fff5f5; color:#c53030;"><strong>不可能</strong>（BCTで排除）</td></tr>
+<tr><td>$1$</td><td>連結色が1つ</td><td style="background:#f0fff4;">可能（$\gamma$ のみが連結）</td></tr>
+<tr><td>$2$</td><td>連結色が2つ</td><td style="background:#f0fff4;">可能</td></tr>
+<tr><td>$3$</td><td>全色が連結</td><td style="background:#f0fff4;">可能</td></tr>
+</table>
+<p>$\conn = 1$ の場合、BCT の証明から、連結色は必ず共通隣接頂点 $m = v_1$ の色 $\gamma$ です。
+これは $b_1$ と $b_2$ の間に「挟まれた」頂点の色であり、幾何学的にも自然な結果です。</p>
+</div>
+
+<!-- ===== Takeaway ===== -->
+<div class="takeaway">
+<h3>ポイント</h3>
+<ul>
+<li><strong>連結色</strong>：色 $x \neq d$ が $H_{d,x}$ で $b_1$ と $b_2$ を繋ぐとき、$x$ を連結色と呼ぶ。
+$\conn$ は連結色の個数。</li>
+<li><strong>BCT（定理3）</strong>：4色が境界に現れるなら、少なくとも1色は $b_1$ と $b_2$ を繋ぐ。
+すなわち $\conn \geq 1$。</li>
+<li><strong>証明は初等的</strong>：$b_1$ と $b_2$ の共通隣接頂点 $m$ を通るパス $b_1\text{---}m\text{---}b_2$ が
+$H_{d,\gamma}$ に含まれることを確認するだけ。</li>
+<li><strong>$\conn = 0$ は不可能</strong>：B4 設定での最も厄介な場合が完全に排除される。</li>
+<li><strong>平面性は不要</strong>：5角形の構造と正則彩色の定義だけから従う。</li>
+<li>これは本証明アプローチにおける<strong>鍵となるブレイクスルー</strong>の1つである。</li>
+</ul>
+</div>
+
+<div class="nav-footer">
+  <a href="05_cycle_rank.html">&larr; 前へ: サイクルランク恒等式</a>
+  <a href="index.html">目次</a>
+  <a href="07_jordan.html">次へ: ジョルダン分離補題 &rarr;</a>
+</div>
+
+</body>
+</html>

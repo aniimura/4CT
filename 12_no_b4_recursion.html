@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第12章: B4非再帰定理 — 四色定理の証明</title>
+<link rel="stylesheet" href="style.css">
+<script>
+MathJax = {
+  tex: { inlineMath: [['$','$']], displayMath: [['$$','$$']],
+         macros: { conn: '\\mathrm{conn}', QED: '\\blacksquare' } },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+</head>
+<body>
+
+<div class="nav-header">
+  <a href="11_conservation.html">&larr; 前へ</a>
+  <a href="index.html">目次</a>
+  <a href="13_kempe_game.html">次へ &rarr;</a>
+</div>
+
+<p class="chapter-number">第12章</p>
+<h1>B4非再帰定理</h1>
+
+<div class="learning-box">
+<h3>このページで学ぶこと</h3>
+<ul>
+<li>定理7：B4からの非連結交換はB4を再現しない</li>
+<li>$\beta$ が連結色になること（BCTから）</li>
+<li>$\beta$ が部分的連結であること（保存則から）</li>
+<li>系3：B4 → B4 遷移の不可能性</li>
+</ul>
+</div>
+
+<div class="prereq-box">
+<strong>前提:</strong> 第6章（BCT）、第10章（B4構造）、第11章（保存則）
+</div>
+
+<!-- ===== 12.1 問題の核心 ===== -->
+<h2>問題の核心</h2>
+
+<p>B4彩色から「非連結 $\{d,\alpha\}$-交換」（$b_1$ を含む成分を交換）を行い、
+新しい彩色 $\varphi'$ を得ます。問題は：</p>
+
+<div class="warning">
+<strong>危険：</strong>交換後の彩色 $\varphi'$ が再び B4 だとしたら？
+→ また非連結交換が必要 → また B4 → 無限ループ！
+</div>
+
+<p>定理7は、この無限ループが<strong>起こりえない</strong>ことを示します。</p>
+
+<!-- ===== 12.2 定理7 ===== -->
+<h2>定理7：B4非再帰定理</h2>
+
+<div class="thm-box">
+<strong>定理7（B4非再帰定理）.</strong>
+$\varphi$ を B4 彩色とし、$\varphi'$ を非連結 $\{d,\alpha\}$-ケンペ交換の結果とする。
+このとき $\varphi'$ は B4 彩色ではない。より正確には：
+<ol style="font-style:normal;">
+<li>$\beta$ は $\varphi'$ において連結色である</li>
+<li>$\conn' = 1$（$\beta$ が唯一の連結色）の場合、$\beta$ は<strong>部分的</strong>連結（$p'_{dc',\beta} \geq 2$）</li>
+</ol>
+</div>
+
+<h3>証明</h3>
+
+<p>証明は4つのステップで進みます。各ステップを丁寧に追いましょう。</p>
+
+<div class="proof-block">
+<span class="proof-title">証明.</span>
+
+<div class="step">
+<span class="step-number">ステップ1：B4の構造を確認.</span>
+定理6より：$p_{d,\beta} = 2$、$L_{d,\beta} = 0$、$L_{\alpha,\beta} = 0$。
+</div>
+
+<div class="step">
+<span class="step-number">ステップ2：保存則を $\beta$ に適用.</span>
+補題1（保存則）を $\xi = \beta$ に適用：
+$$L'_{d,\beta} + L'_{\alpha,\beta} = L_{d,\beta} + L_{\alpha,\beta} + (p'_{d,\beta} + p'_{\alpha,\beta}) - (p_{d,\beta} + p_{\alpha,\beta})$$
+$L_{d,\beta} = L_{\alpha,\beta} = 0$ を代入：
+$$L'_{d,\beta} + L'_{\alpha,\beta} = (p'_{d,\beta} + p'_{\alpha,\beta}) - (2 + p_{\alpha,\beta})$$
+$L' \geq 0$ より：
+$$p'_{d,\beta} + p'_{\alpha,\beta} \geq 2 + p_{\alpha,\beta} \geq 3$$
+
+<p style="font-style:normal;">これは非常に重要な不等式です：<strong>交換後の $\beta$ に関する成分数の和は3以上</strong>。</p>
+</div>
+
+<div class="step">
+<span class="step-number">ステップ3：$\beta$ が連結色であること（BCTから）.</span>
+交換後の新しい境界対 $(b'_1, b'_2)$ を考える。
+これらは5-サイクル上で非隣接であり、共通近傍 $m$ を持つ。
+
+<p>ここで $m = v_4$（色 $\beta$）。$\{d,\alpha\}$-交換は $\beta$ 色の頂点に影響しないので
+$\varphi'(v_4) = \beta$。</p>
+
+<p>BCTの議論と同様に、パス $b'_1$—$v_4$—$b'_2$ は
+$H'_{dc',\beta}$ に含まれる（ここで $dc'$ は新しい二重色）。
+よって $\beta$ は連結色。</p>
+</div>
+
+<div class="step">
+<span class="step-number">ステップ4：$\conn' = 1$ なら $\beta$ は部分的.</span>
+$\conn' = 1$ と仮定する。$\beta$ が唯一の連結色であり、
+他の2つの非 $dc'$ 色は非連結（$p' \geq 2$）。
+
+<p>ステップ2の不等式 $p'_{d,\beta} + p'_{\alpha,\beta} \geq 3$ を使う。
+積の上界を非連結色の相補対に適用すると、
+$p'_{d,\beta}$ と $p'_{\alpha,\beta}$ の一方が 1 に強制される。
+しかし和は $\geq 3$ なので、他方は $\geq 2$。</p>
+
+<p>連結色に対応するペアが $p' = 1$ になり、
+それが $H'_{dc',\beta}$ の相補でない方であることを確認すると、
+$p'_{dc',\beta} \geq 2$。つまり $\beta$ は<strong>部分的</strong>連結色。</p>
+
+<p>$\varphi'$ が B4 であるためには連結色が全域的（$p' = 1$）でなければならないが、
+$p'_{dc',\beta} \geq 2$ なのでこれは成り立たない。$\varphi'$ は B4 ではない。</p>
+</div>
+
+<span class="proof-end">$\QED$</span>
+</div>
+
+<!-- ===== 12.3 各ステップの解説 ===== -->
+<h2>証明のフロー図</h2>
+
+<div class="figure">
+<svg width="500" height="320" viewBox="0 0 500 320">
+  <!-- Box: B4 structure -->
+  <rect x="10" y="10" width="200" height="50" rx="8" fill="#fff5f5" stroke="#e53e3e" stroke-width="1.5"/>
+  <text x="110" y="30" text-anchor="middle" font-size="12" fill="#c53030" font-weight="bold">ステップ1: B4の構造</text>
+  <text x="110" y="48" text-anchor="middle" font-size="11" fill="#4a5568">$L_{d,\beta}=L_{\alpha,\beta}=0$</text>
+  <!-- Arrow -->
+  <line x1="110" y1="60" x2="110" y2="85" stroke="#4a5568" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <!-- Box: Conservation -->
+  <rect x="10" y="85" width="200" height="50" rx="8" fill="#faf5ff" stroke="#805ad5" stroke-width="1.5"/>
+  <text x="110" y="105" text-anchor="middle" font-size="12" fill="#553c9a" font-weight="bold">ステップ2: 保存則</text>
+  <text x="110" y="123" text-anchor="middle" font-size="11" fill="#4a5568">$p'_{d,\beta}+p'_{\alpha,\beta} \geq 3$</text>
+  <!-- Arrow down -->
+  <line x1="110" y1="135" x2="110" y2="160" stroke="#4a5568" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <!-- Box: BCT -->
+  <rect x="10" y="160" width="200" height="50" rx="8" fill="#ebf8ff" stroke="#3182ce" stroke-width="1.5"/>
+  <text x="110" y="180" text-anchor="middle" font-size="12" fill="#2b6cb0" font-weight="bold">ステップ3: BCT</text>
+  <text x="110" y="198" text-anchor="middle" font-size="11" fill="#4a5568">$\beta$ は連結色</text>
+  <!-- Arrow down -->
+  <line x1="110" y1="210" x2="110" y2="235" stroke="#4a5568" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <!-- Box: Product Bound -->
+  <rect x="10" y="235" width="200" height="60" rx="8" fill="#f0fff4" stroke="#38a169" stroke-width="1.5"/>
+  <text x="110" y="255" text-anchor="middle" font-size="12" fill="#276749" font-weight="bold">ステップ4: 積の上界</text>
+  <text x="110" y="273" text-anchor="middle" font-size="11" fill="#4a5568">$p'_{dc',\beta} \geq 2$</text>
+  <text x="110" y="288" text-anchor="middle" font-size="11" fill="#276749">→ B4ではない！</text>
+  <!-- Right side: conclusion -->
+  <rect x="270" y="120" width="210" height="100" rx="8" fill="#fffff0" stroke="#d69e2e" stroke-width="2"/>
+  <text x="375" y="145" text-anchor="middle" font-size="13" fill="#975a16" font-weight="bold">結論</text>
+  <text x="375" y="168" text-anchor="middle" font-size="11" fill="#4a5568">B4 → 非連結交換 → B4'</text>
+  <text x="375" y="186" text-anchor="middle" font-size="11" fill="#4a5568">のとき、B4' は B4 でない。</text>
+  <text x="375" y="204" text-anchor="middle" font-size="11" fill="#c53030">B4→B4 遷移は不可能！</text>
+  <line x1="210" y1="265" x2="270" y2="180" stroke="#d69e2e" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <!-- Arrow marker -->
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#4a5568"/>
+    </marker>
+  </defs>
+</svg>
+</div>
+
+<!-- ===== 12.4 系3 ===== -->
+<h2>系3</h2>
+
+<div class="thm-box corollary">
+<strong>系3.</strong>
+B4 彩色から非連結 $\{d,\alpha\}$-交換を行った後：
+<ul style="font-style:normal;">
+<li>$\conn' \geq 1$（BCT による）</li>
+<li>結果がもし $\conn' = 1$ であれば、ケースB（部分的連結）であり、B4 ではない</li>
+</ul>
+特に、B4 → B4 遷移は不可能。
+</div>
+
+<div class="explanation">
+<h4>なぜこれが重要か</h4>
+<p>ケンペ鎖ゲーム（定理8、次章）では、B4ケースで非連結交換を行います。
+系3により：</p>
+<ul>
+<li>交換後が $\conn' \geq 2$ なら → ケースA（1回の交換で解決）</li>
+<li>交換後が $\conn' = 1$ なら → ケースB（部分的連結、さらに交換が必要だが B4 にはならない）</li>
+</ul>
+<p>いずれにしても、<strong>B4 が繰り返されることはない</strong>。
+これがケンペの1879年の証明の誤りを修正する核心です。</p>
+</div>
+
+<!-- ===== 12.5 歴史的意義 ===== -->
+<h2>歴史的意義</h2>
+
+<div class="example-block">
+<h4>ケンペの誤りと本定理の関係</h4>
+<p>1879年のケンペの「証明」：</p>
+<ol>
+<li>B4ケースで $\{d,\alpha\}$-交換と $\{d,\beta\}$-交換を<strong>同時に</strong>実行しようとした</li>
+<li>しかし一方の交換が他方のケンペ鎖を壊す可能性を見落とした</li>
+<li>1890年にヒーウッドが反例を指摘</li>
+</ol>
+<p>本証明のアプローチ：</p>
+<ol>
+<li>一度に<strong>1回だけ</strong>交換する</li>
+<li>保存則 + 積の上界 + BCT で交換後の状態を代数的に制御</li>
+<li>定理7により B4 の再帰（無限ループ）が不可能であることを証明</li>
+<li>有限回（高々3回）で必ず解決することを保証</li>
+</ol>
+</div>
+
+<div class="takeaway">
+<h3>ポイント</h3>
+<ul>
+<li><strong>定理7</strong>：B4から非連結交換した結果は B4 ではない。</li>
+<li>証明の鍵は4つ：B4構造（定理6）、保存則（補題1）、BCT（定理3）、積の上界。</li>
+<li>保存則が $p'_{d,\beta} + p'_{\alpha,\beta} \geq 3$ を与え、BCT が $\beta$ の連結性を保証し、
+積の上界が $\beta$ の部分性を強制する。</li>
+<li><strong>系3</strong>：B4→B4 遷移は不可能。交換後はケースA（$\conn' \geq 2$）かケースB（部分的連結）。</li>
+<li>ケンペの「同時2交換」を「逐次1交換 + 代数的制御」に置き換えた。</li>
+</ul>
+</div>
+
+<div class="nav-footer">
+  <a href="11_conservation.html">&larr; 前へ: 保存則</a>
+  <a href="index.html">目次</a>
+  <a href="13_kempe_game.html">次へ: ケンペ鎖ゲーム &rarr;</a>
+</div>
+
+</body>
+</html>
