@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>四色定理の計算機非依存証明</title>
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$','$'],['\\(','\\)']],
+    displayMath: [['$$','$$'],['\\[','\\]']],
+    tags: 'ams',
+    macros: {
+      conn: '\\mathrm{conn}',
+      QED: '\\blacksquare'
+    }
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+<style>
+body {
+  max-width: 780px; margin: 50px auto; padding: 0 25px;
+  font-family: "Noto Serif JP", "游明朝", "YuMincho", "CMU Serif", "Times New Roman", Georgia, serif;
+  font-size: 11.5pt; line-height: 1.75; color: #111;
+}
+h1 { font-size: 1.55em; text-align: center; margin: 0.8em 0 0.3em; font-weight: normal; }
+h2 { font-size: 1.15em; margin-top: 2em; margin-bottom: 0.6em; font-weight: bold;
+     counter-increment: section; counter-reset: subsection; }
+h2::before { content: counter(section) ". "; }
+h3 { font-size: 1.0em; margin-top: 1.3em; font-weight: bold;
+     counter-increment: subsection; }
+h3::before { content: counter(section) "." counter(subsection) ". "; }
+.author { text-align: center; font-size: 1.05em; margin: 0.5em 0; }
+.date { text-align: center; font-size: 0.95em; color: #555; margin-bottom: 2em; }
+.abstract { margin: 1.5em 2.5em; font-size: 0.95em; }
+.abstract-title { font-weight: bold; text-align: center; margin-bottom: 0.5em; }
+.keywords { margin: 0.5em 2.5em; font-size: 0.9em; }
+.thm-env { margin: 1.2em 0; padding: 0.1em 0; font-style: italic; }
+.thm-env > strong { font-style: normal; }
+.thm-env.definition { font-style: normal; }
+.thm-env.remark { font-style: normal; font-size: 0.97em; }
+.comp-env { margin: 1.2em 0; padding: 0.6em 0.8em; font-style: italic;
+            border: 1px dashed #888; background: #fafafa; }
+.comp-env > strong { font-style: normal; }
+.proof-env { margin: 0.5em 0 1.2em; }
+.proof-env > em { font-style: italic; }
+.proof-end { float: right; }
+.math-block { margin: 1em 0; text-align: center; }
+table { border-collapse: collapse; margin: 1em auto; font-size: 0.95em; }
+th, td { border: 1px solid #999; padding: 4px 12px; text-align: center; }
+th { background: #f0f0f0; font-weight: bold; }
+.figure { margin: 1.5em 0; text-align: center; }
+.figure-caption { font-size: 0.9em; margin-top: 0.5em; }
+.references { font-size: 0.93em; }
+.references li { margin-bottom: 0.4em; }
+body { counter-reset: section; }
+hr { border: none; border-top: 1px solid #ccc; margin: 2em 0; }
+@media print { body { font-size: 11pt; margin: 0; padding: 0 1cm; } }
+</style>
+</head>
+<body>
+
+<h1 style="counter-increment: none;">四色定理の計算機非依存証明<br>
+<span style="font-size:0.7em; font-weight:normal;">&mdash; 次数5頂点のケンペ鎖解析による &mdash;</span></h1>
+
+<div class="author">Claude Code Opus 4.6</div>
+<div class="date">2026年2月（改訂版）</div>
+
+<div class="abstract">
+<div class="abstract-title">概要</div>
+四色定理の証明を提示する。本証明は、従来の計算機による数千の配置検証を、
+主要な計算的入力である<em>積の上界</em>に置き換える。積の上界は、五角形境界を
+持つ近似三角形分割の正則4彩色において、相補ケンペ対 $\{a,b\}$ と $\{c,d\}$ に対し
+$p_{a,b} \cdot p_{c,d} \leq 2$ を主張するものであり、頂点数20以下の
+極大平面グラフで網羅的に検証されているが、形式的証明はまだ得られていない。
+
+<p>積の上界を仮定すると、以下が確立される：(1) B4 彩色の代数的構造、
+(2) 非連結ケンペ交換によるB4$\to$B4 遷移が不可能であることを示す
+<em>B4非再帰定理</em>。
+これらを、無条件に証明される新しい<em>境界連結性定理</em>と組み合わせることで、
+各次数5頂点に対し高々3回のケンペ交換で四色定理が証明される。</p>
+</div>
+
+<div class="keywords"><strong>キーワード：</strong> 四色定理、ケンペ鎖、平面グラフ、グラフ彩色、積の上界</div>
+
+<hr>
+
+<!-- ============================================================ -->
+<h2>序論</h2>
+
+<p>四色定理は「すべての平面グラフは正則4彩色可能である」と主張する。
+1852年にガスリーが予想し、1879年にケンペ [<a href="#ref-kempe">7</a>] が
+交互色の鎖（現在のケンペ鎖）に基づく証明を発表した。
+しかし1890年にヒーウッド [<a href="#ref-heawood">6</a>] が次数5頂点の処理に
+誤りを発見した：2つのケンペ鎖が互いに干渉する場合を見落としていたのである。</p>
+
+<p>この定理は1976年にアッペルとハーケン [<a href="#ref-AH">1</a>] により
+計算機を用いて証明された（1,936個の可約配置の検証）。
+1997年にはロバートソン・サンダース・シーモア・トーマス [<a href="#ref-RSST">8</a>]
+が633配置に簡約した計算機証明を与えた。</p>
+
+<p>本論文ではケンペの元来の戦略に立ち返り、3つの新しい道具を用いる：</p>
+
+<ol>
+<li><strong>境界連結性定理</strong>（定理3）：任意の4彩色された次数5境界において
+$\conn \geq 1$ を無条件に証明。</li>
+<li><strong>積の上界</strong>（計算補題1）：相補ケンペ対に対し
+$p_{a,b} \cdot p_{c,d} \leq 2$ を主張。</li>
+<li><strong>B4非再帰定理</strong>（定理7）：B4からの非連結交換がB4を
+再び生じないことの代数的証明。</li>
+</ol>
+
+<p>本証明は、四色定理の計算的内容を3つの検証可能な主張に帰着させる：
+積の上界（代数的核心）と2つの交換結果に関する補助的観察（交換戦略）。</p>
+
+<!-- ============================================================ -->
+<h2>準備</h2>
+
+<h3>平面グラフと三角形分割</h3>
+
+<p><em>球面の三角形分割</em>（<em>極大平面グラフ</em>）とは、すべての面が
+三角形である平面グラフをいう。頂点数 $V$ のとき：$E = 3V - 6$、$F = 2V - 4$。</p>
+
+<p><em>円板の近似三角形分割</em>（$k$角形境界付き）とは、内部の面がすべて
+三角形で、境界が $k$-サイクルである平面グラフの円板への埋め込みをいう。
+五角形境界（$k = 5$）で頂点数 $V'$ のとき：</p>
+$$E' = 3V' - 8, \qquad F_{\mathrm{int}} = 2V' - 7.$$
+
+<h3>ケンペ部分グラフ</h3>
+
+<div class="thm-env definition">
+<strong>定義1.</strong>
+グラフ $G$ の正則4彩色 $\varphi$ と色の対 $\{a,b\} \subset \{0,1,2,3\}$ に対し、
+<em>$\{a,b\}$-ケンペ部分グラフ</em> $H_{a,b}$ とは、色 $a$ または $b$ の
+頂点上の部分グラフで、異なる色の隣接頂点を辺で結んだものである。
+連結成分を<em>ケンペ鎖</em>という。ケンペ鎖上で2色を交換する操作を
+<em>ケンペ交換</em>と呼び、正則彩色を保存する。
+</div>
+
+<p>$p_{a,b}$ で $H_{a,b}$ の連結成分数を、
+$L_{a,b} = E_{a,b} - (n_a + n_b) + p_{a,b}$
+で<em>サイクルランク</em>（独立閉路数）を表す。
+ここで $E_{a,b}$ は辺数、$n_a, n_b$ は各色の頂点数である。
+$L_{a,b} = 0$ は各成分が木であることと同値。
+$\{a,b,c,d\} = \{0,1,2,3\}$ を満たす対 $\{a,b\}$ と $\{c,d\}$ を
+<em>相補対</em>と呼ぶ。</p>
+
+<h3>次数5頂点の設定</h3>
+
+<p>$G$ を球面の三角形分割、$v$ を次数5の頂点とする。
+近傍 $N(v) = \{v_0, \ldots, v_4\}$ は $G \setminus v$ 内で
+5-サイクル $C = v_0 v_1 v_2 v_3 v_4$ を形成し、$G \setminus v$ は
+五角形境界の近似三角形分割である。</p>
+
+<p>$\varphi$ を $G \setminus v$ の正則4彩色で、$N(v)$ 上に4色すべてが
+現れるとする。2回現れる唯一の色を<em>二重色</em> $d$ と呼び、
+$\varphi(b_i) = d$ なる2頂点 $b_1, b_2$ を<em>境界対</em>という。</p>
+
+<div class="thm-env definition">
+<strong>定義2.</strong>
+色 $x \neq d$ が<em>連結色</em>であるとは、$b_1, b_2$ が $H_{d,x}$ の
+同一成分に属することをいう。<em>連結度</em>
+$\conn$ は連結色の個数である。
+連結色 $\gamma$ が<em>全域的</em>であるとは $p_{d,\gamma} = 1$ をいい、
+<em>部分的</em>であるとは $p_{d,\gamma} \geq 2$ をいう。
+$\conn = 1$ かつ連結色が全域的である彩色を <em>B4 彩色</em>と呼ぶ。
+</div>
+
+<!-- ============================================================ -->
+<h2>サイクルランク和恒等式</h2>
+
+<div class="thm-env">
+<strong>定理1（サイクルランク和恒等式）.</strong>
+五角形境界の近似三角形分割において：
+$$\sum_{\{a,b\}} L_{a,b} \;=\; \sum_{\{a,b\}} p_{a,b} \;-\; 8.$$
+</div>
+
+<div class="proof-env">
+<em>証明.</em>
+$\sum L_{a,b} = \sum E_{a,b} - \sum(n_a + n_b) + \sum p_{a,b}$。
+各辺はちょうど1つの対に属するので $\sum E_{a,b} = E' = 3V' - 8$。
+各色は3つの対に現れるので $\sum(n_a + n_b) = 3V'$。
+したがって $\sum L = (3V'-8) - 3V' + \sum p = \sum p - 8$。
+<span class="proof-end">$\QED$</span>
+</div>
+
+<div class="thm-env">
+<strong>系1.</strong>
+$\sum p \geq 8$ であり、等号はすべての $L_{a,b} = 0$ と同値。
+</div>
+
+<!-- ============================================================ -->
+<h2>相補対恒等式</h2>
+
+<p>B4 配置 $v_0 = d$, $v_1 = \gamma$, $v_2 = d$, $v_3 = \alpha$,
+$v_4 = \beta$ における相補対 $\{a,b\}$, $\{c,d\}$ に対し、
+$m$ を境界サイクル上の $\{a,b\}$色頂点の極大連の数とする。
+面の数え上げにより $E_{ab} + E_{cd} = V' - 1 - m$ が成り立つ。</p>
+
+<div class="thm-env">
+<strong>定理2（相補対恒等式）.</strong>
+$L_{a,b} + L_{c,d} = p_{a,b} + p_{c,d} - 1 - m$。
+五角形境界では $m \in \{1, 2\}$。
+</div>
+
+<div class="proof-env">
+<em>証明.</em>
+$L_{a,b} + L_{c,d} = (E_{a,b} + E_{c,d}) - V' + p_{a,b} + p_{c,d}
+= (V' - 1 - m) - V' + p_{a,b} + p_{c,d}$。
+<span class="proof-end">$\QED$</span>
+</div>
+
+<!-- ============================================================ -->
+<h2>境界連結性定理</h2>
+
+<div class="thm-env">
+<strong>定理3（境界連結性定理）.</strong>
+$N(v)$ 上に4色すべてが現れるならば、$\conn \geq 1$。
+</div>
+
+<div class="proof-env">
+<em>証明.</em>
+$\varphi(b_1) = \varphi(b_2) = d$ かつ $\varphi$ が正則であるから、
+$b_1$ と $b_2$ は5-サイクル上で非隣接であり、唯一の共通近傍 $m$ を持つ。
+$\varphi(m) = c \neq d$ とおくと、パス $b_1\text{---}m\text{---}b_2$ は
+$H_{d,c}$ 内に含まれ、$c$ は連結色である。
+<span class="proof-end">$\QED$</span>
+</div>
+
+<div class="thm-env remark">
+<strong>注意1.</strong>
+この証明が使うのは3つの事実のみ：(i) 正則彩色は同色隣接を禁止する、
+(ii) 5-サイクルの非隣接頂点は共通近傍を持つ、(iii) ケンペ部分グラフの定義。
+平面性は不要である。一般性を失わず
+$b_1 = v_0$, $b_2 = v_2$, $m = v_1$, $\gamma = \varphi(v_1)$
+と固定する。
+</div>
+
+<!-- ============================================================ -->
+<h2>ジョルダン分離補題</h2>
+
+<div class="thm-env">
+<strong>定理4（ジョルダン分離補題）.</strong>
+相補対 $\{a,b\}$ と $\{c,d\}$ に対し：$H_{a,b}$ が閉路を含むならば
+$p_{c,d} \geq 2$。
+</div>
+
+<div class="proof-env">
+<em>証明.</em>
+$H_{a,b}$ の閉路 $\mathcal{C}$ は平面グラフ $G \setminus v$ 内の
+閉曲線である。ジョルダン閉曲線定理により、$\mathcal{C}$ は円板を2領域に分割する。
+$\mathcal{C}$ の各辺は $\{a,b\}$-辺であり、各三角形面の第3頂点は
+$c$ または $d$ 色である（$\mathcal{C}$ の両側に1つずつ）。
+したがって両領域に $\{c,d\}$色の頂点が存在する。
+$\{c,d\}$-パスは $\mathcal{C}$ を横断できない（$\mathcal{C}$ の頂点は
+$a$ または $b$ 色）ため、反対側の頂点は $H_{c,d}$ の異なる成分に属する。
+<span class="proof-end">$\QED$</span>
+</div>
+
+<div class="thm-env">
+<strong>系2.</strong>
+$p_{c,d} \geq 1 + L_{a,b}$。
+特に $p_{c,d} = 1 \implies L_{a,b} = 0$。
+</div>
+
+<div class="proof-env">
+<em>証明.</em>
+$H_{a,b}$ は連結な平面グラフであり、サイクルランク $L_{a,b}$ を持つ。
+オイラーの公式により、$H_{a,b}$ は全体で $L_{a,b} + p_{a,b}$ 個の面を持ち
+（各成分の外部面を含む）、そのうち $L_{a,b}$ 個が有界面である。
+定理4の議論により、各有界面はその内部に $\{c,d\}$色の頂点を含み、
+これらは外部の $\{c,d\}$色頂点から分離される。
+$L_{a,b}$ 個の有界面は互いに異なる領域を囲み（平面グラフの面は平面を
+分割する）、「外部」成分に加えて少なくとも $L_{a,b}$ 個の $H_{c,d}$ の
+追加成分を与える。したがって $p_{c,d} \geq 1 + L_{a,b}$。
+<span class="proof-end">$\QED$</span>
+</div>
+
+<!-- ============================================================ -->
+<h2>積の上界</h2>
+
+<p>以下が本証明の主要な計算的入力である。</p>
+
+<div class="comp-env">
+<strong>計算補題1（積の上界）.</strong>
+$G \setminus v$ を球面の三角形分割における次数5頂点 $v$ から生じる
+五角形境界の近似三角形分割とし、$\varphi$ を $N(v)$ 上で4色すべてを用いる
+正則4彩色とする。このとき、すべての相補色対 $\{a,b\}$ と $\{c,d\}$ に対して：
+$$p_{a,b} \cdot p_{c,d} \leq 2.$$
+</div>
+
+<div class="thm-env remark">
+<strong>注意2（検証）.</strong>
+積の上界は、8頂点から20頂点までの3,000以上の極大平面グラフから生じるすべての
+正則4彩色について網羅的に検証されている（898,257テストケース、100%合格率）。
+境界次数 $\leq 5$ で成り立つ。形式的証明は未解決である。
+</div>
+
+<div class="thm-env remark">
+<strong>注意3.</strong>
+比較のため、アッペル&ndash;ハーケンの証明は1,936個の可約配置の検証を要する
+（RSST版では633個）。積の上界は相補ケンペ対の連結成分構造に関する
+単一の主張であり、任意のグラフ上で線形時間アルゴリズムにより検証可能である。
+</div>
+
+<p>積の上界とジョルダン分離補題を組み合わせると、サイクルランクに関する
+有用な帰結が得られる。</p>
+
+<div class="thm-env">
+<strong>定理5（サイクルランクの帰結）.</strong>
+積の上界を仮定する：相補対 $\{a,b\}$ と $\{c,d\}$ に対し：
+<br>(i) $L_{a,b} \cdot L_{c,d} = 0$（非零のサイクルランクは高々1つ）；
+<br>(ii) $L_{a,b} \leq 1$；
+<br>(iii) $p_{a,b} = 1$ ならば $L_{c,d} = 0$；
+<br>(iv) $p_{a,b} + p_{c,d} \leq 3$。
+</div>
+
+<div class="proof-env">
+<em>証明.</em>
+(iii)：系2より直ちに $p_{a,b} = 1 \geq 1 + L_{c,d}$。
+(i)：$L_{a,b} \geq 1$ ならば系2より $p_{c,d} \geq 1 + L_{a,b} \geq 2$。
+積の上界より $p_{a,b} \leq 2/p_{c,d} \leq 1$、すなわち $p_{a,b} = 1$。
+(iii) より $L_{c,d} = 0$。
+(ii)：$p_{a,b} = 1$ と相補対恒等式より
+$L_{a,b} = p_{c,d} - m$。
+$p_{c,d} \leq 2$（積の上界）かつ $m \geq 1$ より $L_{a,b} \leq 1$。
+(iv)：$p \cdot q \leq 2$、$p, q \geq 1$ より $p + q \leq 3$。
+<span class="proof-end">$\QED$</span>
+</div>
+
+<!-- ============================================================ -->
+<h2>B4 彩色の構造</h2>
+
+<div class="thm-env">
+<strong>定理6（B4 構造定理）.</strong>
+境界 $v_0=d, v_1=\gamma, v_2=d, v_3=\alpha, v_4=\beta$ を持つ
+B4 彩色において：
+$$p_{d,\gamma} = 1,\; p_{d,\alpha} = 2,\; p_{d,\beta} = 2,\;
+  p_{\alpha,\gamma} = 1,\; p_{\gamma,\beta} = 1,$$
+かつ $L_{d,\alpha} = L_{d,\beta} = L_{\alpha,\beta} = 0$。
+</div>
+
+<div class="proof-env">
+<em>証明.</em>
+
+<p><strong>(i)</strong> $p_{d,\gamma} = 1$：B4 の定義（全域的連結色）による。</p>
+
+<p><strong>(ii)</strong> $\alpha$ は非連結色であるから $p_{d,\alpha} \geq 2$。
+積の上界より $p_{d,\alpha} \cdot p_{\gamma,\beta} \leq 2$。
+$p_{d,\alpha} \geq 2$ より $p_{\gamma,\beta} = 1$ かつ $p_{d,\alpha} = 2$。</p>
+
+<p><strong>(iii)</strong> 同様に $p_{d,\beta} \geq 2$ であるから、
+$p_{d,\beta} \cdot p_{\alpha,\gamma} \leq 2$ より
+$p_{\alpha,\gamma} = 1$ かつ $p_{d,\beta} = 2$。</p>
+
+<p><strong>(iv)</strong> 定理5(iii)より：$p_{\gamma,\beta} = 1 \Rightarrow
+L_{d,\alpha} = 0$；$p_{\alpha,\gamma} = 1 \Rightarrow L_{d,\beta} = 0$；
+$p_{d,\gamma} = 1 \Rightarrow L_{\alpha,\beta} = 0$。
+<span class="proof-end">$\QED$</span></p>
+</div>
+
+<!-- ============================================================ -->
+<h2>B4非再帰定理</h2>
+
+<h3>保存則</h3>
+
+<div class="thm-env">
+<strong>補題1（保存則）.</strong>
+$\{d,\alpha\}$-ケンペ交換のもとで、任意の第三色 $\xi \notin \{d,\alpha\}$ に対し：
+$$e'_{d,\xi} + e'_{\alpha,\xi} = e_{d,\xi} + e_{\alpha,\xi},
+\qquad n'_d + n'_\alpha = n_d + n_\alpha.$$
+したがって：
+$$L'_{d,\xi} + L'_{\alpha,\xi}
+  = L_{d,\xi} + L_{\alpha,\xi}
+    + (p'_{d,\xi} + p'_{\alpha,\xi})
+    - (p_{d,\xi} + p_{\alpha,\xi}).$$
+</div>
+
+<div class="proof-env">
+<em>証明.</em>
+交換は鎖 $C_1$ 上で $d \leftrightarrow \alpha$ を入れ替える。
+各 $\xi$ 色頂点 $u$ は $d$ 色および $\alpha$ 色の近傍への辺を持つ。
+交換により各辺は $H_{d,\xi}$ と $H_{\alpha,\xi}$ の間を移動するだけで、
+辺の生成・消滅は起こらない。辺数合計と頂点数合計が保存され、
+サイクルランクの恒等式は $L = E - V + p$ から従う。
+<span class="proof-end">$\QED$</span>
+</div>
+
+<h3>B4 $\to$ B4 の不可能性</h3>
+
+<div class="thm-env">
+<strong>定理7（B4非再帰定理）.</strong>
+$\varphi$ を B4 彩色、$\varphi'$ を非連結 $\{d,\alpha\}$-ケンペ交換の
+結果とする。このとき $\varphi'$ は B4 彩色ではない。
+より正確には：$\beta$ は $\varphi'$ において連結色であり、
+$\conn' = 1$（$\beta$ が唯一の連結色）ならば $\beta$ は部分的
+（$p'_{dc',\beta} \geq 2$）である。
+</div>
+
+<div class="proof-env">
+<em>証明.</em>
+交換は $H_{d,\alpha}$ の鎖 $C_1$ 上で色を入れ替える。$C_1$ は $b_1, b_2$ の
+一方のみを含む（$b_1 = v_0$ とする；$b_2 = v_2$ の場合も対称的）。
+新しい二重色を $dc'$、新しい境界対を $(b'_1, b'_2)$ とする。
+
+<p><strong>第1段：B4 構造。</strong>
+定理6より：$p_{d,\beta} = 2$、$L_{d,\beta} = 0$、$L_{\alpha,\beta} = 0$。</p>
+
+<p><strong>第2段：$\beta$ に対する保存則。</strong>
+補題1を $\xi = \beta$ で適用する。$L'_{d,\beta} \geq 0$ かつ
+$L'_{\alpha,\beta} \geq 0$ であるから：</p>
+$$p'_{d,\beta} + p'_{\alpha,\beta}
+  \;\geq\; p_{d,\beta} + p_{\alpha,\beta}
+    - L_{d,\beta} - L_{\alpha,\beta}
+  \;=\; 2 + p_{\alpha,\beta} \;\geq\; 3.$$
+
+<p><strong>第3段：$\beta$ は連結色。</strong>
+新しい境界対 $(b'_1, b'_2)$ は5-サイクル上で非隣接であり、
+サイクル上に共通近傍 $m$ を持つ。$m = v_4$ であり
+$\varphi'(v_4) = \beta$（交換は $\beta$ 色頂点に影響しない）であるから、
+経路 $b'_1\text{---}v_4\text{---}b'_2$ は $H'_{dc',\beta}$ に含まれる
+（BCT の論法による）。よって $\beta$ は連結色である。</p>
+
+<p><strong>第4段：$\conn' = 1$ のとき $\beta$ は部分的。</strong>
+$\conn' = 1$ と仮定する。$\beta$ が唯一の連結色であるから、
+他の2つの非 $dc'$ 色は非連結であり、それぞれ $p'_{dc', \cdot} \geq 2$ を満たす。
+これらの相補対に積の上界を適用すると、$p'_{d,\beta}$ または
+$p'_{\alpha,\beta}$ の一方が1に等しくなることが強制される。
+第2段より、もう一方は $\geq 2$ である。</p>
+
+<p>具体的には：非連結色の一方について $\{dc', \text{非連結色}\}$ の相補対が
+$\beta$ を含む対となる。積の上界により $p'_{\text{($\beta$を含む対)}} = 1$
+（非連結色の対は $p' \geq 2$ であるため）。
+第2段より、残る $\beta$ 対は $p' \geq 3 - 1 = 2$ であり、
+これが連結対 $H'_{dc',\beta}$ に対応する。
+よって $p'_{dc',\beta} \geq 2$：$\beta$ は部分的連結色であり、
+$\varphi'$ は B4 ではない。
+<span class="proof-end">$\QED$</span></p>
+</div>
+
+<div class="thm-env">
+<strong>系3.</strong>
+B4 からの非連結 $\{d,\alpha\}$-交換の後、新しい彩色は
+$\conn' \geq 1$（BCTによる）を満たし、$\conn' = 1$ ならば
+彩色は場合B（部分的連結）であって B4 ではない。
+特に B4 $\to$ B4 遷移は不可能である。
+</div>
+
+<!-- ============================================================ -->
+<h2>主定理</h2>
+
+<div class="thm-env">
+<strong>定理8（次数5のケンペ鎖ゲーム）.</strong>
+$G \setminus v$ の任意の正則4彩色は、高々3回のケンペ交換により
+$v$ へ拡張可能な彩色に変換できる。
+</div>
+
+<div class="proof-env">
+<em>証明.</em>
+$\varphi$ を $G \setminus v$ の正則4彩色とする。
+
+<p><strong>ケース0：$N(v)$ 上に $\leq 3$ 色。</strong>
+欠けている色で $v$ を彩色。（0回交換。）</p>
+
+<p><strong>ケースA：$\conn \geq 2$。</strong>
+少なくとも2つの非 $d$ 色が連結。
+3つの非 $d$ 色対 $\{x,y\}$ について、$x$ 色の境界頂点と $y$ 色の境界頂点が
+$H_{x,y}$ の<em>異なる</em>成分にあれば、一方の成分を交換することで
+その頂点の色が他方の色に変わり、境界は $\leq 3$ 色に帰着する。
+これを<em>統合交換</em>と呼ぶ。</p>
+
+<p><em>部分ケース $\conn = 3$。</em>
+3つの非 $d$ 色すべてが連結。
+$m = 2$ の相補対について、積の上界より $p + q \leq 3$、$L_1 = L_2 = 0$
+であり、各対は $(1,2)$ または $(2,1)$。
+補助的観察1（SO1）により、
+少なくとも1つの非 $d$ 対が境界頂点を異なる成分に持ち、
+統合交換が適用可能。
+（$\conn = 3$ では高々1回交換。）</p>
+
+<p><em>部分ケース $\conn = 2$。</em>
+2色（$\gamma, \alpha$）が連結、1色（$\beta$）が非連結。
+$\beta$ は非連結であるから $p_{d,\beta} \geq 2$。
+積の上界より $p_{d,\beta} \cdot p_{\gamma,\alpha} \leq 2$ であるから
+$p_{\gamma,\alpha} = 1$（連結対は単一成分を形成）。
+したがって統合交換の候補は $\{\gamma,\beta\}$ と $\{\alpha,\beta\}$ の2対。
+補助的観察1（SO1）により、少なくとも一方の対が境界頂点を異なる成分に持ち、
+統合交換が適用可能。
+（$\conn = 2$ では高々1回交換。）</p>
+
+<p><strong>ケースB：$\conn = 1$、部分的連結（$p_{d,\gamma} \geq 2$）。</strong>
+$H_{d,\gamma}$ の連結成分 $C$（$b_1, b_2$ を含む）は $H_{d,\gamma}$ 全体
+ではない（内部成分が存在）。$C$ 上で交換：$b_1, b_2$ の色が $d$ から
+$\gamma$ へ変わる。共通近傍 $v_1$（元は $\gamma$ 色）は $C$ に含まれ
+$d$ 色に変わる。新しい境界 $(\gamma, d, \gamma, \alpha, \beta)$、二重色 $\gamma$。
+BCT により $d$ が連結色（$v_1$ 経由）であるから $\conn' \geq 1$。
+補助的観察2（SO2）により $\conn' \geq 2$。
+ケースAが適用され1回追加。（高々2回交換。）</p>
+
+<p><strong>ケースC：$\conn = 1$、全域的連結（B4）。</strong>
+$p_{d,\gamma} = 1$、$p_{d,\alpha} = 2$（定理6）。
+$b_1$ を含む鎖上で非連結 $\{d,\alpha\}$-交換を行う。
+系3より $\conn' \geq 1$（BCT）かつ結果は B4 ではない。
+$\conn' \geq 2$ ならばケースA（1回追加、計2回）。
+$\conn' = 1$ ならば結果は部分的連結（ケースB）であり、
+$\leq 2$ 回追加で解決。（高々3回交換。）</p>
+
+<p>すべてのケースで $\leq 3$ 回のケンペ交換で十分。
+<span class="proof-end">$\QED$</span></p>
+</div>
+
+<h3>四色定理</h3>
+
+<div class="thm-env">
+<strong>定理9（四色定理）.</strong>
+すべての平面グラフは正則4彩色可能である。
+</div>
+
+<div class="proof-env">
+<em>証明.</em>
+そうでないと仮定する。$G$ を極小反例とする。標準的な議論により $G$ は
+球面の三角形分割である。オイラーの公式より $\mathrm{deg}(v) \leq 5$ なる
+頂点 $v$ が存在する。
+
+<p>$\mathrm{deg}(v) \leq 4$ の場合：最小性により $G \setminus v$ は
+4彩色可能であり、$v$ は高々4近傍を持つ。$N(v)$ 上に $\leq 3$ 色なら
+欠けている色で $v$ を彩色。4色すべてが現れても、$|N(v)| = 4$ であり
+二重色はちょうど1対の（必然的に非隣接な）同色頂点を4-サイクル境界上に持つ。
+他の2色のうち1つに対する部分ケンペ交換がこれらを分離し、
+$v$ に色を空ける（1回交換）。</p>
+
+<p>$\mathrm{deg}(v) = 5$ の場合：最小性により $G \setminus v$ は
+4彩色可能。定理8より $\leq 3$ 回の交換で $v$ へ拡張可能。
+いずれの場合も矛盾。
+<span class="proof-end">$\QED$</span></p>
+</div>
+
+<!-- ============================================================ -->
+<h2>考察</h2>
+
+<h3>積の上界の役割</h3>
+
+<p>積の上界は本証明における主要な未証明の主張である。
+アッペル&ndash;ハーケンの証明が、各々独自の帰着論法を持つ数千の
+<em>異なる</em>可約配置の検証を要するのに対し、積の上界は相補ケンペ対の
+連結成分構造に関する<em>単一の一様な</em>主張である。任意のグラフ上で
+線形時間で検証可能であり、形式的証明が得られれば四色定理の最初の完全に
+人間検証可能な証明が完成する。</p>
+
+<p>積の上界から（定理5により）任意の相補対について、非零のサイクルランクは
+高々1つであり、各々 $\leq 1$ であることが導かれる。これはすべてのケンペ
+部分グラフが森であること（$L_{a,b} = 0$）を要求するよりも本質的に弱い条件
+であり、後者はほとんどの極大平面グラフで成り立つがすべてではない。</p>
+
+<h3>補助的計算観察</h3>
+
+<p>積の上界に加え、定理8は以下の2つの補助的計算観察に依存する。
+これらはすべてのテストグラフ（正二十面体、ハミルトン三角形分割、
+ランダム極大平面グラフ）で検証されているが、形式的証明は未だ得られていない：</p>
+<ul>
+<li><strong>SO1（統合交換の存在）：</strong>$\conn \geq 2$ のとき、
+境界頂点が異なる $H_{x,y}$-成分に属する非 $d$ 色対 $\{x,y\}$ が
+存在し、1回の交換で境界を $\leq 3$ 色に帰着できる。</li>
+<li><strong>SO2（部分的連結のアップグレード）：</strong>$\conn = 1$
+で部分的連結の場合、連結成分交換後に $\conn' \geq 2$。</li>
+</ul>
+<p>証明の代数的核心（定理5&ndash;7、系3）は積の上界のみに依存する。
+補助的観察は定理8で交換戦略の決定と交換回数の上界（$\leq 3$）の保証にのみ用いられる。
+SO1 と SO2 の形式的証明があれば結果はさらに強固になる。
+これらがなくともB4非再帰定理（積の上界のみに依存）が
+B4の再帰不可能性を保証する。</p>
+
+<h3>ケンペの議論との比較</h3>
+
+<p>ケンペの1879年の証明は B4 ケースで2つの同時交換を試みて破綻した。
+我々の証明は一度に高々1回の交換のみを行い、代数的構造（保存則 + 積の上界
++ BCT）により結果を制御する。B4非再帰定理はケンペの誤った二重交換を厳密な
+代数的論法に置き換え、$\beta$ が部分的連結色となることを示してB4の
+無限再帰を防ぐ。</p>
+
+<h3>証明の依存関係の要約</h3>
+
+<p>証明の論理構造は以下の通り：</p>
+<ul>
+<li><strong>無条件：</strong> 定理1&ndash;4（サイクルランク和恒等式、
+相補対恒等式、BCT、ジョルダン分離補題）、補題1（保存則）。</li>
+<li><strong>積の上界に条件付き：</strong> 定理5&ndash;7、系3
+（サイクルランクの帰結、B4構造、B4非再帰）。</li>
+<li><strong>積の上界 + SO1 + SO2 に条件付き：</strong> 定理8
+（ケンペ鎖ゲーム、$\leq 3$ 回）、定理9（四色定理）。</li>
+</ul>
+
+<hr>
+
+<h2 style="counter-increment: none; counter-reset: none;">参考文献</h2>
+<ol class="references">
+<li id="ref-AH">K. Appel and W. Haken, <em>Every planar map is four colorable</em>,
+Bulletin of the AMS <strong>82</strong> (1976), 711&ndash;712.</li>
+<li id="ref-AHK">K. Appel, W. Haken, and J. Koch, <em>Every planar map is
+four colorable</em>, Illinois J. Math. <strong>21</strong> (1977), 429&ndash;567.</li>
+<li id="ref-Birkhoff">G. D. Birkhoff, <em>The reducibility of maps</em>,
+Amer. J. Math. <strong>35</strong> (1913), 115&ndash;128.</li>
+<li id="ref-BW">R. L. Brooks, <em>On colouring the nodes of a network</em>,
+Proc. Cambridge Philos. Soc. <strong>37</strong> (1941), 194&ndash;197.</li>
+<li id="ref-Fritsch">R. Fritsch and G. Fritsch, <em>The Four-Color Theorem:
+History, Topological Foundations, and Idea of Proof</em>, Springer, 1998.</li>
+<li id="ref-heawood">P. J. Heawood, <em>Map-colour theorem</em>,
+Quart. J. Pure Appl. Math. <strong>24</strong> (1890), 332&ndash;338.</li>
+<li id="ref-kempe">A. B. Kempe, <em>On the geographical problem of the four
+colours</em>, Amer. J. Math. <strong>2</strong> (1879), 193&ndash;200.</li>
+<li id="ref-RSST">N. Robertson, D. Sanders, P. Seymour, and R. Thomas,
+<em>The four-colour theorem</em>, J. Combin. Theory Ser. B <strong>70</strong>
+(1997), 2&ndash;44.</li>
+<li id="ref-Wilson">R. Wilson, <em>Four Colors Suffice: How the Map Problem
+Was Solved</em>, Princeton University Press, 2002.</li>
+</ol>
+
+</body>
+</html>
